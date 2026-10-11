@@ -352,7 +352,7 @@ h2.upname { color: var(--green); }
 <script>
 /* artmap.js */
 /* 실제 일러스트 목록 — tools/ingest_art.py가 자동으로 다시 씁니다. */
-window.BD_ARTMAP = window.BD_ARTMAP || {};
+window.BD_ARTMAP = {};
 
 </script>
 <script>
@@ -699,10 +699,10 @@ window.BD_ARTMAP = window.BD_ARTMAP || {};
     sera: { hero: 'sera', title: '붉은 검의 세라', cls: 'sword', hp: 80, gold: 99, relic: 'red_ribbon',
             deck: ['s_strike', 's_strike', 's_strike', 's_strike', 's_strike', 's_guard', 's_guard', 's_guard', 's_guard', 's_bash'],
             pitch: '튼튼하고 단순한 정면 승부. 힘을 쌓아 크게 벤다.', line: '길 막으면 벤다. 안 막으면… 그래도 갈 거야.' },
-    luna: { hero: 'luna', title: '별을 읽는 루나', cls: 'magic', hp: 76, gold: 99, relic: 'moon_pendant',
+    luna: { hero: 'luna', title: '별을 읽는 루나', cls: 'magic', hp: 80, gold: 99, relic: 'moon_pendant',
             deck: ['m_bolt', 'm_bolt', 'm_bolt', 'm_bolt', 'm_ward', 'm_ward', 'm_ward', 'm_ward', 'm_meteor', 'm_focus'],
             pitch: '범위 마법과 드로우. 적이 많을수록 신난다.', line: '계산은 끝났어. 이제 예쁘게 터뜨리기만 하면 돼.' },
-    yuki: { hero: 'yuki', title: '그림자 걷는 유키', cls: 'ninja', hp: 76, gold: 99, relic: 'shadow_hood',
+    yuki: { hero: 'yuki', title: '그림자 걷는 유키', cls: 'ninja', hp: 80, gold: 99, relic: 'shadow_hood',
             deck: ['n_slash', 'n_slash', 'n_slash', 'n_slash', 'n_slash', 'n_dodge', 'n_dodge', 'n_dodge', 'n_dodge', 'n_venom'],
             pitch: '표창과 독으로 천천히, 확실하게. 손이 바쁜 타입.', line: '…시끄러운 건 싫어. 조용히 끝낼게.' },
     aria: { hero: 'aria', title: '빛의 방패 아리아', cls: 'holy', hp: 72, gold: 99, relic: 'holy_sigil', locked: true,
@@ -803,7 +803,7 @@ window.BD_ARTMAP = window.BD_ARTMAP || {};
     eve:   { name: '타락 성기사 이브', kind: 'rival', act: 3, hp: [68, 72], colors: ['#9a7cff', '#1c0f33'], glyph: '이', age: 28, desc: '아리아의 옛 동료. 별의 목소리를 듣고 첨탑으로 떠났다.',
              moves: { judge: { name: '검은 심판', dmg: 16, playerSt: { vuln: 1 } }, pray: { name: '어둠의 기도', block: 18, heal: 10, say: '이것도 기도야. 방향만 다를 뿐.' }, smite: { name: '타락한 일격', dmg: 9, hits: 2 } },
              ai: { type: 'random', w: { judge: 4, smite: 4, pray: 2 }, maxRun: { judge: 1, smite: 2, pray: 1 } } },
-    shard: { name: '별 조각', kind: 'monster', act: 3, hp: [18, 20], colors: ['#fff3a8', '#6a5a10'], glyph: '✦', desc: '셀레스가 떨어뜨린 별의 파편.',
+    shard: { name: '별 조각', kind: 'monster', act: 3, hp: [14, 16], colors: ['#fff3a8', '#6a5a10'], glyph: '✦', desc: '셀레스가 떨어뜨린 별의 파편.',
              moves: { zap: { name: '섬광', dmg: 7 }, glow: { name: '증폭', selfSt: { str: 2 } } }, ai: { type: 'random', w: { zap: 7, glow: 3 }, maxRun: { zap: 2, glow: 1 } } },
     sena:  { name: '쌍성의 무녀 세나', kind: 'elite', act: 3, hp: [150, 156], colors: ['#ffe6a0', '#5a3a0a'], glyph: '세', age: 26, desc: '두 개의 별을 섬기는 무녀. 춤 한 번에 별이 하나 떨어진다.',
              moves: { dance: { name: '쌍성의 춤', dmg: 8, hits: 3 }, seal: { name: '봉인 부적', playerSt: { weak: 2, vuln: 2 }, block: 12, say: '움직이지 마세요. 별자리가 흐트러져요.' }, fall: { name: '낙성', dmg: 28 } },
@@ -811,7 +811,7 @@ window.BD_ARTMAP = window.BD_ARTMAP || {};
     drake: { name: '성룡 아스테르', kind: 'elite', act: 3, hp: [170, 176], colors: ['#7fd6ff', '#0a2a44'], glyph: '🐉', desc: '별을 먹고 자란 어린 용. 어려도 용은 용이다.',
              moves: { breath: { name: '별빛 숨결', dmg: 14, addCards: [{ id: 'burn', n: 2, to: 'discard' }] }, tail: { name: '꼬리 휘두르기', dmg: 10, hits: 2 }, roar: { name: '포효', selfSt: { str: 4 }, playerSt: { weak: 1 } } },
              ai: { type: 'cycle', order: ['roar', 'breath', 'tail', 'breath'] } },
-    celes: { name: '별을 삼킨 마녀 셀레스', kind: 'boss', boss: true, act: 3, hp: [196, 196], colors: ['#a0b8ff', '#0a0f2a'], glyph: '셀', age: 27,
+    celes: { name: '별을 삼킨 마녀 셀레스', kind: 'boss', boss: true, act: 3, hp: [186, 186], colors: ['#a0b8ff', '#0a0f2a'], glyph: '셀', age: 27,
              desc: '하늘의 별을 하나씩 삼켜 힘을 얻은 대마녀. 별이 다 사라지면 세상도 끝난다고 믿는다.',
              intro: '별은 아름답지. 그러니까 내가 갖는 거야.', death: '…아, 별이… 이렇게 따뜻했구나.',
              moves: { comet: { name: '혜성 낙하', dmg: 18 }, shards: { name: '별 부수기', summon: ['shard', 'shard'], block: 15, say: '반짝반짝, 예쁘지?' }, gravity: { name: '중력장', playerSt: { weak: 2, vuln: 2 }, addCards: [{ id: 'burn', n: 2, to: 'discard' }] },

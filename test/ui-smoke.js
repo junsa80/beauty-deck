@@ -28,6 +28,7 @@ const tag = `${VW}x${VH}`;
     const st = await page.evaluate(() => { const U = window.BD_UI, r = U.run; return r ? { screen: r.screen, over: r.over, busy: U.ui.busy, hold: U.ui.hold, modal: !!U.ui.modal, act: r.act, floor: r.floor, hp: r.hp, tut: !!document.querySelector('.tutbox'), turn: r.combat && r.combat.turn, hand: r.combat && r.combat.hand.length, en: r.combat && r.combat.energy } : null; });
     if (!st) break;
     if (st.busy || st.hold) { await wait(150); continue; }
+    if (process.env.GOD && st.screen === 'combat') await page.evaluate(() => { const r = window.BD_UI.run; r.hp = r.maxHp; r.combat.p.st.str = 30; });
     const key = JSON.stringify(st);
     if (key === lastKey) { if (++same > 40) { errors.push('stuck at ' + key); break; } } else { same = 0; lastKey = key; }
     if (!seen.has(st.screen)) { seen.add(st.screen); await wait(120); await shot('s-' + st.screen); }

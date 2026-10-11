@@ -117,6 +117,9 @@ function cardScore(run, cd, incoming) {
     }
   }
   if (d.type === 'skill' && al.some(e => e.st.enrage) && needBlock < 10) s -= 15;
+  // 막타 보너스: 이 카드로 적을 끝낼 수 있으면 우선
+  const one = d.effects.find(e => e.t === 'dmg' && !e.hitsFrom);
+  if (one && al.length) { const low = Math.min(...al.map(x => x.hp + x.block)); if (atk(one.v, { strMult: one.strMult }) * (one.hits || 1) >= low) s += 60; }
   const cost = d.cost === -1 ? Math.max(1, c.energy) : d.cost;
   return s / Math.max(0.6, cost);
 }
