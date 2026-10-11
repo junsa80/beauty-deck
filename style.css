@@ -215,3 +215,114 @@ h1, h2, h3 { margin: 0; }
   .enemies.n1 .enemy .portrait, .enemies.n2 .enemy .portrait { width: 84px; height: 96px; font-size: 34px; }
   .enemies.n1 .enemy.boss .portrait { width: 110px; height: 126px; }
 }
+
+/* ═════ v1.0 추가 ═════ */
+.screen { flex: 1; display: flex; flex-direction: column; min-height: 0; position: relative; }
+.screen.enter { animation: scrIn .28s ease-out; }
+.scr-map, .scr-rest, .scr-shop, .scr-event, .scr-treasure, .scr-reward, .scr-select { background: radial-gradient(120% 70% at 50% 0%, color-mix(in srgb, var(--actbg, #3a1d55) 70%, transparent), transparent 70%); }
+.battle { background: radial-gradient(110% 60% at 50% 10%, color-mix(in srgb, var(--actbg, #3a1d55) 80%, transparent), transparent 75%); }
+@keyframes scrIn { from { opacity: 0; transform: translateY(10px); } }
+.sshake { animation: sshake .32s; } .sshake2 { animation: sshake2 .5s; }
+@keyframes sshake { 20% { transform: translate(-4px, 2px); } 40% { transform: translate(4px, -2px); } 60% { transform: translate(-3px, 1px); } 80% { transform: translate(2px, 0); } }
+@keyframes sshake2 { 10% { transform: translate(-9px, 4px); } 25% { transform: translate(8px, -5px); } 40% { transform: translate(-7px, 3px); } 55% { transform: translate(6px, -2px); } 70% { transform: translate(-4px, 1px); } 85% { transform: translate(2px, 0); } }
+body.reduce *, body.reduce *::before, body.reduce *::after { animation-duration: .01s !important; animation-iteration-count: 1 !important; transition: none !important; }
+body.fast .float { animation-duration: .6s; }
+.btn.sm { min-height: 36px; padding: 6px 12px; font-size: 14px; border-radius: 10px; }
+.dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--red); margin-left: 4px; vertical-align: top; }
+
+/* 그림 박스 (9:16 일러스트) */
+.artbox { position: relative; overflow: hidden; border-radius: 14px; background: #1a1028; flex-shrink: 0; cursor: zoom-in; }
+.artbox svg, .artbox .artimg, .eportrait svg, .eportrait .artimg, .pportrait svg, .pportrait .artimg, .card .art svg, .card .art .artimg, .tile svg, .tile .artimg, .bossart svg, .bossart .artimg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; display: block; }
+.artbox.locked, .tile.locked { cursor: default; }
+.artbox.locked svg, .tile.locked svg, .card.locked .art svg { filter: brightness(.35) saturate(0) contrast(1.2); }
+.artimg.sil { filter: brightness(0) drop-shadow(0 0 2px #b98cff); }
+.lockq { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 30px; font-weight: 900; color: #fff8; }
+.title-heroes .artbox.th { width: 72px; height: 128px; border: 2px solid #ffffff22; box-shadow: 0 6px 16px #0008; }
+.title-heroes { flex-wrap: wrap; justify-content: center; }
+.artbox.hp { width: 96px; height: 170px; }
+.artbox.bh { width: 84px; height: 150px; }
+.artbox.p-lg { width: 90px; height: 160px; }
+.artbox.endart { width: 180px; height: 320px; border: 2px solid #ffd36e88; box-shadow: 0 10px 30px #000a; }
+.lockedpanel { opacity: .8; }
+.archrow { display: flex; flex-wrap: wrap; gap: 2px; }
+.asc-panel input[type=range] { flex: 1; accent-color: #ff6fa8; }
+.asc-desc { max-height: 120px; overflow-y: auto; color: #ffb3b3; line-height: 1.5; }
+
+/* 지도 */
+.actbar { display: flex; justify-content: space-between; align-items: center; padding: 6px 12px; font-size: 14px; flex-shrink: 0; border-bottom: 1px solid #ffffff14; }
+.node.boss { overflow: hidden; }
+.bossart { position: absolute; inset: 0; border-radius: 50%; overflow: hidden; }
+.node.n-elite { border-color: #ff6b6b; }
+.topbar .actt { font-size: 12px; } .topbar .asct { color: #ff9c6b; }
+
+/* 전투 */
+.eportrait { position: relative; width: 92px; height: 120px; border-radius: 16px; overflow: hidden; border: 2px solid #0006; box-shadow: 0 6px 16px #0009; }
+.enemies.n1 .eportrait, .enemies.n2 .eportrait { width: 104px; height: 150px; }
+.enemies.n3 .eportrait, .enemies.n4 .eportrait { width: 74px; height: 104px; }
+.enemy.boss .eportrait { width: 130px; height: 190px; border-color: #ffd36e; box-shadow: 0 0 20px #ff2e4d66, 0 6px 16px #0009; }
+.enemy.elite .eportrait { border-color: #ff6b6b; }
+.intent .atk.heavy { color: #ff4040; font-size: 17px; animation: pulse .9s infinite; }
+.pportrait { position: relative; width: 48px; height: 64px; border-radius: 12px; overflow: hidden; flex-shrink: 0; border: 2px solid #ffffff33; }
+.incoming { color: #ff8b8b; } .incoming.safe { color: var(--green); }
+.card .art { position: relative; overflow: hidden; }
+.card.big .art { height: 120px; }
+.synbadge { position: absolute; top: -8px; right: -6px; background: linear-gradient(180deg, #6fe39a, #1f9a55); color: #062; font-size: 10.5px; font-weight: 900; padding: 2px 5px; border-radius: 9px; border: 1px solid #c9ffd9; z-index: 3; white-space: nowrap; }
+.card.r-legend { border-color: #ffb02e; box-shadow: 0 0 0 2px #ff6f00, 0 0 18px #ffb02e99; background: linear-gradient(180deg, #5a2a10, #26100a); }
+.card.locked { opacity: .75; }
+.hand.deal .card { animation: deal .35s backwards; animation-delay: calc(var(--i) * 45ms); }
+@keyframes deal { from { opacity: 0; transform: translate(-120px, 40px) rotate(-14deg) scale(.6); } }
+.tutbox { position: absolute; left: 10px; right: 10px; z-index: 70; background: #fff; color: #2a1840; border-radius: 16px; padding: 12px 14px; font-size: 14px; line-height: 1.5; box-shadow: 0 10px 30px #000c, 0 0 0 3px #ff6fa8; animation: scrIn .25s; }
+.tutbox .btn { color: #2a1840; border-color: #d8c6ea; background: #f4ecfb; }
+.tutbox .btn.primary { color: #fff; background: linear-gradient(180deg, #ff7cb0, #d63d7e); }
+.tutbox.tut-intent { bottom: 64px; } .tutbox.tut-hand, .tutbox.tut-energy, .tutbox.tut-end { top: 6px; }
+.banner.actb { top: 34%; font-size: 26px; padding: 22px 12px; background: linear-gradient(90deg, transparent, #000e, transparent); text-shadow: 0 0 18px #ffd36e; animation-duration: 2.2s; }
+
+/* 보상 / 상점 / 이벤트 */
+.list-btn.bossrelic { border-color: #ffd36e; background: linear-gradient(90deg, #4a3008, #2a1840); }
+.relic.bossr, .relictile.bossr { border-color: #ffd36e; }
+.campfire { animation: flicker 1.6s infinite; }
+@keyframes flicker { 0%, 100% { transform: scale(1); filter: brightness(1); } 50% { transform: scale(1.06); filter: brightness(1.25); } }
+.chest { animation: pulse 1.2s infinite; } .pop { animation: pop .5s; }
+@keyframes pop { from { transform: scale(.2); opacity: 0; } 70% { transform: scale(1.2); } }
+
+/* 카드 상세 */
+.cdetail { display: flex; gap: 12px; align-items: flex-start; }
+.cd-art { position: relative; width: 132px; aspect-ratio: 9 / 16; border-radius: 14px; overflow: hidden; flex-shrink: 0; border: 2px solid #ffffff33; cursor: zoom-in; }
+.cd-art svg, .cd-art .artimg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #0b0614; }
+.cd-art .zoom { position: absolute; right: 4px; bottom: 4px; background: #0009; border-radius: 8px; padding: 2px 5px; font-size: 13px; }
+.cd-cost { width: 34px; height: 34px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff6, #3b86ff 45%, #1b3c94); border: 2px solid #cfe3ff; display: flex; align-items: center; justify-content: center; font-weight: 900; }
+.cd-desc { font-size: 15px; line-height: 1.5; background: #0005; border-radius: 10px; padding: 8px; }
+.cd-desc b.up, .diffpanel b.diff { color: var(--green); } .cd-desc b.down { color: var(--red); }
+h2.upname { color: var(--green); }
+.diffpanel { display: flex; flex-direction: column; gap: 6px; border-color: #6fe39a66; }
+.tag.up { border-color: #6fe39a; color: #b6ffd0; }
+.tag.r-rare { border-color: #ffd36e; } .tag.r-legend { border-color: #ff8a00; color: #ffc46e; } .tag.r-uncommon { border-color: #6fb6ff; }
+
+/* 도감 */
+.tabs { display: flex; gap: 4px; overflow-x: auto; padding-bottom: 2px; }
+.tabs.sub .tabb { font-size: 12px; min-height: 32px; }
+.tabb { flex-shrink: 0; min-height: 38px; padding: 4px 10px; border-radius: 10px; border: 1px solid var(--line); background: #0005; font-size: 13px; font-weight: 700; position: relative; }
+.tabb.on { background: linear-gradient(180deg, #ff7cb0, #d63d7e); border-color: #ff9cc4; }
+.relicgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); gap: 8px; }
+.relictile { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 4px; border-radius: 12px; border: 1px solid var(--line); background: #0005; min-height: 74px; text-align: center; line-height: 1.2; }
+.relictile .ri { font-size: 26px; } .relictile.locked { opacity: .45; }
+.artgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.tile { position: relative; aspect-ratio: 9 / 16; border-radius: 12px; overflow: hidden; border: 1px solid #ffffff22; cursor: zoom-in; }
+.tile .tcap { position: absolute; left: 0; right: 0; bottom: 0; padding: 14px 4px 4px; font-size: 11px; font-weight: 700; text-align: center; background: linear-gradient(transparent, #000d); line-height: 1.25; }
+.achrow { display: flex; gap: 10px; align-items: center; padding: 8px 10px; border-radius: 12px; background: #0005; border: 1px solid #ffffff14; opacity: .6; }
+.achrow.got { opacity: 1; border-color: #ffd36e66; }
+.achrow .ic { font-size: 24px; width: 30px; text-align: center; } .achrow .chk { color: var(--green); font-weight: 900; }
+.list-btn.toggle .sw { min-width: 48px; text-align: center; padding: 4px 8px; border-radius: 12px; background: #0007; font-size: 13px; }
+.list-btn.toggle.on .sw { background: var(--green); color: #032; }
+
+/* 크게 보기 */
+.viewer { position: fixed; inset: 0; z-index: 400; background: #000e; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 16px; animation: fadein .2s; cursor: zoom-out; }
+.viewer .vimg { position: relative; height: min(78vh, calc((100vw - 32px) * 16 / 9)); aspect-ratio: 9 / 16; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 40px #000; }
+.viewer .vimg svg, .viewer .vimg .artimg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.viewer .vcap { max-width: 420px; text-align: center; font-size: 14px; color: #fff; line-height: 1.5; }
+.viewer .vclose { font-size: 13px; color: var(--dim); }
+@media (max-height: 700px) {
+  .enemies.n1 .eportrait, .enemies.n2 .eportrait { width: 84px; height: 118px; }
+  .enemy.boss .eportrait { width: 104px; height: 150px; }
+  .enemies.n3 .eportrait, .enemies.n4 .eportrait { width: 64px; height: 90px; }
+}

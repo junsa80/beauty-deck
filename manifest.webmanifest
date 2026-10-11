@@ -1,0 +1,16 @@
+{
+  "name": "미녀 덱: 밤의 여왕",
+  "short_name": "미녀 덱",
+  "description": "모바일 덱빌딩 로그라이트",
+  "lang": "ko",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#140b1f",
+  "theme_color": "#140b1f",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
