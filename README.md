@@ -59,6 +59,7 @@ test/ui-scenes.js   주요 장면 스크린샷 (390×844, 360×780)
 - 연출은 엔진이 `run.fx`에 이벤트(`dmg`, `block`, `say`, `phase`, `act`, `revive` 등)를 쌓으면 `ui.js`의 `playFx`가 받아서 처리합니다.
 - 난수는 시드 기반(`run.rng`)이라 저장하고 다시 불러와도 같은 흐름으로 이어집니다.
 - 저장 키: `beautydeck.run.v2`(진행 중인 원정), `beautydeck.meta.v2`(업적·도감·기록, v0.1 기록 자동 이전), `beautydeck.settings.v1`
+- 저장은 **이 기기 localStorage만** (클라우드 동기화 없음). 설정에서 JSON 백업 내보내기/가져오기 가능. 가져올 때 로컬이 더 새롭거나 기록이 더 많으면 덮어쓰기 경고를 띄움 (v1.1.1).
 
 ## 테스트
 ```bash

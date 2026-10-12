@@ -11,7 +11,7 @@
   let run = null;
   let meta = loadMeta();
   const settings = Object.assign({ sound: false, vibe: true, reduce: false, fast: false, asc: 0 }, loadJSON(SET_KEY) || {});
-  const ui = { view: 'title', sel: null, potionSel: null, busy: false, modal: null, hold: false, deadShown: new Set(), runAch: [], tut: 0, lastScreen: null, codexTab: 'cards', codexCls: 'all', modalStack: [] };
+  const ui = { view: 'title', sel: null, potionSel: null, busy: false, modal: null, hold: false, deadShown: new Set(), runAch: [], tut: 0, lastScreen: null, codexTab: 'cards', codexCls: 'all', modalStack: [], pendingBackup: null };
 
   // ───────── 저장 ─────────
   function loadJSON(k) { try { const s = localStorage.getItem(k); return s ? JSON.parse(s) : null; } catch (e) { return null; } }
@@ -23,7 +23,7 @@
     if (m1) { m.runs = m1.runs || 0; m.wins = m1.wins || 0; m.kills = m1.kills || 0; m.bestFloor = m1.bestFloor || 0; saveJSON(META_KEY, m); }
     return m;
   }
-  function saveMeta() { saveJSON(META_KEY, meta); }
+  function saveMeta() { meta.updatedAt = new Date().toISOString(); saveJSON(META_KEY, meta); }
   function saveSettings() { saveJSON(SET_KEY, settings); applySettings(); }
   function saveRun() {
     if (!run) return;
@@ -31,6 +31,65 @@
       if (!run.recorded) { E.recordRun(meta, run); grantAch(); saveMeta(); }
       try { localStorage.removeItem(SAVE_KEY); } catch (e) { /* 무시 */ }
     } else saveJSON(SAVE_KEY, JSON.parse(JSON.stringify(run, (k, v) => (k === 'fx' ? undefined : v))));
+    stampSave();
+  }
+  function stampSave() {
+    meta.updatedAt = new Date().toISOString();
+    saveJSON(META_KEY, meta);
+  }
+  function saveStatusLine() {
+    const t = meta.updatedAt ? new Date(meta.updatedAt) : null;
+    const when = t && !isNaN(t) ? t.toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '아직 없음';
+    return `이 기기에만 저장 · 클라우드 동기화 없음 · 마지막 저장 ${when}`;
+  }
+  function buildBackup() {
+    const cur = run && !run.over ? JSON.parse(JSON.stringify(run, (k, v) => (k === 'fx' ? undefined : v))) : loadJSON(SAVE_KEY);
+    return {
+      v: 1,
+      game: 'beauty-deck',
+      exportedAt: new Date().toISOString(),
+      run: cur && !cur.over ? cur : null,
+      meta: JSON.parse(JSON.stringify(meta)),
+      settings: JSON.parse(JSON.stringify(settings))
+    };
+  }
+  function summarizeBackup(b) {
+    const m = b.meta || {};
+    const r = b.run;
+    const runTxt = r && r.starter && D.STARTERS[r.starter]
+      ? `${D.STARTERS[r.starter].title} · ${r.act < 4 ? r.act + '막' : '종막'}`
+      : '진행 중 원정 없음';
+    return `원정 ${m.runs || 0}회 · 클리어 ${m.wins || 0}회 · 승천 ${m.ascMax || 0} · ${runTxt}`;
+  }
+  function backupIsOlderThanLocal(b) {
+    const localTs = meta.updatedAt ? Date.parse(meta.updatedAt) : 0;
+    const fileTs = b.exportedAt ? Date.parse(b.exportedAt) : 0;
+    if (localTs && fileTs && localTs > fileTs) return true;
+    const lr = meta.runs || 0, lw = meta.wins || 0;
+    const fr = (b.meta && b.meta.runs) || 0, fw = (b.meta && b.meta.wins) || 0;
+    if (lr > fr || lw > fw) return true;
+    return false;
+  }
+  function applyBackup(b) {
+    if (!b || b.game !== 'beauty-deck' || b.v !== 1 || !b.meta) throw new Error('형식이 맞지 않는 백업이야');
+    meta = E.migrateMeta(b.meta);
+    meta.updatedAt = new Date().toISOString();
+    saveJSON(META_KEY, meta);
+    if (b.settings && typeof b.settings === 'object') {
+      Object.assign(settings, { sound: false, vibe: true, reduce: false, fast: false, asc: 0 }, b.settings);
+      saveSettings();
+    }
+    if (b.run && b.run.v === 2 && !b.run.over && D.STARTERS[b.run.starter]) {
+      saveJSON(SAVE_KEY, b.run);
+      run = null;
+    } else {
+      try { localStorage.removeItem(SAVE_KEY); } catch (e) { /* 무시 */ }
+      run = null;
+    }
+    ui.view = 'title'; ui.modal = null; ui.modalStack = []; ui.pendingBackup = null;
+    applySettings();
+    render();
+    toast('백업을 불러왔어.');
   }
   function grantAch() {
     const got = E.checkAchievements(meta, run);
@@ -210,6 +269,7 @@
         <div class="row"><button class="btn block" data-act="help">❔ 도움말</button><button class="btn block" data-act="settings">⚙️ 설정</button></div>
       </div>
       <div class="dim small">원정 ${meta.runs}회 · 클리어 ${meta.wins}회 · 최고 승천 ${Math.max(0, meta.ascMax - (meta.wins ? 1 : 0))}${meta.ascMax ? ` · 승천 ${meta.ascMax}까지 열림` : ''}</div>
+      <div class="dim" style="font-size:11px">${esc(saveStatusLine())}</div>
       <div class="dim" style="font-size:11px">v${D.VERSION} · 모든 등장인물은 20대 이상의 성인입니다</div>
     </div></div>`;
   }
@@ -539,17 +599,22 @@
     • 보스를 이기면 <b>👑보스 유물</b> 3개 중 하나. 강하지만 대가가 있어.<br>
     • 2막 보스를 이기면 새 히로인 <b>아리아</b> 합류. 업적을 달성하면 <b>전설 카드</b>가 보상에 나오기 시작해.<br>
     • 클리어하면 <b>🔥승천</b>이 열려. 최대 10단계까지.<br>
-    • 진행은 자동 저장돼. 홈 화면에 추가하면 앱처럼 쓸 수 있어.</div>
+    • 진행은 <b>이 기기에만</b> 자동 저장돼. 클라우드 동기화는 없어. 설정에서 백업 파일로 내보내/가져오기를 할 수 있어.<br>
+    • 홈 화면에 추가하면 앱처럼 쓸 수 있어.</div>
     <button class="btn block" data-act="tutReplay">첫 전투 튜토리얼 다시 보기</button>
     <button class="btn block primary" data-act="closeModal">알겠어!</button>`;
   }
   function settingsHTML() {
     const row = (k, label, sub) => `<button class="list-btn toggle ${settings[k] ? 'on' : ''}" data-act="toggle" data-k="${k}"><span style="flex:1">${label}<br><span class="small dim">${sub}</span></span><span class="sw">${settings[k] ? 'ON' : 'OFF'}</span></button>`;
     return `<h2>⚙️ 설정</h2>
+      <div class="panel small dim" style="margin-bottom:8px">${esc(saveStatusLine())}</div>
       ${row('sound', '🔊 효과음', '기본은 꺼져 있어. 켜면 합성 효과음이 나와.')}
       ${row('vibe', '📳 진동', '피격·보스 격파 때 짧게 진동 (지원 기기만)')}
       ${row('reduce', '🧘 움직임 줄이기', '화면 흔들림·카드 날아가기 같은 연출을 줄여')}
       ${row('fast', '⏩ 빠른 연출', '적 턴 연출 속도 2배')}
+      <div class="section-title" style="padding-left:0;margin-top:8px">💾 백업</div>
+      <button class="btn block" data-act="exportBackup">⬇️ 백업 파일 내보내기</button>
+      <button class="btn block" data-act="importPick">⬆️ 백업 파일 가져오기</button>
       <button class="btn block" data-act="resetConfirm" style="color:var(--red)">🗑️ 모든 기록 초기화</button>
       <button class="btn block primary" data-act="closeModal">닫기</button>`;
   }
@@ -783,6 +848,54 @@
     toggle(d) { settings[d.k] = !settings[d.k]; saveSettings(); if (d.k === 'sound' && settings.sound) sfx('ach'); if (d.k === 'vibe' && settings.vibe) buzz(40); ui.modal = settingsHTML(); render(); },
     resetConfirm() { openModal(`<h2>정말 초기화할까?</h2><div class="small dim">업적·도감·갤러리·승천·진행 중인 원정이 모두 지워져.</div><div class="row"><button class="btn block" data-act="closeModal">아니</button><button class="btn block primary" data-act="resetYes">초기화</button></div>`, true); },
     resetYes() { meta = E.newMeta(); saveMeta(); try { localStorage.removeItem(SAVE_KEY); } catch (e) { /* 무시 */ } run = null; ui.view = 'title'; ui.modal = null; ui.modalStack = []; render(); toast('기록을 초기화했어.'); },
+    exportBackup() {
+      try {
+        const b = buildBackup();
+        const blob = new Blob([JSON.stringify(b, null, 2)], { type: 'application/json' });
+        const a = document.createElement('a');
+        const stamp = (b.exportedAt || '').slice(0, 10) || 'backup';
+        a.href = URL.createObjectURL(blob);
+        a.download = `beauty-deck-backup-${stamp}.json`;
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+        toast('백업 파일을 저장했어.');
+      } catch (e) { toast('내보내기 실패: ' + esc(e.message)); }
+    },
+    importPick() {
+      let inp = document.getElementById('bd-backup-file');
+      if (!inp) {
+        inp = document.createElement('input');
+        inp.type = 'file'; inp.accept = 'application/json,.json'; inp.id = 'bd-backup-file';
+        inp.style.display = 'none';
+        document.body.appendChild(inp);
+        inp.addEventListener('change', () => {
+          const f = inp.files && inp.files[0];
+          inp.value = '';
+          if (!f) return;
+          const reader = new FileReader();
+          reader.onload = () => {
+            try {
+              const b = JSON.parse(reader.result);
+              if (!b || b.game !== 'beauty-deck' || b.v !== 1 || !b.meta) throw new Error('미녀 덱 백업 파일이 아니야');
+              ui.pendingBackup = b;
+              const older = backupIsOlderThanLocal(b);
+              openModal(`<h2>이 백업을 불러올까?</h2>
+                <div class="small dim">파일: ${esc(summarizeBackup(b))}</div>
+                <div class="small dim" style="margin-top:6px">지금 이 기기: ${esc(summarizeBackup({ meta, run: loadJSON(SAVE_KEY) }))}</div>
+                ${older ? '<div class="small" style="color:var(--red);margin-top:8px">지금 이 기기 기록이 더 새롭거나 더 많을 수 있어. 가져오면 지금 기록을 덮어써.</div>' : '<div class="small dim" style="margin-top:8px">가져오면 지금 이 기기의 기록을 이 파일로 바꿔.</div>'}
+                <div class="row" style="margin-top:10px"><button class="btn block" data-act="closeModal">아니</button><button class="btn block primary" data-act="importConfirm">가져오기</button></div>`, true);
+            } catch (e) { toast('가져오기 실패: ' + esc(e.message)); }
+          };
+          reader.onerror = () => toast('파일을 읽지 못했어.');
+          reader.readAsText(f);
+        });
+      }
+      inp.click();
+    },
+    importConfirm() {
+      try { applyBackup(ui.pendingBackup); }
+      catch (e) { toast('가져오기 실패: ' + esc(e.message)); }
+    },
     codex() { ui.codexTab = 'cards'; openModal(codexHTML()); },
     codexGallery() { ui.codexTab = 'gallery'; openModal(codexHTML()); },
     codexTab(d) { ui.codexTab = d.t; ui.modal = codexHTML(); render(); },

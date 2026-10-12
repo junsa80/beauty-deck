@@ -597,7 +597,7 @@
 
   for (const k of Object.keys(CARDS)) CARDS[k].id = k;
   const DATA = { HEROINES, STATUS, ARCH, CLASS_ARCH, CARDS, STARTERS, ACTS, ENEMIES, ENCOUNTERS, RELICS, POTIONS, EVENTS, ACHIEVEMENTS, GALLERY, ASCENSION, ART,
-    TITLE: '미녀 덱: 밤의 여왕', VERSION: '1.0.0' };
+    TITLE: '미녀 덱: 밤의 여왕', VERSION: '1.1.1' };
   root.BD_DATA = DATA;
   if (typeof module !== 'undefined' && module.exports) module.exports = DATA;
 })(typeof window !== 'undefined' ? window : globalThis);
