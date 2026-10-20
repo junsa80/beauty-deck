@@ -1,4 +1,4 @@
-# 미녀 덱: 밤의 여왕 (v1.2.0)
+# 미녀 덱: 밤의 여왕 (v1.2.1)
 
 슬레이 더 스파이어 스타일의 **모바일 덱빌딩 로그라이트** 웹앱입니다. 순수 HTML/CSS/JS라 빌드 없이 돌아가고, 폰 세로 화면(360~430px)에 맞춰 만들었습니다.
 **모든 등장인물은 20대 이상의 성인 여성**이고, 노출·교복 같은 요소는 없습니다.
@@ -39,10 +39,11 @@
 
 ## 일러스트
 - 실제 그림이 없는 칸은 `art.js`가 **key마다 다른 9:16 SVG 일러스트**(히로인 실루엣, 색, 문양)를 즉석에서 그립니다. 그래서 그림 없이도 모든 화면이 완성된 상태로 보입니다.
-- 실제 그림 슬롯은 **180칸**입니다: 히로인 12, 적 29, 카드 111, 갤러리 12, 이벤트 16.
+- 실제 그림 슬롯은 **180칸**입니다: 히로인 12, 적 29, 카드 111(+숙련 카드 12), 갤러리 12, 이벤트 16.
   1. `node tools/art_prompts.js`를 실행하면 `art/ART_PROMPTS.md`와 `art/prompts.json`이 나옵니다. 16:9 트립틱 60장 분량이고, 한 장에 세로 패널 3개가 들어갑니다.
   2. 생성한 트립틱을 `art/incoming/batch_###.png`로 저장합니다. 한 장짜리라면 `card_s_bash.png`처럼 이름을 붙입니다.
   3. `python3 tools/ingest_art.py`를 실행합니다. 늘리지 않고 잘라서 **540×960 webp(약 60~120KB)**로 `img/`에 저장하고, `artmap.js`도 자동으로 갱신합니다.
+  - **숙련 카드 12장(v1.2.1)**: `tools/mastery_art.js`가 같은 히로인의 실제 일러스트를 카드마다 다르게 잘라 색보정하고, 카드 효과 SVG(꽃잎 참격·혜성·서리·독침·초승달·등불·방패 문양 등)와 금빛 숙련 문장을 겹쳐 540×960 webp로 굽고 `artmap.js`에 등록합니다. `NODE_PATH=/tmp/pt/node_modules node tools/mastery_art.js`
   - 그림은 `loading="lazy"`로 불러오고, 서비스 워커가 캐시해 둡니다.
 
 ## 파일 구조
@@ -62,6 +63,7 @@ test/sim.js         헤드리스 시뮬레이션 (무작위 봇 = 크래시/소�
 test/ui-smoke.js    헤드리스 크롬 모바일 터치로 한 판 진행 (GOD=1 이면 종막까지 완주)
 test/ui-scenes.js   주요 장면 스크린샷 (390×844, 360×780)
 test/ui-mastery.js  v1.2 검사: v1.1 기록 이전, 프로필, 스토리, 대사, 원정 종료 경험치, 백업 왕복
+test/ui-v121.js     v1.2.1 검사: 숙련 카드 전용 그림 12장, 스토리 20장 600~900자, v1.2.0 저장 유지, 버전/캐시 이름
 ```
 - 엔진 함수(`playCard`, `endTurn`, `chooseNode`, `takeBossRelic` 등)는 `run`을 바꾸고 `{ok, reason}`을 돌려줍니다. 화면은 `run.screen` 값으로 정해집니다.
 - 연출은 엔진이 `run.fx`에 이벤트(`dmg`, `block`, `say`, `phase`, `act`, `revive` 등)를 쌓으면 `ui.js`의 `playFx`가 받아서 처리합니다.
@@ -79,6 +81,7 @@ python3 -m http.server 8765 &        # 로컬 서버
 NODE_PATH=<puppeteer-core 위치>/node_modules URL=http://127.0.0.1:8765/ VP=360x780 node test/ui-smoke.js
 NODE_PATH=... URL=http://127.0.0.1:8765/ node test/ui-scenes.js
 NODE_PATH=... URL=http://127.0.0.1:8765/ SHOTS=/tmp/shots node test/ui-mastery.js
+NODE_PATH=... URL=http://127.0.0.1:8765/ SHOTS=/tmp/shots node test/ui-v121.js
 MASTERY=1 node test/sim.js 300       # 레벨 10 (숙련 카드·패시브·시작 물약), MASTERY=all 이면 대안 유물·덱까지
 ```
 **밸런스 (똑똑한 봇, 히로인별 300판)**: 승천 0에서 세라 36%, 루나 33%, 유키 32%를 클리어합니다. 해금 보상 캐릭터 아리아는 58%로 더 쉽습니다. 승천 5에서는 12~13%(아리아 33%), 승천 10에서는 1~3%(아리아 8%)입니다. 무작위 봇을 포함해 수천 판을 돌리는 동안 크래시, 소프트락, 불변식 위반은 0건이었습니다.

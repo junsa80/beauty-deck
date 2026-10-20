@@ -1,5 +1,17 @@
 /* 실제 일러스트 목록 — tools/ingest_art.py가 자동으로 다시 씁니다. */
 window.BD_ARTMAP = {
+"card:ax_dawnshield": "img/card_ax_dawnshield.webp",
+"card:ax_oath": "img/card_ax_oath.webp",
+"card:ax_lantern": "img/card_ax_lantern.webp",
+"card:yx_moon": "img/card_yx_moon.webp",
+"card:yx_needle": "img/card_yx_needle.webp",
+"card:yx_mist": "img/card_yx_mist.webp",
+"card:lx_orbit": "img/card_lx_orbit.webp",
+"card:lx_veil": "img/card_lx_veil.webp",
+"card:lx_comet": "img/card_lx_comet.webp",
+"card:sx_dawn": "img/card_sx_dawn.webp",
+"card:sx_vow": "img/card_sx_vow.webp",
+"card:sx_flurry": "img/card_sx_flurry.webp",
 "card:ex_aegis": "img/card_ex_aegis.webp",
 "card:ex_crimson": "img/card_ex_crimson.webp",
 "card:ex_encore": "img/card_ex_encore.webp",
