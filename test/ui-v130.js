@@ -105,7 +105,7 @@ const give = (r, id, up) => { const cd = { uid: r.nextUid++, id, up: !!up }; r.c
   await page.evaluate(m => localStorage.setItem('beautydeck.meta.v2', JSON.stringify(m)), v121);
   await page.reload(); await wait(600);
   const mm = await page.evaluate(() => { const m = window.BD_UI.meta, E = window.BD_ENGINE; return { v: window.BD_DATA.VERSION, sera: E.heroLevel(m, 'sera').lv, nw: ['mariel', 'serena', 'odette'].map(h => E.heroLevel(m, h).lv), runs: m.runs, read: !!m.storyRead.sera0 }; });
-  ok(mm.v === '1.3.0' && mm.sera === 7 && mm.nw.every(l => l === 1) && mm.runs === 9 && mm.read, `브라우저: v1.2.1 저장 유지(세라 Lv${mm.sera}) · 새 히로인 Lv1 · 버전 ${mm.v}`);
+  ok(mm.v === require('../data.js').VERSION && mm.sera === 7 && mm.nw.every(l => l === 1) && mm.runs === 9 && mm.read, `브라우저: v1.2.1 저장 유지(세라 Lv${mm.sera}) · 새 히로인 Lv1 · 버전 ${mm.v}`);
   // 선택 화면
   await page.evaluate(() => window.BD_UI.H.newGame()); await wait(400);
   await shot('v130-select-top');
