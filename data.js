@@ -309,26 +309,33 @@
   const STARTERS = {
     sera: { hero: 'sera', title: '붉은 검의 세라', cls: 'sword', hp: 80, gold: 99, relic: 'red_ribbon',
             deck: ['s_strike', 's_strike', 's_strike', 's_strike', 's_strike', 's_guard', 's_guard', 's_guard', 's_guard', 's_bash'],
-            pitch: '튼튼하고 단순한 정면 승부. 힘을 쌓아 크게 벤다.', line: '길 막으면 벤다. 안 막으면… 그래도 갈 거야.' },
+            pitch: '튼튼하고 단순한 정면 승부. 힘을 쌓아 크게 벤다.', line: '길 막으면 벤다. 안 막으면… 그래도 갈 거야.',
+            mech: ["💪 <b>힘</b>: 공격 피해가 힘 수치만큼 늘어. 쌓을수록 한 방이 커져."] },
     luna: { hero: 'luna', title: '별을 읽는 루나', cls: 'magic', hp: 80, gold: 99, relic: 'moon_pendant',
             deck: ['m_bolt', 'm_bolt', 'm_bolt', 'm_bolt', 'm_ward', 'm_ward', 'm_ward', 'm_ward', 'm_meteor', 'm_focus'],
-            pitch: '범위 마법과 드로우. 적이 많을수록 신난다.', line: '계산은 끝났어. 이제 예쁘게 터뜨리기만 하면 돼.' },
+            pitch: '범위 마법과 드로우. 적이 많을수록 신난다.', line: '계산은 끝났어. 이제 예쁘게 터뜨리기만 하면 돼.',
+            mech: ["☄️ 모든 적을 치는 광역 마법과 드로우가 중심.", "❄️ 약화로 적 피해를 줄이거나, 🔥 내 덱에 「화상」을 섞는 대신 강한 공격을 쓰는 조합."] },
     yuki: { hero: 'yuki', title: '그림자 걷는 유키', cls: 'ninja', hp: 80, gold: 99, relic: 'shadow_hood',
             deck: ['n_slash', 'n_slash', 'n_slash', 'n_slash', 'n_slash', 'n_dodge', 'n_dodge', 'n_dodge', 'n_dodge', 'n_venom'],
-            pitch: '표창과 독으로 천천히, 확실하게. 손이 바쁜 타입.', line: '…시끄러운 건 싫어. 조용히 끝낼게.' },
+            pitch: '표창과 독으로 천천히, 확실하게. 손이 바쁜 타입.', line: '…시끄러운 건 싫어. 조용히 끝낼게.',
+            mech: ["☠️ <b>중독</b>: 적이 턴 시작마다 수치만큼 체력을 잃고, 수치가 1 줄어.", "✴️ <b>표창</b>: 0코스트 피해 4, 쓰면 소멸."] },
     aria: { hero: 'aria', title: '빛의 방패 아리아', cls: 'holy', hp: 72, gold: 99, relic: 'holy_sigil', locked: true,
             unlockText: '2막 보스 「밤의 여왕 벨리타」를 한 번 쓰러뜨리면 합류해.',
             deck: ['h_strike', 'h_strike', 'h_strike', 'h_strike', 'h_guard', 'h_guard', 'h_guard', 'h_guard', 'h_guard', 'h_smite'],
-            pitch: '방어도를 쌓고 그대로 되돌려 주는 수호 기사. 회복과 반격도 특기.', line: '뒤는 내가 지킬게. 앞만 봐.' },
+            pitch: '방어도를 쌓고 그대로 되돌려 주는 수호 기사. 회복과 반격도 특기.', line: '뒤는 내가 지킬게. 앞만 봐.',
+            mech: ["🛡️ 방어도를 쌓고 🌹가시·⚖️응보로 맞받아쳐. 회복 카드도 많아."] },
     mariel: { hero: 'mariel', title: '실을 잇는 마리엘', cls: 'puppet', hp: 68, gold: 99, relic: 'silver_thimble',
             deck: ['pm_strike', 'pm_strike', 'pm_strike', 'pm_strike', 'pm_guard', 'pm_guard', 'pm_guard', 'pm_guard', 'pm_doll', 'pm_doll'],
-            pitch: '인형을 세워 앞줄을 맡기고, 턴이 끝날 때 인형이 공격해. 인형은 들어오는 공격을 (방어도 다음으로) 대신 맞아.', line: '앞줄은 도도가 설게. 넌 내 뒤에서 숨 쉬어.' },
+            pitch: '인형을 세워 앞줄을 맡기고, 턴이 끝날 때 인형이 공격해. 인형은 들어오는 공격을 (방어도 다음으로) 대신 맞아.', line: '앞줄은 도도가 설게. 넌 내 뒤에서 숨 쉬어.',
+            mech: ["🪆 <b>인형</b>(최대 3체): 적 공격은 방어도 → 맨 앞 인형 → 내 체력 순으로 맞아.", "턴이 끝나면 인형마다 무작위 적을 공격. 4체째는 맨 앞 인형 체력에 더해져."] },
     serena: { hero: 'serena', title: '달을 추는 세레나', cls: 'moon', hp: 66, gold: 99, relic: 'crescent_pin',
             deck: ['sm_slash', 'sm_slash', 'sm_slash', 'sm_slash', 'sm_step', 'sm_step', 'sm_step', 'sm_step', 'sm_full', 'sm_wane'],
-            pitch: '카드를 낼 때마다 달이 🌒→🌓→🌕→🌑로 바뀌어. 위상이 맞는 카드를 맞는 순서로 내면 추가 효과.', line: '박자 놓치지 마. 다음이 보름이야.' },
+            pitch: '카드를 낼 때마다 달이 🌒→🌓→🌕→🌑로 바뀌어. 위상이 맞는 카드를 맞는 순서로 내면 추가 효과.', line: '박자 놓치지 마. 다음이 보름이야.',
+            mech: ["🌙 <b>달 위상</b>: 카드를 낼 때마다 🌒초승→🌓반달→🌕보름→🌑그믐 순으로 1칸.", "카드의 달 배지가 <b>낼 때의 위상</b>과 같으면 추가 효과.", "🌑그믐→🌒초승으로 넘어가면 한 바퀴."] },
     odette: { hero: 'odette', title: '기록하는 오데트', cls: 'lore', hp: 70, gold: 99, relic: 'brass_key',
             deck: ['lo_strike', 'lo_strike', 'lo_strike', 'lo_strike', 'lo_guard', 'lo_guard', 'lo_guard', 'lo_guard', 'lo_read', 'lo_read'],
-            pitch: '「보존」 카드는 턴이 끝나도 손에 남고 각주가 쌓여 점점 세져. 아껴 두었다가 크게 쓰는 덱.', line: '이 카드는 다음 턴을 위해 아껴 둘게.' },
+            pitch: '「보존」 카드는 턴이 끝나도 손에 남고 각주가 쌓여 점점 세져. 아껴 두었다가 크게 쓰는 덱.', line: '이 카드는 다음 턴을 위해 아껴 둘게.',
+            mech: ["📑 <b>보존</b> 카드는 턴이 끝나도 손에 남고 <b>각주</b>가 1 쌓여.", "각주 1당 카드 수치가 커져(카드에 「각주당 +N」 표시). 내면 각주는 0으로."] },
   };
 
   // ───────── 막(Act) ─────────
@@ -827,7 +834,7 @@
   };
 
   const DATA = { MASTERY, LINES, HEROINES, STATUS, ARCH, CLASS_ARCH, CARDS, STARTERS, ACTS, ENEMIES, ENCOUNTERS, RELICS, POTIONS, EVENTS, ACHIEVEMENTS, GALLERY, ASCENSION, ART,
-    TITLE: '미녀 덱: 밤의 여왕', VERSION: '1.3.1' };
+    TITLE: '미녀 덱: 밤의 여왕', VERSION: '1.3.2' };
   root.BD_DATA = DATA;
   if (typeof module !== 'undefined' && module.exports) module.exports = DATA;
 })(typeof window !== 'undefined' ? window : globalThis);

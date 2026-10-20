@@ -388,3 +388,12 @@ h2.upname { color: var(--green); }
 .card .fnbadge.ret { font-weight: 400; opacity: .9; }
 .card .moonbadge { position: absolute; right: 3px; top: 3px; z-index: 3; font-size: 13px; opacity: .55; }
 .card .moonbadge.on { opacity: 1; filter: drop-shadow(0 0 4px #fff); }
+
+/* v1.3.2 기믹 요약 · 다음 보상 */
+.mechlist { margin: 2px 0 0; padding-left: 16px; line-height: 1.45; }
+.mechlist li { margin: 1px 0; }
+.nextbox { margin: 8px 0; padding: 8px 10px; border-radius: 10px; border: 1px solid #ffd36e66; background: #ffd36e12; display: flex; flex-direction: column; gap: 3px; }
+.trackrow.next { background: #8e7bff22; outline: 1px solid #8e7bff66; }
+.tstate { font-size: 11px; padding: 1px 6px; border-radius: 8px; white-space: nowrap; }
+.tstate.got { background: #ffd36e33; color: var(--gold); }
+.tstate.next { background: #8e7bff44; }

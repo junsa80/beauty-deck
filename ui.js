@@ -306,6 +306,7 @@
               ${lvMini(id)}
               <div><span class="tag">${esc(h.job)}</span><span class="tag">${h.age}세</span><span class="tag">❤️ ${s.hp - (asc >= 6 ? 6 : 0)}</span>${meta.heroBestAsc[id] != null && wins ? `<span class="tag">🔥${meta.heroBestAsc[id]}</span>` : ''}</div>
               <div class="small">${esc(s.pitch)}</div>
+              ${mechListHTML(s)}
               <div class="quote">“${esc(s.line)}”</div>
             </div></div>
           <div class="small"><b>${r.icon} ${esc(r.name)}</b> — ${esc(r.desc)}${E.masteryHas(meta, id, 'relic') ? ' <span class="dim">(기본)</span>' : ''}</div>
@@ -531,6 +532,10 @@
   }
 
   // ───────── 카드 선택(강화/제거/복제) ─────────
+  // 기믹 요약 (data.js STARTERS[].mech, 코드 동작 기준 짧은 설명. <b>만 허용하는 고정 문자열)
+  function mechListHTML(s) {
+    return s && s.mech ? `<ul class="mechlist small">${s.mech.map(x => `<li>${x}</li>`).join('')}</ul>` : '';
+  }
   function renderSelect() {
     const p = run.pending;
     const list = E.selectableCards(run);
@@ -598,10 +603,15 @@
   function profileHTML(h) {
     const L = E.heroLevel(meta, h), Hn = D.HEROINES[h], t = E.heroTitle(meta, h), lv = L.lv;
     const frame = E.masteryHas(meta, h, 'frame');
-    const tr = D.MASTERY.track(h).map(x => {
-      const got = lv >= x.lv;
-      return `<div class="trackrow ${got ? 'got' : 'locked'}"><span class="tlv">Lv${x.lv}</span><span class="tic">${got ? TRACK_ICON[x.kind] : '🔒'}</span><span class="small" style="flex:1">${esc(trackLabel(h, x))}</span></div>`;
+    const track = D.MASTERY.track(h), nextLv = (track.find(x => x.lv > lv) || {}).lv;
+    const tr = track.map(x => {
+      const got = lv >= x.lv, nx = x.lv === nextLv;
+      const st = got ? '<span class="tstate got">획득</span>' : nx ? '<span class="tstate next">다음</span>' : '';
+      return `<div class="trackrow ${got ? 'got' : nx ? 'next' : 'locked'}"><span class="tlv">Lv${x.lv}</span><span class="tic">${got || nx ? TRACK_ICON[x.kind] : '🔒'}</span><span class="small" style="flex:1">${esc(trackLabel(h, x))}</span>${st}</div>`;
     }).join('');
+    const nextBox = nextLv ? `<div class="nextbox"><div class="small"><b>다음 보상 · Lv ${nextLv}</b> <span class="dim">(${D.MASTERY.curve[nextLv - 1] - L.xp} XP 남음)</span></div>${track.filter(x => x.lv === nextLv).map(x => `<div class="small">${TRACK_ICON[x.kind]} ${esc(trackLabel(h, x))}</div>`).join('')}</div>`
+      : '<div class="nextbox"><div class="small"><b>모든 레벨 보상을 얻었어.</b></div></div>';
+    const got = track.filter(x => lv >= x.lv).length;
     const stories = D.STORIES ? D.STORIES[h].map((st, i) => {
       const lvReq = D.MASTERY.track(h).find(x => x.kind === 'story' && x.ch === i).lv;
       const ok = lv >= lvReq, isNew = ok && !meta.storyRead[h + i];
@@ -619,9 +629,11 @@
           <div class="small dim">원정 ${runs}회 · 클리어 ${wins}회</div>
           <div class="small">${esc(Hn.bio)}</div>
         </div></div>
+      ${nextBox}
+      ${mechListHTML(D.STARTERS[h])}
       ${meta.xpMigratedFrom ? '<div class="small dim" style="margin:6px 0">이전 버전 기록(원정·클리어 수)으로 시작 경험치를 계산해 넣었어.</div>' : ''}
       <div class="section-title" style="padding-left:0">📖 개인 스토리</div>${stories}
-      <div class="section-title" style="padding-left:0">🎁 레벨 보상</div><div class="track">${tr}</div>
+      <div class="section-title" style="padding-left:0">🎁 레벨 보상 <span class="small dim">${got} / ${track.length}</span></div><div class="track">${tr}</div>
       <div class="small dim" style="margin-top:6px">경험치: 오른 층 ×${D.MASTERY.xp.floor} · 엘리트 ×${D.MASTERY.xp.elite} · 보스 ×${D.MASTERY.xp.boss} · 원정 성공 +${D.MASTERY.xp.win}</div>
       <button class="btn block primary" data-act="closeModal">닫기</button></div>`;
   }
@@ -670,6 +682,7 @@
       <div class="small dim">${after.max ? '최대 레벨' : `${after.xp} / ${after.next} XP`}${x.gain === 0 && after.max ? '' : ''}</div>
       ${parts ? `<div class="statgrid small">${parts}</div>` : '<div class="small dim">이번엔 층을 넘지 못했어. 그래도 다음엔 더 멀리!</div>'}
       ${unl ? `<b style="color:var(--gold)">새로 열린 것</b>${unl}` : ''}
+      ${(() => { const nt = D.MASTERY.track(x.hero).filter(t => t.lv > after.lv); if (!nt.length) return ''; const nl = nt[0].lv; return `<div class="small dim" style="text-align:left">다음 보상 Lv ${nl} (${D.MASTERY.curve[nl - 1] - after.xp} XP 남음): ${nt.filter(t => t.lv === nl).map(t => esc(trackLabel(x.hero, t))).join(', ')}</div>`; })()}
       ${x.unlocks.some(t => t.kind === 'story') ? `<button class="btn gold block" data-act="profile" data-id="${x.hero}">📖 새 개인 스토리 보기</button>` : ''}
     </div>`;
   }
@@ -1097,7 +1110,7 @@
     abandonYes() { ui.modal = null; ui.modalStack = []; run.over = true; run.won = false; run.screen = 'gameover'; run.combat = null; saveRun(); render(); },
     deck() { openModal(deckModal(run.deck, '내 덱')); },
     relic(d) { const r = D.RELICS[d.id]; toast(`${r.icon} <b>${esc(r.name)}</b>${r.boss ? ' 👑' : ''}<br>${esc(r.desc)}`); },
-    mechInfo(d) { toast(d.k === 'moon' ? '🌙 <b>달의 위상</b><br>카드를 낼 때마다 🌒초승→🌓반달→🌕보름→🌑그믐 순으로 1칸. 카드 오른쪽 위 달이 지금 위상과 같으면 추가 효과.' : '🪆 <b>인형</b> (최대 3체)<br>적의 공격은 방어도 → 맨 앞 인형 → 체력 순으로 받아. 턴 종료 시 인형마다 무작위 적을 공격.', 4200); },
+    mechInfo(d) { toast(d.k === 'moon' ? '🌙 <b>달의 위상</b><br>카드를 낼 때마다 🌒초승→🌓반달→🌕보름→🌑그믐 순으로 1칸. 카드 오른쪽 위 달이 지금 위상과 같으면 추가 효과. 그믐→초승으로 넘어가면 한 바퀴.' : '🪆 <b>인형</b> (최대 3체)<br>적의 공격은 방어도 → 맨 앞 인형 → 체력 순으로 받아. 턴 종료 시 인형마다 무작위 적을 공격. 3체일 때 더 세우면 맨 앞 인형 체력이 늘어.', 4200); },
     status(d) { const s = D.STATUS[d.s]; toast(`${s.icon} <b>${esc(s.name)}</b> ${s.flag ? '' : d.v}<br>${esc(s.desc(+d.v))}`); },
     cardInfo(d) { openModal(cardDetail({ id: d.id, up: d.up === '1' }), true); },
     node(d) { sfx('tap'); doAct(() => E.chooseNode(run, d.id)); },

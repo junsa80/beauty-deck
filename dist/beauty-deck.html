@@ -404,6 +404,15 @@ h2.upname { color: var(--green); }
 .card .moonbadge { position: absolute; right: 3px; top: 3px; z-index: 3; font-size: 13px; opacity: .55; }
 .card .moonbadge.on { opacity: 1; filter: drop-shadow(0 0 4px #fff); }
 
+/* v1.3.2 기믹 요약 · 다음 보상 */
+.mechlist { margin: 2px 0 0; padding-left: 16px; line-height: 1.45; }
+.mechlist li { margin: 1px 0; }
+.nextbox { margin: 8px 0; padding: 8px 10px; border-radius: 10px; border: 1px solid #ffd36e66; background: #ffd36e12; display: flex; flex-direction: column; gap: 3px; }
+.trackrow.next { background: #8e7bff22; outline: 1px solid #8e7bff66; }
+.tstate { font-size: 11px; padding: 1px 6px; border-radius: 8px; white-space: nowrap; }
+.tstate.got { background: #ffd36e33; color: var(--gold); }
+.tstate.next { background: #8e7bff44; }
+
 </style>
 </head>
 <body>
@@ -1082,26 +1091,33 @@ window.BD_ARTMAP = {
   const STARTERS = {
     sera: { hero: 'sera', title: '붉은 검의 세라', cls: 'sword', hp: 80, gold: 99, relic: 'red_ribbon',
             deck: ['s_strike', 's_strike', 's_strike', 's_strike', 's_strike', 's_guard', 's_guard', 's_guard', 's_guard', 's_bash'],
-            pitch: '튼튼하고 단순한 정면 승부. 힘을 쌓아 크게 벤다.', line: '길 막으면 벤다. 안 막으면… 그래도 갈 거야.' },
+            pitch: '튼튼하고 단순한 정면 승부. 힘을 쌓아 크게 벤다.', line: '길 막으면 벤다. 안 막으면… 그래도 갈 거야.',
+            mech: ["💪 <b>힘</b>: 공격 피해가 힘 수치만큼 늘어. 쌓을수록 한 방이 커져."] },
     luna: { hero: 'luna', title: '별을 읽는 루나', cls: 'magic', hp: 80, gold: 99, relic: 'moon_pendant',
             deck: ['m_bolt', 'm_bolt', 'm_bolt', 'm_bolt', 'm_ward', 'm_ward', 'm_ward', 'm_ward', 'm_meteor', 'm_focus'],
-            pitch: '범위 마법과 드로우. 적이 많을수록 신난다.', line: '계산은 끝났어. 이제 예쁘게 터뜨리기만 하면 돼.' },
+            pitch: '범위 마법과 드로우. 적이 많을수록 신난다.', line: '계산은 끝났어. 이제 예쁘게 터뜨리기만 하면 돼.',
+            mech: ["☄️ 모든 적을 치는 광역 마법과 드로우가 중심.", "❄️ 약화로 적 피해를 줄이거나, 🔥 내 덱에 「화상」을 섞는 대신 강한 공격을 쓰는 조합."] },
     yuki: { hero: 'yuki', title: '그림자 걷는 유키', cls: 'ninja', hp: 80, gold: 99, relic: 'shadow_hood',
             deck: ['n_slash', 'n_slash', 'n_slash', 'n_slash', 'n_slash', 'n_dodge', 'n_dodge', 'n_dodge', 'n_dodge', 'n_venom'],
-            pitch: '표창과 독으로 천천히, 확실하게. 손이 바쁜 타입.', line: '…시끄러운 건 싫어. 조용히 끝낼게.' },
+            pitch: '표창과 독으로 천천히, 확실하게. 손이 바쁜 타입.', line: '…시끄러운 건 싫어. 조용히 끝낼게.',
+            mech: ["☠️ <b>중독</b>: 적이 턴 시작마다 수치만큼 체력을 잃고, 수치가 1 줄어.", "✴️ <b>표창</b>: 0코스트 피해 4, 쓰면 소멸."] },
     aria: { hero: 'aria', title: '빛의 방패 아리아', cls: 'holy', hp: 72, gold: 99, relic: 'holy_sigil', locked: true,
             unlockText: '2막 보스 「밤의 여왕 벨리타」를 한 번 쓰러뜨리면 합류해.',
             deck: ['h_strike', 'h_strike', 'h_strike', 'h_strike', 'h_guard', 'h_guard', 'h_guard', 'h_guard', 'h_guard', 'h_smite'],
-            pitch: '방어도를 쌓고 그대로 되돌려 주는 수호 기사. 회복과 반격도 특기.', line: '뒤는 내가 지킬게. 앞만 봐.' },
+            pitch: '방어도를 쌓고 그대로 되돌려 주는 수호 기사. 회복과 반격도 특기.', line: '뒤는 내가 지킬게. 앞만 봐.',
+            mech: ["🛡️ 방어도를 쌓고 🌹가시·⚖️응보로 맞받아쳐. 회복 카드도 많아."] },
     mariel: { hero: 'mariel', title: '실을 잇는 마리엘', cls: 'puppet', hp: 68, gold: 99, relic: 'silver_thimble',
             deck: ['pm_strike', 'pm_strike', 'pm_strike', 'pm_strike', 'pm_guard', 'pm_guard', 'pm_guard', 'pm_guard', 'pm_doll', 'pm_doll'],
-            pitch: '인형을 세워 앞줄을 맡기고, 턴이 끝날 때 인형이 공격해. 인형은 들어오는 공격을 (방어도 다음으로) 대신 맞아.', line: '앞줄은 도도가 설게. 넌 내 뒤에서 숨 쉬어.' },
+            pitch: '인형을 세워 앞줄을 맡기고, 턴이 끝날 때 인형이 공격해. 인형은 들어오는 공격을 (방어도 다음으로) 대신 맞아.', line: '앞줄은 도도가 설게. 넌 내 뒤에서 숨 쉬어.',
+            mech: ["🪆 <b>인형</b>(최대 3체): 적 공격은 방어도 → 맨 앞 인형 → 내 체력 순으로 맞아.", "턴이 끝나면 인형마다 무작위 적을 공격. 4체째는 맨 앞 인형 체력에 더해져."] },
     serena: { hero: 'serena', title: '달을 추는 세레나', cls: 'moon', hp: 66, gold: 99, relic: 'crescent_pin',
             deck: ['sm_slash', 'sm_slash', 'sm_slash', 'sm_slash', 'sm_step', 'sm_step', 'sm_step', 'sm_step', 'sm_full', 'sm_wane'],
-            pitch: '카드를 낼 때마다 달이 🌒→🌓→🌕→🌑로 바뀌어. 위상이 맞는 카드를 맞는 순서로 내면 추가 효과.', line: '박자 놓치지 마. 다음이 보름이야.' },
+            pitch: '카드를 낼 때마다 달이 🌒→🌓→🌕→🌑로 바뀌어. 위상이 맞는 카드를 맞는 순서로 내면 추가 효과.', line: '박자 놓치지 마. 다음이 보름이야.',
+            mech: ["🌙 <b>달 위상</b>: 카드를 낼 때마다 🌒초승→🌓반달→🌕보름→🌑그믐 순으로 1칸.", "카드의 달 배지가 <b>낼 때의 위상</b>과 같으면 추가 효과.", "🌑그믐→🌒초승으로 넘어가면 한 바퀴."] },
     odette: { hero: 'odette', title: '기록하는 오데트', cls: 'lore', hp: 70, gold: 99, relic: 'brass_key',
             deck: ['lo_strike', 'lo_strike', 'lo_strike', 'lo_strike', 'lo_guard', 'lo_guard', 'lo_guard', 'lo_guard', 'lo_read', 'lo_read'],
-            pitch: '「보존」 카드는 턴이 끝나도 손에 남고 각주가 쌓여 점점 세져. 아껴 두었다가 크게 쓰는 덱.', line: '이 카드는 다음 턴을 위해 아껴 둘게.' },
+            pitch: '「보존」 카드는 턴이 끝나도 손에 남고 각주가 쌓여 점점 세져. 아껴 두었다가 크게 쓰는 덱.', line: '이 카드는 다음 턴을 위해 아껴 둘게.',
+            mech: ["📑 <b>보존</b> 카드는 턴이 끝나도 손에 남고 <b>각주</b>가 1 쌓여.", "각주 1당 카드 수치가 커져(카드에 「각주당 +N」 표시). 내면 각주는 0으로."] },
   };
 
   // ───────── 막(Act) ─────────
@@ -1600,7 +1616,7 @@ window.BD_ARTMAP = {
   };
 
   const DATA = { MASTERY, LINES, HEROINES, STATUS, ARCH, CLASS_ARCH, CARDS, STARTERS, ACTS, ENEMIES, ENCOUNTERS, RELICS, POTIONS, EVENTS, ACHIEVEMENTS, GALLERY, ASCENSION, ART,
-    TITLE: '미녀 덱: 밤의 여왕', VERSION: '1.3.1' };
+    TITLE: '미녀 덱: 밤의 여왕', VERSION: '1.3.2' };
   root.BD_DATA = DATA;
   if (typeof module !== 'undefined' && module.exports) module.exports = DATA;
 })(typeof window !== 'undefined' ? window : globalThis);
@@ -5909,6 +5925,7 @@ window.BD_ARTMAP = {
               ${lvMini(id)}
               <div><span class="tag">${esc(h.job)}</span><span class="tag">${h.age}세</span><span class="tag">❤️ ${s.hp - (asc >= 6 ? 6 : 0)}</span>${meta.heroBestAsc[id] != null && wins ? `<span class="tag">🔥${meta.heroBestAsc[id]}</span>` : ''}</div>
               <div class="small">${esc(s.pitch)}</div>
+              ${mechListHTML(s)}
               <div class="quote">“${esc(s.line)}”</div>
             </div></div>
           <div class="small"><b>${r.icon} ${esc(r.name)}</b> — ${esc(r.desc)}${E.masteryHas(meta, id, 'relic') ? ' <span class="dim">(기본)</span>' : ''}</div>
@@ -6134,6 +6151,10 @@ window.BD_ARTMAP = {
   }
 
   // ───────── 카드 선택(강화/제거/복제) ─────────
+  // 기믹 요약 (data.js STARTERS[].mech, 코드 동작 기준 짧은 설명. <b>만 허용하는 고정 문자열)
+  function mechListHTML(s) {
+    return s && s.mech ? `<ul class="mechlist small">${s.mech.map(x => `<li>${x}</li>`).join('')}</ul>` : '';
+  }
   function renderSelect() {
     const p = run.pending;
     const list = E.selectableCards(run);
@@ -6201,10 +6222,15 @@ window.BD_ARTMAP = {
   function profileHTML(h) {
     const L = E.heroLevel(meta, h), Hn = D.HEROINES[h], t = E.heroTitle(meta, h), lv = L.lv;
     const frame = E.masteryHas(meta, h, 'frame');
-    const tr = D.MASTERY.track(h).map(x => {
-      const got = lv >= x.lv;
-      return `<div class="trackrow ${got ? 'got' : 'locked'}"><span class="tlv">Lv${x.lv}</span><span class="tic">${got ? TRACK_ICON[x.kind] : '🔒'}</span><span class="small" style="flex:1">${esc(trackLabel(h, x))}</span></div>`;
+    const track = D.MASTERY.track(h), nextLv = (track.find(x => x.lv > lv) || {}).lv;
+    const tr = track.map(x => {
+      const got = lv >= x.lv, nx = x.lv === nextLv;
+      const st = got ? '<span class="tstate got">획득</span>' : nx ? '<span class="tstate next">다음</span>' : '';
+      return `<div class="trackrow ${got ? 'got' : nx ? 'next' : 'locked'}"><span class="tlv">Lv${x.lv}</span><span class="tic">${got || nx ? TRACK_ICON[x.kind] : '🔒'}</span><span class="small" style="flex:1">${esc(trackLabel(h, x))}</span>${st}</div>`;
     }).join('');
+    const nextBox = nextLv ? `<div class="nextbox"><div class="small"><b>다음 보상 · Lv ${nextLv}</b> <span class="dim">(${D.MASTERY.curve[nextLv - 1] - L.xp} XP 남음)</span></div>${track.filter(x => x.lv === nextLv).map(x => `<div class="small">${TRACK_ICON[x.kind]} ${esc(trackLabel(h, x))}</div>`).join('')}</div>`
+      : '<div class="nextbox"><div class="small"><b>모든 레벨 보상을 얻었어.</b></div></div>';
+    const got = track.filter(x => lv >= x.lv).length;
     const stories = D.STORIES ? D.STORIES[h].map((st, i) => {
       const lvReq = D.MASTERY.track(h).find(x => x.kind === 'story' && x.ch === i).lv;
       const ok = lv >= lvReq, isNew = ok && !meta.storyRead[h + i];
@@ -6222,9 +6248,11 @@ window.BD_ARTMAP = {
           <div class="small dim">원정 ${runs}회 · 클리어 ${wins}회</div>
           <div class="small">${esc(Hn.bio)}</div>
         </div></div>
+      ${nextBox}
+      ${mechListHTML(D.STARTERS[h])}
       ${meta.xpMigratedFrom ? '<div class="small dim" style="margin:6px 0">이전 버전 기록(원정·클리어 수)으로 시작 경험치를 계산해 넣었어.</div>' : ''}
       <div class="section-title" style="padding-left:0">📖 개인 스토리</div>${stories}
-      <div class="section-title" style="padding-left:0">🎁 레벨 보상</div><div class="track">${tr}</div>
+      <div class="section-title" style="padding-left:0">🎁 레벨 보상 <span class="small dim">${got} / ${track.length}</span></div><div class="track">${tr}</div>
       <div class="small dim" style="margin-top:6px">경험치: 오른 층 ×${D.MASTERY.xp.floor} · 엘리트 ×${D.MASTERY.xp.elite} · 보스 ×${D.MASTERY.xp.boss} · 원정 성공 +${D.MASTERY.xp.win}</div>
       <button class="btn block primary" data-act="closeModal">닫기</button></div>`;
   }
@@ -6273,6 +6301,7 @@ window.BD_ARTMAP = {
       <div class="small dim">${after.max ? '최대 레벨' : `${after.xp} / ${after.next} XP`}${x.gain === 0 && after.max ? '' : ''}</div>
       ${parts ? `<div class="statgrid small">${parts}</div>` : '<div class="small dim">이번엔 층을 넘지 못했어. 그래도 다음엔 더 멀리!</div>'}
       ${unl ? `<b style="color:var(--gold)">새로 열린 것</b>${unl}` : ''}
+      ${(() => { const nt = D.MASTERY.track(x.hero).filter(t => t.lv > after.lv); if (!nt.length) return ''; const nl = nt[0].lv; return `<div class="small dim" style="text-align:left">다음 보상 Lv ${nl} (${D.MASTERY.curve[nl - 1] - after.xp} XP 남음): ${nt.filter(t => t.lv === nl).map(t => esc(trackLabel(x.hero, t))).join(', ')}</div>`; })()}
       ${x.unlocks.some(t => t.kind === 'story') ? `<button class="btn gold block" data-act="profile" data-id="${x.hero}">📖 새 개인 스토리 보기</button>` : ''}
     </div>`;
   }
@@ -6700,7 +6729,7 @@ window.BD_ARTMAP = {
     abandonYes() { ui.modal = null; ui.modalStack = []; run.over = true; run.won = false; run.screen = 'gameover'; run.combat = null; saveRun(); render(); },
     deck() { openModal(deckModal(run.deck, '내 덱')); },
     relic(d) { const r = D.RELICS[d.id]; toast(`${r.icon} <b>${esc(r.name)}</b>${r.boss ? ' 👑' : ''}<br>${esc(r.desc)}`); },
-    mechInfo(d) { toast(d.k === 'moon' ? '🌙 <b>달의 위상</b><br>카드를 낼 때마다 🌒초승→🌓반달→🌕보름→🌑그믐 순으로 1칸. 카드 오른쪽 위 달이 지금 위상과 같으면 추가 효과.' : '🪆 <b>인형</b> (최대 3체)<br>적의 공격은 방어도 → 맨 앞 인형 → 체력 순으로 받아. 턴 종료 시 인형마다 무작위 적을 공격.', 4200); },
+    mechInfo(d) { toast(d.k === 'moon' ? '🌙 <b>달의 위상</b><br>카드를 낼 때마다 🌒초승→🌓반달→🌕보름→🌑그믐 순으로 1칸. 카드 오른쪽 위 달이 지금 위상과 같으면 추가 효과. 그믐→초승으로 넘어가면 한 바퀴.' : '🪆 <b>인형</b> (최대 3체)<br>적의 공격은 방어도 → 맨 앞 인형 → 체력 순으로 받아. 턴 종료 시 인형마다 무작위 적을 공격. 3체일 때 더 세우면 맨 앞 인형 체력이 늘어.', 4200); },
     status(d) { const s = D.STATUS[d.s]; toast(`${s.icon} <b>${esc(s.name)}</b> ${s.flag ? '' : d.v}<br>${esc(s.desc(+d.v))}`); },
     cardInfo(d) { openModal(cardDetail({ id: d.id, up: d.up === '1' }), true); },
     node(d) { sfx('tap'); doAct(() => E.chooseNode(run, d.id)); },
