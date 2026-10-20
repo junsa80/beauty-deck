@@ -62,7 +62,7 @@
     const asc = Math.max(0, Math.min(10, opts.asc | 0));
     const run = {
       v: 2, seed, rng: seed, nextUid: 1, starter: starterId, cls: s.cls, asc,
-      unlocked: (opts.unlocked || []).slice(),
+      unlocked: (opts.unlocked || []).slice(), passive: opts.passive ? starterId : null, loadout: { relic: opts.relic || s.relic, deck: opts.deck ? 'alt' : 'base' },
       hp: s.hp, maxHp: s.hp, gold: s.gold, deck: [], relics: [], potions: [null, null, null],
       act: 1, floor: 0, totalFloor: 0, pos: null, visited: [], map: null, screen: 'map', over: false, won: false,
       combat: null, rewards: null, shop: null, event: null, treasure: null, pending: null,
@@ -72,10 +72,11 @@
       fx: []
     };
     if (asc >= 6) { run.maxHp -= 6; run.hp = run.maxHp; }
-    s.deck.forEach(id => run.deck.push(newCard(run, id)));
+    (opts.deck || s.deck).forEach(id => run.deck.push(newCard(run, id)));
     if (asc >= 7) run.deck.push(newCard(run, 'wound'));
     run.map = genMap(run, 1);
-    addRelic(run, s.relic);
+    addRelic(run, opts.relic || s.relic);
+    if (opts.potion) addPotion(run, randomPotion(run));
     return run;
   }
 
@@ -208,6 +209,7 @@
       const c = D.CARDS[k];
       if (!(c.cls === run.cls || c.cls === 'neutral')) return false;
       if (c.rarity === 'legend') return rarity === 'rare' && run.unlocked.includes(k);
+      if (c.mastery && !run.unlocked.includes(k)) return false;
       return c.rarity === rarity;
     });
   }
@@ -279,6 +281,15 @@
     if (hasRelic(run, 'b_mask')) for (let i = 0; i < 2; i++) c.hand.push(newCard(run, 'daze'));
     if (hasRelic(run, 'guard_charm')) P.block += 10;
     if (hasRelic(run, 'holy_sigil')) { P.block += 4; addSt(P, 'thorns', 1); }
+    if (hasRelic(run, 'crimson_sheath')) addSt(P, 'vigor', kind === 'monster' ? 6 : 10);
+    if (hasRelic(run, 'viper_ring')) c.enemies.forEach(e => addSt(e, 'poison', 2));
+    if (hasRelic(run, 'dawn_lamp')) addSt(P, 'sanctuary', 1);
+    // 히로인 레벨 5 패시브
+    if (run.passive === 'sera' && kind === 'boss') addSt(P, 'str', 1);
+    if (run.passive === 'sera' && kind === 'elite') addSt(P, 'vigor', 4);
+    if (run.passive === 'luna') addSt(P, 'arcane', 1);
+    if (run.passive === 'yuki' && kind !== 'monster' && c.hand.length < HAND_MAX) c.hand.push(newCard(run, 'shiv'));
+    if (run.passive === 'aria') addSt(P, 'retribution', 2);
     if (hasRelic(run, 'dragon_heart')) addSt(P, 'str', 1);
     if (hasRelic(run, 'silk_glove')) addSt(P, 'dex', 1);
     if (hasRelic(run, 'thorn_crown')) addSt(P, 'thorns', 3);
@@ -427,7 +438,7 @@
       + (c.turn === 1 && hasRelic(run, 'moon_pendant') ? 1 : 0)
       + (c.turn % 3 === 0 && hasRelic(run, 'sun_pin') ? 1 : 0);
     drawCards(run, BASE_DRAW + (P.st.drawUp || 0) + (hasRelic(run, 'b_hourglass') ? 1 : 0)
-      + (c.turn === 1 && hasRelic(run, 'firefly') ? 2 : 0) + (c.turn === 1 && hasRelic(run, 'moon_pendant') ? 1 : 0));
+      + (c.turn === 1 && hasRelic(run, 'firefly') ? 2 : 0) + (c.turn === 1 && hasRelic(run, 'moon_pendant') ? 1 : 0) + (c.turn % 2 === 0 && hasRelic(run, 'star_chart') ? 1 : 0));
     fx(run, { k: 'turn', who: 'p', turn: c.turn });
     checkCombatEnd(run);
   }
@@ -746,7 +757,7 @@
   }
 
   // ───────── 휴식 ─────────
-  function restHealAmount(run) { return hasRelic(run, 'b_ember') ? 0 : Math.floor(run.maxHp * (run.asc >= 5 ? 0.27 : 0.3)) + (hasRelic(run, 'teacup') ? 15 : 0); }
+  function restHealAmount(run) { return hasRelic(run, 'b_ember') ? 0 : Math.floor(run.maxHp * (run.asc >= 5 ? 0.27 : 0.3)) + (hasRelic(run, 'teacup') ? 15 : 0) + (hasRelic(run, 'dawn_lamp') ? 6 : 0); }
   function restHeal(run) {
     if (run.screen !== 'rest') return { ok: false };
     if (hasRelic(run, 'b_ember')) return { ok: false, reason: '영원의 불씨 때문에 쉴 수 없어.' };
@@ -889,13 +900,26 @@
   function newMeta() {
     return { v: 2, runs: 0, wins: 0, bestFloor: 0, bestAct: 0, kills: 0, elites: 0, bosses: {}, heroWins: {}, heroRuns: {}, heroBestAsc: {},
              cardsSeen: [], relicsSeen: [], enemiesSeen: [], ach: {}, ascMax: 0, maxHit: 0, cardsPlayed: 0, dmgDealt: 0, potionsUsed: 0,
-             goldEarned: 0, playMs: 0, tutorialDone: false, newGallery: [] };
+             goldEarned: 0, playMs: 0, tutorialDone: false, newGallery: [], heroXp: {}, storyRead: {} };
   }
   function migrateMeta(m) {
     const n = newMeta();
     if (!m || typeof m !== 'object') return n;
     for (const k of Object.keys(n)) if (m[k] !== undefined) n[k] = m[k];
     if (!Array.isArray(n.cardsSeen)) n.cardsSeen = [];
+    if (m.updatedAt) n.updatedAt = m.updatedAt;
+    if (m.xpMigratedFrom) n.xpMigratedFrom = m.xpMigratedFrom;
+    if (!n.heroXp || typeof n.heroXp !== 'object') n.heroXp = {};
+    if (!n.storyRead || typeof n.storyRead !== 'object') n.storyRead = {};
+    // v1.1 이하 기록: 히로인 경험치가 없으면 남아 있는 기록(히로인별 원정·클리어 수)으로 보수적으로 계산
+    if (m.heroXp === undefined && (m.runs || 0) > 0) {
+      for (const h of Object.keys(D.MASTERY.heroes)) {
+        const r = (n.heroRuns && n.heroRuns[h]) || 0, w = (n.heroWins && n.heroWins[h]) || 0;
+        n.heroXp[h] = Math.min(D.MASTERY.curve[D.MASTERY.curve.length - 1], Math.max(0, r - w) * 40 + w * 300);
+      }
+      n.xpMigratedFrom = 'v1.1';
+    }
+    n.v = 3;
     return n;
   }
   const GALLERY_REQ = { g_sera: 'win_sera', g_luna: 'win_luna', g_yuki: 'win_yuki', g_aria: 'win_aria', g_morgana: 'boss_morgana', g_belita: 'boss_belita',
@@ -944,7 +968,68 @@
     if (run) for (const cid of unlockedCards(meta)) if (!run.unlocked.includes(cid)) run.unlocked.push(cid);
     return got;
   }
+  // ───────── 히로인 레벨 ─────────
+  function levelOf(xp) {
+    const c = D.MASTERY.curve; let lv = 1;
+    for (let i = 1; i < c.length; i++) if (xp >= c[i]) lv = i + 1;
+    return lv;
+  }
+  function heroLevel(meta, h) {
+    const xp = (meta.heroXp && meta.heroXp[h]) || 0, c = D.MASTERY.curve, lv = levelOf(xp);
+    const cur = c[lv - 1], next = lv < c.length ? c[lv] : null;
+    return { lv, xp, cur, next, max: next == null, pct: next == null ? 1 : (xp - cur) / (next - cur) };
+  }
+  function masteryHas(meta, h, kind, id) {
+    if (!D.MASTERY.heroes[h]) return false;
+    const lv = heroLevel(meta, h).lv;
+    return D.MASTERY.track(h).some(t => t.kind === kind && (id === undefined || t.id === id || t.ch === id) && lv >= t.lv);
+  }
+  function masteryCards(meta) {
+    const out = [];
+    for (const h of Object.keys(D.MASTERY.heroes)) for (const t of D.MASTERY.track(h)) if (t.kind === 'card' && heroLevel(meta, h).lv >= t.lv) out.push(t.id);
+    return out;
+  }
+  function heroTitle(meta, h) {
+    const m = D.MASTERY.heroes[h]; if (!m) return null;
+    const lv = heroLevel(meta, h).lv;
+    return lv >= 10 ? m.titles[1] : lv >= 8 ? m.titles[0] : null;
+  }
+  // 원정 시작 옵션(레벨 보상 반영). choice = { relic: 'base'|'alt', deck: 'base'|'alt' }
+  function runOptions(meta, h, choice) {
+    choice = choice || {};
+    const m = D.MASTERY.heroes[h], o = { unlocked: unlockedCards(meta).concat(masteryCards(meta)) };
+    if (!m) return o;
+    if (choice.relic === 'alt' && masteryHas(meta, h, 'relic')) o.relic = m.relic;
+    if (choice.deck === 'alt' && masteryHas(meta, h, 'deck')) o.deck = m.deck.cards.slice();
+    o.passive = masteryHas(meta, h, 'passive');
+    o.potion = masteryHas(meta, h, 'potion');
+    return o;
+  }
+  function runXp(run) {
+    const X = D.MASTERY.xp, s = run.stats;
+    const floors = Math.max(0, (run.act - 1) * 11 + run.floor - (run.won ? 0 : 1));
+    const parts = [
+      { k: '오른 층', n: floors, xp: floors * X.floor },
+      { k: '엘리트', n: s.elites, xp: s.elites * X.elite },
+      { k: '보스', n: s.bosses.length, xp: s.bosses.length * X.boss }
+    ];
+    if (run.won) parts.push({ k: '원정 성공', n: 1, xp: X.win });
+    return { parts, total: parts.reduce((a, p) => a + p.xp, 0) };
+  }
+  function awardXp(meta, run) {
+    const h = run.starter;
+    if (!D.MASTERY.heroes[h]) return null;
+    meta.heroXp = meta.heroXp || {};
+    const before = heroLevel(meta, h), g = runXp(run);
+    const cap = D.MASTERY.curve[D.MASTERY.curve.length - 1];
+    meta.heroXp[h] = Math.min(cap, before.xp + g.total);
+    const after = heroLevel(meta, h);
+    const unlocks = D.MASTERY.track(h).filter(t => t.lv > before.lv && t.lv <= after.lv);
+    return { hero: h, before, after, gain: after.xp - before.xp, parts: g.parts, unlocks };
+  }
+
   function recordRun(meta, run) {
+    run.xpResult = awardXp(meta, run);
     meta.runs++; meta.kills += run.stats.kills; meta.elites += run.stats.elites;
     meta.cardsPlayed += run.stats.cardsPlayed; meta.dmgDealt += run.stats.dmgDealt; meta.potionsUsed += run.stats.potionsUsed; meta.goldEarned += run.stats.goldEarned;
     meta.maxHit = Math.max(meta.maxHit, run.stats.maxHit);
@@ -1060,7 +1145,7 @@
     takeGold, takeCard, skipCard, takeRelic, takeBossRelic, takePotion, leaveReward, synergy, rewardCount,
     restHeal, restHealAmount, restSmith, selectableCards, selectCard, cancelSelect,
     buy, shopRemove, removePrice, leaveShop, openChest, leaveTreasure, chooseEvent, eventOptionOk, leaveEvent,
-    newMeta, migrateMeta, recordRun, checkAchievements, heroUnlocked, unlockedCards, galleryUnlocked,
+    newMeta, migrateMeta, recordRun, heroLevel, masteryHas, masteryCards, heroTitle, runOptions, runXp, awardXp, levelOf, checkAchievements, heroUnlocked, unlockedCards, galleryUnlocked,
     describe, upgradeDiff, josa, hasRelic, startCombat
   };
   root.BD_ENGINE = E;

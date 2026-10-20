@@ -204,7 +204,16 @@ function smartStep(run, R) {
 function mkR(seed) { let s = seed >>> 0; return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; }
 
 function playRun(starter, seed, stepFn) {
-  const run = E.newRun(starter, seed, { asc: +(process.env.ASC || 0) });
+  // MASTERY=1: 히로인 레벨 10(카드 3장·패시브·물약) · MASTERY=relic|deck: 그 시작 옵션까지
+  let opts = { asc: +(process.env.ASC || 0) };
+  if (process.env.MASTERY) {
+    const m = E.newMeta(); m.heroXp[starter] = 99999;
+    const ch = { relic: /relic|all/.test(process.env.MASTERY) ? 'alt' : 'base', deck: /deck|all/.test(process.env.MASTERY) ? 'alt' : 'base' };
+    opts = Object.assign(E.runOptions(m, starter, ch), opts);
+    if (process.env.NOPASSIVE) opts.passive = false;
+    if (process.env.NOPOTION) opts.potion = false;
+  }
+  const run = E.newRun(starter, seed, opts);
   const R = mkR(seed * 7 + 3);
   let steps = 0, fights = 0, maxTurns = 0, lastScreen = null;
   while (!run.over) {

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="theme-color" content="#140b1f">
-<meta name="description" content="미녀 덱: 밤의 여왕 — 모바일 덱빌딩 로그라이트. 4명의 히로인, 111장의 카드, 3막+종막.">
+<meta name="description" content="미녀 덱: 밤의 여왕 — 모바일 덱빌딩 로그라이트. 4명의 히로인, 123장의 카드, 히로인 레벨·개인 스토리, 3막+종막.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="미녀 덱">
@@ -341,6 +341,57 @@ h2.upname { color: var(--green); }
   .enemy.boss .eportrait { width: 104px; height: 150px; }
   .enemies.n3 .eportrait, .enemies.n4 .eportrait { width: 64px; height: 90px; }
 }
+
+/* ───────── v1.2 히로인 레벨 · 스토리 · 대사 ───────── */
+.lvbar { position: relative; height: 8px; border-radius: 6px; background: #ffffff1a; overflow: hidden; width: 100%; }
+.lvbar.big { height: 12px; }
+.lvbar i { position: absolute; left: 0; top: 0; bottom: 0; background: linear-gradient(90deg, #ff7cb0, #ffd36e); border-radius: 6px; }
+.lvbar.xpanim i.old { background: #ffffff55; z-index: 1; }
+.lvbar.xpanim i.new { animation: xpfill 1.4s ease-out both; }
+@keyframes xpfill { from { transform: scaleX(0); transform-origin: left; } to { transform: scaleX(1); transform-origin: left; } }
+.reduce .lvbar.xpanim i.new { animation: none; }
+.lvmini { display: grid; grid-template-columns: auto 1fr; gap: 2px 8px; align-items: center; font-size: 13px; }
+.lvmini .lvbar { grid-column: 1 / -1; }
+.lvmini > .small { grid-column: 1 / -1; }
+.htitle { color: var(--gold); font-size: 12px; font-weight: 700; }
+.lvbig { font-size: 20px; color: var(--gold); }
+.loadout { display: flex; flex-direction: column; gap: 6px; }
+.seg { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.seg > .small:first-child { width: 58px; flex-shrink: 0; }
+.segb { flex: 1; min-height: 40px; padding: 6px 8px; border-radius: 10px; border: 1px solid var(--line); background: transparent; color: inherit; font-size: 13px; font-weight: 700; }
+.segb.on { background: linear-gradient(180deg, #ff7cb0, #d63d7e); border-color: #ff9cc4; }
+.lockedseg { opacity: .6; min-height: 40px; }
+.artbox.hl { width: 54px; height: 96px; }
+.artbox.prof { width: 110px; height: 196px; }
+.heroline { align-items: center; }
+.prof-top { display: flex; gap: 12px; align-items: flex-start; padding: 8px; border-radius: 16px; border: 1px solid var(--line); }
+.prof-top.goldframe { border: 2px solid var(--gold); box-shadow: 0 0 18px #ffd36e55 inset, 0 0 12px #ffd36e44; }
+.track { display: flex; flex-direction: column; gap: 4px; }
+.trackrow { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 10px; background: #ffffff0a; }
+.trackrow.locked { opacity: .5; }
+.trackrow.got { background: #ffd36e14; }
+.trackrow .tlv { font-size: 12px; font-weight: 800; width: 36px; color: var(--gold); }
+.trackrow .tic { width: 22px; text-align: center; }
+.list-btn.locked { opacity: .55; }
+.newtag { font-size: 10px; background: var(--red); color: #fff; padding: 1px 6px; border-radius: 8px; vertical-align: middle; }
+.xppanel .lvup { color: var(--gold); font-weight: 900; }
+.story-bg { position: fixed; inset: 0; z-index: 260; background: radial-gradient(ellipse at 50% 30%, #3a1a4a, #0a0716 75%); display: flex; flex-direction: column; animation: fadein .2s; user-select: none; }
+.story-head { display: flex; align-items: center; justify-content: space-between; padding: calc(env(safe-area-inset-top) + 8px) 12px 6px; font-size: 13px; color: #ffffffbb; font-weight: 700; }
+.story-head .tb { min-width: 44px; min-height: 44px; }
+.story-stage { flex: 1; display: flex; align-items: flex-end; justify-content: center; min-height: 0; padding-top: 8px; }
+.artbox.sp { width: min(54vw, 230px); height: auto; aspect-ratio: 9 / 16; max-height: 100%; border-radius: 18px 18px 0 0; box-shadow: 0 0 40px #ff7cb033; cursor: default; }
+.story-box { margin: 0 10px calc(env(safe-area-inset-bottom) + 12px); background: #fffffff2; color: #2a1840; border-radius: 18px; padding: 12px 14px; min-height: 150px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 -6px 30px #0008; }
+.story-box.nar { background: #1c1230f2; color: #f1e6ff; border: 1px solid #ffffff22; }
+.story-name { font-weight: 900; color: #d63d7e; font-size: 15px; }
+.story-text { font-size: 16px; line-height: 1.65; flex: 1; word-break: keep-all; }
+.story-box.nar .story-text { font-style: italic; }
+.story-foot { display: flex; justify-content: space-between; }
+.herosay { background: #fff; color: #2a1840; border-radius: 14px; padding: 8px 12px; font-size: 14px; font-weight: 700; line-height: 1.4; box-shadow: 0 6px 18px #000a; max-width: 320px; word-break: keep-all; }
+.herosay .hs-name { color: #d63d7e; font-weight: 900; margin-right: 4px; }
+.herosay.live { position: absolute; left: 50%; bottom: calc(env(safe-area-inset-bottom) + 210px); transform: translateX(-50%); animation: say 3.3s forwards; width: max-content; max-width: 86vw; }
+.herosay.static { width: 100%; max-width: 340px; }
+.xppanel .trackrow, .xppanel .statgrid { text-align: left; }
+.story-head .tb { background: #ffffff1f; color: #fff; border: 1px solid #ffffff33; border-radius: 12px; font-size: 18px; }
 
 </style>
 </head>
@@ -868,6 +919,20 @@ window.BD_ARTMAP = {
   C('ex_aegis', '절대 성역', 'holy', 'skill', 'legend', 2, 'aria', ['aegis'], '👼', [blk(20), self('sanctuary', 5)], { effects: [blk(26), self('sanctuary', 6)] }, { quote: '여기 있는 한, 아무도 못 다쳐.', unlock: 'block50' });
   C('ex_encore', '앙코르', 'neutral', 'skill', 'legend', 0, 'lyra', ['spell'], '🎤', [draw(2), { t: 'energy', v: 2 }], { effects: [draw(3), { t: 'energy', v: 2 }] }, { exhaust: true, quote: '한 곡 더! 한 곡 더!', unlock: 'elite10' });
 
+  // ── 히로인 숙련 카드 (v1.2: 히로인 레벨로 보상 풀에 추가됨, mastery 표시)
+  C('sx_flurry', '홍련 연참', 'sword', 'attack', 'uncommon', 1, 'sera', ['multi', 'str'], '🌺', [dmg(4, { hits: 2 }), self('str', 1)], { effects: [dmg(5, { hits: 2 }), self('str', 1)] }, { exhaust: true, mastery: 'sera', quote: '베고, 다시 벤다. 그때마다 더 무거워져.' });
+  C('sx_vow', '붉은 맹세', 'sword', 'skill', 'common', 1, 'sera', ['blood', 'guard'], '🎀', [{ t: 'loseHp', v: 2 }, blk(10)], { effects: [{ t: 'loseHp', v: 2 }, blk(13)] }, { mastery: 'sera', quote: '이 정도 피는 약속값이야.' });
+  C('sx_dawn', '새벽 검무', 'sword', 'power', 'rare', 2, 'sera', ['multi', 'str'], '🌅', [self('trance', 1), self('str', 1)], { cost: 1 }, { mastery: 'sera', quote: '밤이 끝나는 걸, 칼끝으로 보여 줄게.' });
+  C('lx_comet', '꼬리별', 'magic', 'attack', 'common', 1, 'luna', ['aoe', 'spell'], '☄️', [{ t: 'dmgAll', v: 5 }, draw(1)], { effects: [{ t: 'dmgAll', v: 7 }, draw(1)] }, { mastery: 'luna', quote: '하나 떨어뜨리고, 다음 계산.' });
+  C('lx_veil', '서리 장막', 'magic', 'skill', 'uncommon', 1, 'luna', ['frost'], '🌫️', [blk(7), appAll('weak', 1)], { effects: [blk(10), appAll('weak', 2)] }, { mastery: 'luna', quote: '추우면 다들 얌전해지거든.' });
+  C('lx_orbit', '별자리 공명', 'magic', 'power', 'rare', 1, 'luna', ['spell'], '🪐', [self('arcane', 2), draw(1)], { effects: [self('arcane', 3), draw(1)] }, { mastery: 'luna', quote: '주문 하나마다 별 하나가 대답해.' });
+  C('yx_mist', '안개 걸음', 'ninja', 'skill', 'common', 0, 'yuki', ['evade'], '🌁', [blk(2), draw(1)], { effects: [blk(4), draw(1)] }, { mastery: 'yuki', quote: '…방금 여기 있었는데?' });
+  C('yx_needle', '독침 연사', 'ninja', 'attack', 'uncommon', 1, 'yuki', ['poison', 'combo'], '🪡', [dmg(3, { hits: 2 }), app('poison', 3)], { effects: [dmg(3, { hits: 2 }), app('poison', 5)] }, { mastery: 'yuki', quote: '따끔. 그다음은 천천히.' });
+  C('yx_moon', '달그림자 난무', 'ninja', 'skill', 'rare', 1, 'yuki', ['shiv', 'combo'], '🌘', [{ t: 'add', id: 'shiv', n: 4, to: 'hand' }], { effects: [{ t: 'add', id: 'shiv', n: 5, to: 'hand' }] }, { exhaust: true, mastery: 'yuki', quote: '달이 숨은 동안만, 끝까지.' });
+  C('ax_lantern', '순례자의 등불', 'holy', 'skill', 'common', 1, 'aria', ['heal', 'aegis'], '🏮', [blk(5), { t: 'heal', v: 2 }], { effects: [blk(7), { t: 'heal', v: 3 }] }, { mastery: 'aria', quote: '불은 꺼뜨리지 않아. 누구 앞에서도.' });
+  C('ax_oath', '수호 서약', 'holy', 'skill', 'uncommon', 1, 'aria', ['judge', 'aegis'], '📜', [blk(6), self('thorns', 1)], { effects: [blk(9), self('thorns', 2)] }, { mastery: 'aria', quote: '맹세는 방패에 새기는 거야.' });
+  C('ax_dawnshield', '여명의 방패', 'holy', 'skill', 'rare', 2, 'aria', ['aegis'], '🌄', [blk(14), self('metal', 2)], { effects: [blk(18), self('metal', 3)] }, { exhaust: true, mastery: 'aria', quote: '해가 뜰 때까지, 여기 서 있을게.' });
+
   // ── 토큰 / 상태 카드 (보상에 안 나옴)
   C('shiv', '표창', 'token', 'attack', 'special', 0, 'yuki', ['shiv'], '✴️', [dmg(4)], { effects: [dmg(6)] }, { exhaust: true, quote: '휙.' });
   C('burn', '화상', 'status', 'status', 'special', 0, null, [], '🔥', [], null, { unplayable: true, endTurnInHand: 2, text: '사용 불가. 턴 종료 시 손에 있으면 체력 2를 잃어.', quote: '앗 뜨거…' });
@@ -1030,6 +1095,10 @@ window.BD_ARTMAP = {
     moon_pendant: { name: '달의 펜던트', icon: '🌙', starter: true, desc: '매 전투 첫 턴에 에너지 1, 카드 1장을 더 얻어.' },
     shadow_hood:  { name: '그림자 두건', icon: '🥷', starter: true, desc: '전투 시작 시 표창 3장을 손에 넣어.' },
     holy_sigil:   { name: '성기사의 인장', icon: '🔰', starter: true, desc: '전투 시작 시 방어도 4, 가시 1.' },
+    crimson_sheath:{ name: '핏빛 칼집', icon: '🗡️', starter: true, mastery: 'sera', desc: '전투 시작 시 활력 6. 엘리트·보스 전투에서는 대신 활력 10.' },
+    star_chart:   { name: '별자리 지도', icon: '🗺️', starter: true, mastery: 'luna', desc: '짝수 턴마다 카드를 1장 더 뽑아.' },
+    viper_ring:   { name: '독사의 반지', icon: '💍', starter: true, mastery: 'yuki', desc: '전투 시작 시 모든 적에게 중독 2.' },
+    dawn_lamp:    { name: '새벽 등불', icon: '🪔', starter: true, mastery: 'aria', desc: '턴 시작 시 방어도 1 (성역 1). 휴식 시 회복량 +6.' },
     guard_charm:  { name: '수호의 부적', icon: '🧿', desc: '전투 시작 시 방어도를 10 얻어.' },
     dragon_heart: { name: '용의 심장', icon: '❤️‍🔥', desc: '전투 시작 시 힘을 1 얻어.' },
     viper_fang:   { name: '독사의 송곳니', icon: '🐍', desc: '전투 시작 시 모든 적에게 취약 1.' },
@@ -1247,10 +1316,1586 @@ window.BD_ARTMAP = {
   const ART = root.BD_ARTMAP || {};
 
   for (const k of Object.keys(CARDS)) CARDS[k].id = k;
-  const DATA = { HEROINES, STATUS, ARCH, CLASS_ARCH, CARDS, STARTERS, ACTS, ENEMIES, ENCOUNTERS, RELICS, POTIONS, EVENTS, ACHIEVEMENTS, GALLERY, ASCENSION, ART,
-    TITLE: '미녀 덱: 밤의 여왕', VERSION: '1.0.0' };
+  // ───────── 히로인 레벨·숙련 (v1.2) ─────────
+  // 경험치는 원정이 끝날 때마다(실패해도) 얻음. curve[i] = 레벨 i+1에 필요한 누적 경험치.
+  const MASTERY = {
+    curve: [0, 100, 250, 450, 700, 1000, 1400, 1900, 2500, 3200],
+    xp: { floor: 10, elite: 25, boss: 60, win: 150 },
+    heroes: {
+      sera: { cards: ['sx_vow', 'sx_flurry', 'sx_dawn'], relic: 'crimson_sheath',
+        passive: { name: '전장의 감', desc: '보스 전투 시작 시 힘 1, 엘리트 전투 시작 시 활력 4.' },
+        deck: { name: '연타·피의 각오형', desc: '붉은 일섬 대신 피의 맹세로 시작. 체력을 깎아 에너지를 당겨 쓰는 덱.', cards: ['s_strike', 's_strike', 's_strike', 's_strike', 's_strike', 's_guard', 's_guard', 's_guard', 's_guard', 's_bloodoath'] },
+        titles: ['두 번째 리본', '새벽의 검'] },
+      luna: { cards: ['lx_comet', 'lx_veil', 'lx_orbit'], relic: 'star_chart',
+        passive: { name: '별의 속삭임', desc: '전투 시작 시 마력 공명 1 (스킬을 낼 때마다 무작위 적에게 피해 1).' },
+        deck: { name: '서리 제어형', desc: '별똥별 대신 눈보라로 시작. 적을 약하게 만들며 버티는 덱.', cards: ['m_bolt', 'm_bolt', 'm_bolt', 'm_bolt', 'm_ward', 'm_ward', 'm_ward', 'm_ward', 'm_blizzard', 'm_focus'] },
+        titles: ['별을 세는 사람', '밤하늘의 사서'] },
+      yuki: { cards: ['yx_mist', 'yx_needle', 'yx_moon'], relic: 'viper_ring',
+        passive: { name: '그림자 숙련', desc: '엘리트·보스 전투 시작 시 표창 1장을 손에 넣어.' },
+        deck: { name: '표창 연계형', desc: '독 대신 표창 난무로 시작. 표창을 쏟아붓는 덱.', cards: ['n_slash', 'n_slash', 'n_slash', 'n_slash', 'n_slash', 'n_dodge', 'n_dodge', 'n_dodge', 'n_dodge', 'n_blades'] },
+        titles: ['그림자 밖으로', '달빛 아래의 유키'] },
+      aria: { cards: ['ax_lantern', 'ax_oath', 'ax_dawnshield'], relic: 'dawn_lamp',
+        passive: { name: '응보의 맹세', desc: '전투 시작 시 응보 2 (공격을 방어도로 전부 막으면 그 적에게 피해 2).' },
+        deck: { name: '치유·응보형', desc: '천벌 대신 응징으로 시작. 막고 맞받아치는 덱.', cards: ['h_strike', 'h_strike', 'h_strike', 'h_strike', 'h_guard', 'h_guard', 'h_guard', 'h_guard', 'h_guard', 'h_retort'] },
+        titles: ['다시 든 방패', '여명의 성기사'] }
+    }
+  };
+  // 레벨 보상 순서 (모든 히로인 공통 틀)
+  MASTERY.track = h => {
+    const m = MASTERY.heroes[h];
+    return [
+      { lv: 2, kind: 'story', ch: 0 }, { lv: 2, kind: 'card', id: m.cards[0] },
+      { lv: 3, kind: 'relic', id: m.relic },
+      { lv: 4, kind: 'story', ch: 1 }, { lv: 4, kind: 'card', id: m.cards[1] },
+      { lv: 5, kind: 'passive' },
+      { lv: 6, kind: 'story', ch: 2 }, { lv: 6, kind: 'deck' },
+      { lv: 7, kind: 'card', id: m.cards[2] },
+      { lv: 8, kind: 'story', ch: 3 }, { lv: 8, kind: 'title', id: 0 },
+      { lv: 9, kind: 'potion' },
+      { lv: 10, kind: 'story', ch: 4 }, { lv: 10, kind: 'title', id: 1 }, { lv: 10, kind: 'frame' }
+    ];
+  };
+
+  // ───────── 히로인 짧은 대사 (설정에서 끌 수 있음) ─────────
+  const LINES = {
+    sera: {
+      elite: ['강해 보이네. 그래서 좋아.', '저 녀석, 제대로 베어 볼 만하겠어.', '뒤로 빠지지 마. 정면이야.'],
+      boss: ['여기까지 왔으면 끝까지 가는 거야.', '리본 꽉 묶었어. 간다!', '네가 길을 막는 마지막 벽이야?'],
+      bossWin: ['…후. 아직 칼은 안 무뎌졌어.', '다음 문으로 가자. 쉬는 건 그다음.'],
+      event: ['수상한데… 그래도 들여다보긴 할래.', '뭐든 칼로 안 되면 머리로 해 보지.'],
+      shop: ['날 좀 갈아 줄 숫돌 있어?', '돈은 아끼는 거 아니야. 살아남는 데 쓰는 거지.'],
+      rest: ['불 앞에선 잠깐 칼 내려놓을게.', '리본 다시 묶고… 좋아, 아직 괜찮아.'],
+      win: ['봤지? 끝까지 왔어.', '밤이 걷혔어. 이제 좀 자도 되겠다.'],
+      loss: ['…다음엔 한 걸음 더 갈 거야.', '아파도 괜찮아. 배운 건 남으니까.', '칼은 또 들 수 있어. 다시 가자.']
+    },
+    luna: {
+      elite: ['변수가 하나 늘었네. 재밌다.', '저건 계산식이 좀 길겠는걸.', '졸리지만… 집중할게.'],
+      boss: ['별이 여기서 멈추라고 했어. 난 안 멈출 거지만.', '다 계산해 뒀어. 아마도.', '좋아, 큰 거 한 방 준비할게.'],
+      bossWin: ['예상보다 3초 빨랐어. 훌륭해.', '…휴, 오차 범위 안이었어.'],
+      event: ['기록에 없는 현상이야. 메모해 둬야지.', '함정일 확률 40퍼센트. 그래도 궁금해.'],
+      shop: ['마도서 할인은 안 해?', '이 돌, 마력 순도가 좋네.'],
+      rest: ['잠깐만 눈 좀 붙일게… 오 분만.', '별자리 다시 그려 볼게. 길이 보여.'],
+      win: ['계산대로야. 아니, 계산보다 좋았어.', '밤하늘이 다시 제자리로 돌아왔어.'],
+      loss: ['오차가 컸어. 다음 식은 고칠게.', '실패도 데이터야. 꽤 많이 모였어.', '…좀 자고 다시 계산하자.']
+    },
+    yuki: {
+      elite: ['…강하다. 조용히 끝낸다.', '그림자 쪽으로 돌아갈게.', '저건 독이 잘 들 거야.'],
+      boss: ['…여기서 숨지 않아.', '이번엔 정면이야. 이상하지?', '끝내자.'],
+      bossWin: ['…끝.', '숨, 다시 쉬어도 돼.'],
+      event: ['…기척이 있어.', '조심해. 아니, 내가 먼저 볼게.'],
+      shop: ['표창, 스무 개.', '…독은 어디 있어?'],
+      rest: ['불빛은 싫지만, 오늘은 괜찮아.', '…잠깐 앉을게.'],
+      win: ['…해냈어. 같이라서.', '그림자 밖도, 나쁘지 않네.'],
+      loss: ['…다음엔 더 조용히.', '실수했어. 기억해 둘게.', '아직 끝 아니야.']
+    },
+    aria: {
+      elite: ['모두 내 뒤로! 첫 공격은 내가 받는다.', '강한 상대일수록 방패가 빛나지.', '물러서지 않아.'],
+      boss: ['이번엔 지켜 낼 거야. 반드시.', '맹세를 걸고, 여기서 막는다.', '성기사단 부단장 아리아, 간다!'],
+      bossWin: ['다친 사람 없지? 좋아.', '빛은 아직 꺼지지 않았어.'],
+      event: ['누군가 도움이 필요한 걸지도 몰라.', '신중하게. 하지만 외면하진 말자.'],
+      shop: ['방패 손질할 기름 있나요?', '필요한 만큼만 사자. 나머진 남을 위해.'],
+      rest: ['모두 쉬어. 불침번은 내가 설게.', '기도 한 번 하고 쉴게.'],
+      win: ['지켜 냈어. 이번에는, 정말로.', '여명이야. 모두 수고했어.'],
+      loss: ['다음엔 더 단단해질게.', '쓰러져도 다시 일어나는 게 기사야.', '…미안. 다시 지킬게.']
+    }
+  };
+
+  const DATA = { MASTERY, LINES, HEROINES, STATUS, ARCH, CLASS_ARCH, CARDS, STARTERS, ACTS, ENEMIES, ENCOUNTERS, RELICS, POTIONS, EVENTS, ACHIEVEMENTS, GALLERY, ASCENSION, ART,
+    TITLE: '미녀 덱: 밤의 여왕', VERSION: '1.2.0' };
   root.BD_DATA = DATA;
   if (typeof module !== 'undefined' && module.exports) module.exports = DATA;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* story.js */
+/* 미녀 덱: 밤의 여왕 — 히로인 개인 스토리 (v1.2)
+ * 히로인마다 5장. 레벨 2·4·6·8·10에서 열림. 화면을 터치하면 다음 대사로 넘어감.
+ * 말하는 사람: 히로인 id(sera/luna/yuki/aria), 적 id(morgana/belita/celes/nyx), 'nar'(내레이션).
+ * 모든 등장인물은 성인. 따뜻한 판타지 드라마 톤, 노출·성적 내용 없음.
+ */
+(function (root) {
+  'use strict';
+  const STORIES = {
+   "sera": [
+    {
+     "title": "1장 · 반쪽짜리 리본",
+     "lines": [
+      [
+       "nar",
+       "어스름 숲 어귀의 모닥불. 세라는 칼날을 닦다 말고 머리끈을 풀어 손바닥 위에 올려놓았다. 붉은 비단은 끝이 거칠게 잘려 있었다."
+      ],
+      [
+       "luna",
+       "그 리본, 원래 더 길었지? 매듭이 반쪽뿐이야."
+      ],
+      [
+       "sera",
+       "눈썰미 좋네. 맞아. 원래 하나였어. 검술 도장에서 같이 자란 언니랑 반씩 나눠 가졌거든."
+      ],
+      [
+       "luna",
+       "그 언니는 지금 어디 있어?"
+      ],
+      [
+       "sera",
+       "모르겠어. 3년 전 밤이 길어지기 시작하던 해에 말없이 떠났어. 도장 문에 이 반쪽만 묶어 두고."
+      ],
+      [
+       "nar",
+       "루나는 모닥불에 장작을 하나 더 얹었다. 숲 저편에서 무언가가 울었지만, 두 사람 다 고개를 돌리지 않았다."
+      ],
+      [
+       "sera",
+       "어릴 땐 언니가 늘 앞에 섰어. 목검으로 대련하면 난 한 번도 못 이겼고. 그래도 지고 나면 꼭 이 리본으로 내 머리를 묶어 줬어."
+      ],
+      [
+       "luna",
+       "그래서 지금도 그렇게 꽉 묶는구나. 매일 아침마다."
+      ],
+      [
+       "sera",
+       "응. 풀리면 언니가 혼낼 것 같아서. 바보 같지?"
+      ],
+      [
+       "luna",
+       "아니. 계산상으로는 꽤 합리적인 습관이야. 머리카락이 눈을 안 가리잖아."
+      ],
+      [
+       "nar",
+       "불꽃이 튀었다. 세라는 리본을 다시 질끈 묶었다."
+      ],
+      [
+       "sera",
+       "난 떠돌이 검사라고 소개하지만, 사실은 사람을 찾는 중이야. 밤의 성 쪽에서 붉은 리본을 단 검사를 봤다는 소문을 들었어."
+      ],
+      [
+       "luna",
+       "밤의 성이면… 닉스 편에 선 사람들이 모인 곳이잖아."
+      ],
+      [
+       "sera",
+       "알아. 그래서 칼을 갈고 있는 거야. 만나면 먼저 묻고 싶어. 왜 말도 없이 갔냐고. 대답이 마음에 안 들면… 그때 생각할래."
+      ],
+      [
+       "luna",
+       "말보다 칼이 먼저 나가는 타입이라더니, 생각보다 말이 많네."
+      ],
+      [
+       "sera",
+       "오늘만이야. 내일부턴 다시 칼이 먼저야."
+      ]
+     ]
+    },
+    {
+     "title": "2장 · 숲의 마녀가 아는 것",
+     "lines": [
+      [
+       "nar",
+       "모르가나를 쓰러뜨린 뒤, 덩굴이 걷힌 오두막 안. 마녀는 지친 얼굴로 벽에 기대 앉아 있었다."
+      ],
+      [
+       "morgana",
+       "붉은 머리끈이라… 너, 벨리타의 동생이구나."
+      ],
+      [
+       "sera",
+       "벨리타? 그게… 언니 이름이 맞아. 언니를 알아?"
+      ],
+      [
+       "morgana",
+       "알다마다. 밤의 성으로 가는 길목을 내가 지켰으니까. 그 아이는 혼자 이 숲을 걸어 들어왔어. 칼 한 자루, 반쪽 리본 하나."
+      ],
+      [
+       "sera",
+       "언니가 왜 닉스한테 간 거야. 우리 도장은 밤을 막는 쪽이었는데."
+      ],
+      [
+       "morgana",
+       "거래를 했다더라. 남쪽 강가 마을, 이름이 뭐였더라… 밤이 내려앉아 아이들이 깨어나지 않던 곳."
+      ],
+      [
+       "sera",
+       "…루벨 마을. 우리가 자란 곳 바로 옆이야."
+      ],
+      [
+       "morgana",
+       "그 마을의 밤을 거두는 대가로 자기 밤을 바쳤어. 이제 그 아이는 성의 여왕이야. 밤의 여왕 벨리타."
+      ],
+      [
+       "nar",
+       "오두막 창밖에서 덩굴이 천천히 시들어 갔다. 마녀의 힘이 빠져나가는 소리처럼 바스락거렸다."
+      ],
+      [
+       "morgana",
+       "그 아이, 떠나기 전에 내 오두막에서 하룻밤 묵었어. 잠꼬대로 누군가 이름을 부르더구나. 세라, 세라 하고."
+      ],
+      [
+       "sera",
+       "…그 얘기는 안 해도 됐는데."
+      ],
+      [
+       "morgana",
+       "해야지. 칼을 들고 성에 가는 사람은 자기가 누구를 만나러 가는지 알아야 해."
+      ],
+      [
+       "nar",
+       "세라의 손이 칼자루 위에서 멈췄다. 오두막 밖에서 첫새벽 새가 울었다."
+      ],
+      [
+       "sera",
+       "그럼 언니는 배신한 게 아니라… 대신 짊어진 거네."
+      ],
+      [
+       "morgana",
+       "어느 쪽이든 결과는 같아. 성에 가면 그 아이는 너를 벨 거야. 닉스와의 계약은 그런 거니까."
+      ],
+      [
+       "sera",
+       "그럼 내가 먼저 막으면 되지. 베지 않고, 막을 거야."
+      ]
+     ]
+    },
+    {
+     "title": "3장 · 달 없는 성의 여왕",
+     "lines": [
+      [
+       "nar",
+       "달 없는 성의 옥좌 앞. 쓰러진 벨리타의 손에서 칼이 미끄러졌다. 그녀의 손목에도 반쪽 리본이 감겨 있었다."
+      ],
+      [
+       "belita",
+       "…많이 컸네, 세라. 칼끝이 예전처럼 흔들리지 않아."
+      ],
+      [
+       "sera",
+       "언니가 가르쳐 줬잖아. 흔들리면 지는 거라고."
+      ],
+      [
+       "belita",
+       "그럼 끝까지 해. 계약은 내가 쓰러지는 걸로 끝나지 않아. 닉스가 날 다시 일으켜 세울 거야."
+      ],
+      [
+       "sera",
+       "싫어. 언니를 베러 온 게 아니야. 데리러 온 거야."
+      ],
+      [
+       "belita",
+       "루벨의 아이들은 지금도 잠들어 있어. 내 밤이 그 애들 대신 깨어 있는 거야. 내가 성을 떠나면…"
+      ],
+      [
+       "sera",
+       "그럼 닉스를 쓰러뜨리면 되지. 계약한 쪽이 사라지면 계약도 끝나잖아."
+      ],
+      [
+       "belita",
+       "…정말, 말보다 칼이 먼저구나. 그런데 이번엔 말이 맞는 것 같기도 해."
+      ],
+      [
+       "nar",
+       "성 밖에서 바람이 불었다. 옥좌 뒤 커다란 창문 너머로, 3년 동안 보이지 않던 달의 가장자리가 희미하게 비쳤다."
+      ],
+      [
+       "belita",
+       "네가 처음 목검을 쥐던 날 기억나? 손에 물집 잡혀서 울면서도 안 놓았지."
+      ],
+      [
+       "sera",
+       "기억나. 언니가 그 물집에 약 발라 주면서, 칼은 놓는 것보다 쥐는 게 쉽다고 했어."
+      ],
+      [
+       "belita",
+       "지금 생각해 보면 틀린 말이었어. 놓는 게 훨씬 어려워. 3년 동안 매일 이 칼을 놓고 싶었는데, 한 번도 못 놨거든."
+      ],
+      [
+       "sera",
+       "그럼 이번엔 내가 대신 쥐고 있을게. 언니는 좀 쉬어."
+      ],
+      [
+       "nar",
+       "벨리타는 리본을 풀어 세라의 손에 쥐여 주려다, 다시 자기 손목에 감았다."
+      ],
+      [
+       "belita",
+       "이건 아직 못 줘. 네가 황혼까지 가서 돌아오면, 그때 매듭을 다시 묶자."
+      ],
+      [
+       "sera",
+       "약속이야. 도장식으로."
+      ],
+      [
+       "belita",
+       "도장식으로."
+      ]
+     ]
+    },
+    {
+     "title": "4장 · 두 번째 리본",
+     "lines": [
+      [
+       "nar",
+       "별의 첨탑으로 향하는 길. 세라는 새로 산 붉은 실로 리본 끝을 몰래 수선하고 있었다."
+      ],
+      [
+       "yuki",
+       "…바느질, 못하네."
+      ],
+      [
+       "sera",
+       "들켰다. 칼은 되는데 바늘은 왜 이렇게 안 되지."
+      ],
+      [
+       "yuki",
+       "줘 봐. 닌자는 상처도 꿰매."
+      ],
+      [
+       "nar",
+       "유키의 손끝이 빠르게 움직였다. 잘려 나간 쪽에 새 실로 짧은 매듭이 생겼다."
+      ],
+      [
+       "sera",
+       "…두 번째 매듭이네. 원래 리본에는 없던 거."
+      ],
+      [
+       "yuki",
+       "없던 게 생겨도 돼. 같이 온 사람들 몫이야."
+      ],
+      [
+       "nar",
+       "첨탑으로 이어지는 돌계단 위로 별빛이 쏟아졌다. 일행은 잠시 걸음을 멈추고 숨을 골랐다."
+      ],
+      [
+       "sera",
+       "처음 원정 나올 땐 혼자였어. 지도도 없이 그냥 성 방향으로 걸었지. 숲에서 두 번이나 길을 잃었고."
+      ],
+      [
+       "yuki",
+       "…알아. 그때 뒤에서 봤어."
+      ],
+      [
+       "sera",
+       "뭐? 그때부터 따라왔어?"
+      ],
+      [
+       "yuki",
+       "길 잃는 사람은 그냥 못 지나쳐. 닌자 규칙은 아니고, 내 규칙."
+      ],
+      [
+       "sera",
+       "언니만 찾으면 된다고 생각했어. 근데 이제는 너희랑 같이 돌아가는 것까지가 목표야."
+      ],
+      [
+       "aria",
+       "좋은 목표야. 기사단에선 그런 걸 귀환 맹세라고 불러. 아무도 두고 가지 않는다."
+      ],
+      [
+       "sera",
+       "그거 좋다. 나도 할래, 귀환 맹세."
+      ],
+      [
+       "luna",
+       "그럼 계산에 넣어 둘게. 생존 인원, 처음과 끝이 같을 것."
+      ],
+      [
+       "sera",
+       "틀리면 안 돼, 루나."
+      ],
+      [
+       "luna",
+       "난 계산 틀린 적 없어. 거의."
+      ]
+     ]
+    },
+    {
+     "title": "5장 · 새벽의 검",
+     "lines": [
+      [
+       "nar",
+       "황혼의 옥좌가 무너지고, 닉스는 처음으로 지친 목소리로 말했다."
+      ],
+      [
+       "nyx",
+       "인간의 밤을 거둬 가는 건 내 일이었어. 대가 없는 아침은 없어, 검사."
+      ],
+      [
+       "sera",
+       "대가는 이미 충분히 치렀어. 언니가 3년 동안 대신 깨어 있었잖아. 이제 그만 돌려줘."
+      ],
+      [
+       "nyx",
+       "…그래. 이번 계약은 끝났다. 벨리타의 밤도, 루벨의 아이들도."
+      ],
+      [
+       "nar",
+       "며칠 뒤, 루벨 마을 강가. 아이들이 물수제비를 뜨며 떠들고 있었다. 벨리타는 낡은 도장 마당에서 세라를 기다렸다."
+      ],
+      [
+       "belita",
+       "왔네. 약속대로."
+      ],
+      [
+       "nar",
+       "도장 마당에는 오래된 목검 두 자루가 나란히 세워져 있었다. 세라가 떠나기 전 그대로였다."
+      ],
+      [
+       "belita",
+       "대련 한 판 할래? 이번엔 봐주지 않을 거야."
+      ],
+      [
+       "sera",
+       "언니가 봐준 적 있었어?"
+      ],
+      [
+       "belita",
+       "매번. 네가 울까 봐."
+      ],
+      [
+       "sera",
+       "…그럼 이번엔 진짜로 해. 이제 안 울어. 아마도."
+      ],
+      [
+       "sera",
+       "도장식으로, 매듭 다시 묶자."
+      ],
+      [
+       "nar",
+       "두 반쪽이 하나로 이어졌다. 세라가 덧댄 두 번째 매듭이 가운데에 남았다."
+      ],
+      [
+       "belita",
+       "이 매듭은 뭐야? 원래 없던 건데."
+      ],
+      [
+       "sera",
+       "같이 싸운 사람들 몫. 언니도 이제 그 사람들 중 하나야."
+      ],
+      [
+       "belita",
+       "…그럼 다음 원정은 나도 껴 줘. 이번엔 네 뒤에서."
+      ],
+      [
+       "sera",
+       "안 돼. 옆에서. 그게 새벽의 검이야."
+      ],
+      [
+       "nar",
+       "해가 떠올랐다. 붉은 리본 하나가 아침 바람에 길게 흔들렸다. (칭호 「새벽의 검」·프로필 금빛 테두리 해금)"
+      ]
+     ]
+    }
+   ],
+   "luna": [
+    {
+     "title": "1장 · 틀린 별점",
+     "lines": [
+      [
+       "nar",
+       "마탑 최상층 관측실. 루나는 낡은 별 지도를 펼쳐 놓고 같은 계산을 세 번째 반복하고 있었다."
+      ],
+      [
+       "luna",
+       "역시 이상해. 별이 하나 모자라."
+      ],
+      [
+       "sera",
+       "별이 모자라면 큰일이야? 하늘에 별은 많잖아."
+      ],
+      [
+       "luna",
+       "이건 그냥 별이 아니야. 새벽별, 아침을 부르는 별. 3년 전부터 관측 기록에서 사라졌어. 그때부터 밤이 길어졌고."
+      ],
+      [
+       "sera",
+       "누가 훔쳐 가기라도 했어?"
+      ],
+      [
+       "luna",
+       "농담인 줄 알지? 계산상으로는 정말 그래. 누군가 별을 삼켰어. 기록상 그럴 수 있는 사람은 한 명뿐이야."
+      ],
+      [
+       "nar",
+       "루나가 가리킨 이름 위에는 잉크가 번져 있었다. 셀레스. 마탑 별 기록관."
+      ],
+      [
+       "luna",
+       "내 스승님이었어. 별을 세는 법도, 졸릴 때 차 마시는 법도 다 그분한테 배웠어."
+      ],
+      [
+       "sera",
+       "그런 사람이 왜 별을…"
+      ],
+      [
+       "luna",
+       "몰라. 그래서 가 보려고. 계산만으로는 안 나오는 답도 있다고, 스승님이 그랬거든."
+      ],
+      [
+       "nar",
+       "관측실 창밖으로 별이 천천히 돌았다. 루나는 깃펜 끝으로 빈자리를 톡톡 두드렸다."
+      ],
+      [
+       "luna",
+       "스승님은 매일 밤 이 자리에서 별을 하나씩 불러 줬어. 이름을 부르면 별이 대답한다고. 난 그 말을 믿지 않았는데."
+      ],
+      [
+       "sera",
+       "지금은 믿어?"
+      ],
+      [
+       "luna",
+       "반쯤. 새벽별 이름을 불러 봤는데 대답이 없었거든. 대답이 없다는 것도 일종의 대답이니까."
+      ],
+      [
+       "sera",
+       "어려운 말 하지 마. 졸려 보이는데 머리는 엄청 빨리 돌아가네."
+      ],
+      [
+       "sera",
+       "그럼 길은 내가 뚫을게. 넌 계산해."
+      ],
+      [
+       "luna",
+       "좋아. 근데 오늘은 일단 자고. 오 분만."
+      ]
+     ]
+    },
+    {
+     "title": "2장 · 마녀의 차 한 잔",
+     "lines": [
+      [
+       "nar",
+       "숲의 마녀 모르가나는 패배한 뒤에도 손님에게 차를 내오는 것을 잊지 않았다."
+      ],
+      [
+       "morgana",
+       "마탑 아이구나. 셀레스가 가끔 네 얘기를 했지. 잠꾸러기 천재라고."
+      ],
+      [
+       "luna",
+       "스승님이랑 아는 사이였어요?"
+      ],
+      [
+       "morgana",
+       "별의 첨탑으로 가는 약초는 이 숲에서만 나니까. 그 아이는 매달 찾아왔어. 그러다 3년 전부터 발길이 끊겼지."
+      ],
+      [
+       "luna",
+       "마지막으로 왔을 때 무슨 말을 했어요?"
+      ],
+      [
+       "morgana",
+       "닉스가 새벽별을 원한다고. 아침이 오지 않으면 밤은 영원히 닉스의 것이 되니까. 셀레스는 그걸 막겠다고 했어."
+      ],
+      [
+       "luna",
+       "막겠다고요? 그런데 왜 스승님이 별을…"
+      ],
+      [
+       "morgana",
+       "훔치는 것과 숨기는 것은 비슷해 보이지. 셀레스는 별을 삼켜 자기 안에 숨겼어. 닉스 손에 넘어가지 않게."
+      ],
+      [
+       "nar",
+       "모르가나는 서랍에서 바랜 편지 한 장을 꺼냈다. 별 모양 밀랍 인장이 반쯤 녹아 있었다."
+      ],
+      [
+       "morgana",
+       "셀레스가 마지막으로 두고 간 거야. 언젠가 잠꾸러기 제자가 오면 주라고."
+      ],
+      [
+       "luna",
+       "…스승님 글씨네요. 「루나, 차는 너무 오래 우리지 마라. 쓴맛이 남는다.」 이게 다예요?"
+      ],
+      [
+       "morgana",
+       "그 아이다운 유언이지. 하지만 뒷면을 보렴."
+      ],
+      [
+       "nar",
+       "편지 뒷면에는 작게 계산식 하나가 적혀 있었다. 별빛이 사람을 태우는 속도. 끝에는 날짜가 하나 있었다. 이미 지난 날짜였다."
+      ],
+      [
+       "nar",
+       "찻잔 위로 김이 흔들렸다. 루나는 한참 동안 아무 말도 하지 않았다."
+      ],
+      [
+       "luna",
+       "…계산이 틀렸네. 스승님은 범인이 아니라 금고였어."
+      ],
+      [
+       "morgana",
+       "금고는 오래 버티지 못해. 별빛은 사람을 안에서부터 태우거든. 서두르렴."
+      ],
+      [
+       "luna",
+       "서두를게요. 차는 맛있었어요. 졸음이 다 깼어."
+      ]
+     ]
+    },
+    {
+     "title": "3장 · 별을 삼킨 마녀",
+     "lines": [
+      [
+       "nar",
+       "별의 첨탑 꼭대기. 쓰러진 셀레스의 몸에서 희미한 별빛이 새어 나왔다."
+      ],
+      [
+       "celes",
+       "루나… 왜 왔니. 넌 여기 오면 안 됐어."
+      ],
+      [
+       "luna",
+       "스승님이 계산을 틀렸으니까요. 혼자 별을 품고 버틸 수 있는 시간, 아마 2년도 안 됐을 거예요. 벌써 3년이에요."
+      ],
+      [
+       "celes",
+       "…여전히 계산은 정확하구나."
+      ],
+      [
+       "luna",
+       "별을 저한테 나눠 주세요. 둘이 나누면 반씩만 타잖아요."
+      ],
+      [
+       "celes",
+       "안 돼. 그러면 너도…"
+      ],
+      [
+       "luna",
+       "스승님이 그랬잖아요. 혼자 푸는 식보다 같이 푸는 식이 오차가 작다고."
+      ],
+      [
+       "nar",
+       "첨탑 바닥에는 수천 개의 별 지도가 흩어져 있었다. 전부 같은 사람의 글씨였다. 셀레스는 3년 동안 매일 새벽별의 자리를 계산했던 것이다."
+      ],
+      [
+       "luna",
+       "이걸 혼자 다 하셨어요? 3년 동안?"
+      ],
+      [
+       "celes",
+       "별이 돌아갈 자리를 잊으면 안 되니까. 하루라도 계산을 거르면 하늘의 빈자리가 조금씩 움직여."
+      ],
+      [
+       "luna",
+       "그럼 이제부턴 반씩 해요. 홀수 날은 스승님, 짝수 날은 저."
+      ],
+      [
+       "celes",
+       "넌 짝수 날엔 늘 늦잠 잤잖니."
+      ],
+      [
+       "nar",
+       "셀레스가 웃었다. 처음 마탑에서 루나에게 차를 따라 주던 날과 같은 얼굴이었다."
+      ],
+      [
+       "celes",
+       "그 말을 기억하는 사람이 있었네. 좋아. 대신 약속해. 별은 닉스 앞에서 돌려줘. 새벽별은 하늘에 있어야 하니까."
+      ],
+      [
+       "nar",
+       "두 사람의 손바닥 사이로 빛이 오갔다. 루나의 지팡이 끝 수정이 처음으로 아침 빛깔을 띠었다."
+      ],
+      [
+       "luna",
+       "…따뜻하네요. 생각보다."
+      ],
+      [
+       "celes",
+       "그게 아침이야. 늘 그렇게 따뜻했어."
+      ]
+     ]
+    },
+    {
+     "title": "4장 · 별을 세는 사람",
+     "lines": [
+      [
+       "nar",
+       "종막으로 가는 마지막 모닥불. 루나는 잠들지 않고 하늘을 올려다보고 있었다."
+      ],
+      [
+       "aria",
+       "안 자? 너답지 않은데."
+      ],
+      [
+       "luna",
+       "별을 세고 있어. 스승님이 그랬거든. 무서울 땐 아는 걸 세라고."
+      ],
+      [
+       "aria",
+       "몇 개까지 셌어?"
+      ],
+      [
+       "luna",
+       "천이백 개. 근데 자꾸 우리 일행을 같이 세게 돼. 세라 하나, 유키 하나, 아리아 하나."
+      ],
+      [
+       "aria",
+       "그건 별이 아니잖아."
+      ],
+      [
+       "luna",
+       "계산상으로는 같아. 길을 잃었을 때 기준이 되는 거니까."
+      ],
+      [
+       "nar",
+       "모닥불이 낮게 타올랐다. 멀리서 유키와 세라가 내일 진형을 두고 투닥거리는 소리가 들렸다."
+      ],
+      [
+       "luna",
+       "마탑에 있을 땐 늘 혼자였어. 최연소 수석이라고 다들 거리를 뒀거든. 계산 잘하는 애랑은 같이 밥 먹기 싫대."
+      ],
+      [
+       "aria",
+       "그건 그 사람들 손해네. 너랑 밥 먹으면 식비가 정확하게 나뉘잖아."
+      ],
+      [
+       "luna",
+       "그건 칭찬이야, 놀리는 거야?"
+      ],
+      [
+       "aria",
+       "둘 다. 일행끼리는 원래 그래."
+      ],
+      [
+       "nar",
+       "아리아는 말없이 루나 옆에 앉아 망토를 반쯤 덮어 주었다."
+      ],
+      [
+       "aria",
+       "그럼 나도 하나 세 줄게. 루나 하나."
+      ],
+      [
+       "luna",
+       "…그거 반칙이야. 나는 세는 쪽이지 세지는 쪽이 아닌데."
+      ],
+      [
+       "aria",
+       "이젠 둘 다야. 그게 일행이니까."
+      ],
+      [
+       "luna",
+       "알았어. 그럼 천이백다섯. 이제 정말 자야겠다. 오 분만."
+      ]
+     ]
+    },
+    {
+     "title": "5장 · 밤하늘의 사서",
+     "lines": [
+      [
+       "nar",
+       "황혼의 옥좌. 무릎 꿇은 닉스 앞에서 루나는 지팡이를 들어 올렸다. 수정 안에서 새벽별이 맥박처럼 뛰었다."
+      ],
+      [
+       "nyx",
+       "그 별을 내게 주면, 너희에게 영원한 휴식을 줄 수도 있어. 더는 졸릴 일도 없겠지."
+      ],
+      [
+       "luna",
+       "사양할게. 잠은 아침이 오는 걸 알 때 제일 달거든."
+      ],
+      [
+       "nar",
+       "루나는 별을 하늘로 놓아 주었다. 동쪽 하늘 끝에서, 3년 만에 새벽별이 떴다."
+      ],
+      [
+       "nyx",
+       "…별은 돌아갔고, 밤은 다시 짧아지겠군. 오랜만에 지는 기분이 나쁘지 않구나."
+      ],
+      [
+       "nar",
+       "루나가 놓아준 빛이 하늘을 가로지르는 동안, 일행은 아무 말 없이 고개를 들고 있었다."
+      ],
+      [
+       "sera",
+       "저게 새벽별이야? 생각보다 작네."
+      ],
+      [
+       "luna",
+       "작아도 돼. 제자리에 있으면, 길 잃은 사람이 방향을 찾을 수 있어. 그게 별의 일이야."
+      ],
+      [
+       "yuki",
+       "…그럼 너도 별이야."
+      ],
+      [
+       "luna",
+       "갑자기 그렇게 말하면 계산이 안 되잖아."
+      ],
+      [
+       "nar",
+       "한 달 뒤, 마탑 관측실. 회복한 셀레스가 새 기록부를 루나에게 내밀었다."
+      ],
+      [
+       "celes",
+       "이제 네가 별 기록관이야. 밤하늘 전체가 네 서가지."
+      ],
+      [
+       "luna",
+       "사서라니, 좀 거창한데요. 전 그냥 별을 세는 사람이에요."
+      ],
+      [
+       "celes",
+       "세는 사람이 있어야 잃어버린 걸 알아채지. 넌 별 하나가 모자란 걸 알아챘잖니."
+      ],
+      [
+       "luna",
+       "…그럼 첫 기록은 이걸로 할게요."
+      ],
+      [
+       "nar",
+       "기록부 첫 장에 루나는 별 대신 이름 넷을 적었다. 그리고 그 옆에 작게 덧붙였다. 오차 없음."
+      ],
+      [
+       "nar",
+       "(칭호 「밤하늘의 사서」·프로필 금빛 테두리 해금)"
+      ]
+     ]
+    }
+   ],
+   "yuki": [
+    {
+     "title": "1장 · 그림자의 빚",
+     "lines": [
+      [
+       "nar",
+       "야영지에서 조금 떨어진 나무 위. 유키는 언제나처럼 아무도 모르게 불침번을 서고 있었다."
+      ],
+      [
+       "sera",
+       "역시 거기 있었구나. 내려와. 같이 불 쬐자."
+      ],
+      [
+       "yuki",
+       "…불빛 근처에 있으면 그림자가 짧아져."
+      ],
+      [
+       "sera",
+       "그게 나빠?"
+      ],
+      [
+       "yuki",
+       "우리 일족은 그림자 길이만큼 빚을 져. 짧아지면, 빚을 못 갚아."
+      ],
+      [
+       "sera",
+       "빚? 누구한테?"
+      ],
+      [
+       "nar",
+       "유키는 한참 말이 없다가, 나뭇가지 끝에 걸린 달을 보며 짧게 말했다."
+      ],
+      [
+       "yuki",
+       "숲의 마녀. 백 년 전, 우리 마을이 불탈 때 숲이 숨겨 줬대. 대신 일족은 대대로 그림자로 숲을 섬겨."
+      ],
+      [
+       "nar",
+       "모닥불이 타닥거렸다. 유키는 나뭇가지 위에서 다리를 흔들었다. 내려올지 말지 아직 정하지 못한 사람처럼."
+      ],
+      [
+       "sera",
+       "그 빚, 얼마나 남았는데?"
+      ],
+      [
+       "yuki",
+       "몰라. 아무도 안 세. 그냥 평생이래. 태어날 때부터 정해져 있어."
+      ],
+      [
+       "sera",
+       "그건 빚이 아니라 족쇄 같은데."
+      ],
+      [
+       "yuki",
+       "…처음 들어 보는 말이야. 그렇게 말해 준 사람은."
+      ],
+      [
+       "sera",
+       "그럼 모르가나랑 싸우면 너…"
+      ],
+      [
+       "yuki",
+       "응. 빚을 진 쪽이 주인에게 칼을 드는 거야. 그래도 갈 거야."
+      ],
+      [
+       "sera",
+       "왜?"
+      ],
+      [
+       "yuki",
+       "숲이 닉스 편에 섰으니까. 백 년 전의 숲이랑 지금 숲은 달라. …그리고 너희가 가니까."
+      ],
+      [
+       "sera",
+       "마지막 말이 제일 마음에 들어. 내려와. 오늘 불침번은 같이 서자."
+      ],
+      [
+       "yuki",
+       "…조금만."
+      ]
+     ]
+    },
+    {
+     "title": "2장 · 숲이 숨긴 것",
+     "lines": [
+      [
+       "nar",
+       "모르가나가 쓰러진 오두막. 유키는 무릎을 꿇고 고개를 숙였다. 닌자의 예법이었다."
+      ],
+      [
+       "morgana",
+       "그림자 일족의 막내로구나. 결국 칼을 들었네."
+      ],
+      [
+       "yuki",
+       "…죄송합니다. 빚은 남은 생으로 갚겠습니다."
+      ],
+      [
+       "morgana",
+       "빚이라… 누가 그렇게 가르쳤니?"
+      ],
+      [
+       "yuki",
+       "일족의 어른들이요. 그림자는 숲의 것이라고."
+      ],
+      [
+       "morgana",
+       "백 년 전 그날, 숲은 너희를 숨겨 주고 아무것도 요구하지 않았어. 빚 이야기를 만든 건 너희 쪽이야. 고마움을 잊지 않으려고."
+      ],
+      [
+       "nar",
+       "유키의 손이 떨렸다. 쿠나이가 바닥에 떨어지는 작은 소리가 났다."
+      ],
+      [
+       "yuki",
+       "…그럼 백 년 동안, 우리는."
+      ],
+      [
+       "morgana",
+       "숲을 사랑했던 거지. 빚이 아니라. 내가 닉스와 손잡은 건 숲을 지키려고였지만, 너희에게 그걸 강요할 생각은 없었어."
+      ],
+      [
+       "nar",
+       "오두막 안쪽 벽에는 작은 목각 인형들이 줄지어 놓여 있었다. 검은 옷, 얼굴 가리개. 백 년 동안 숲을 지나간 그림자 일족의 아이들을 마녀가 하나씩 깎아 둔 것이었다."
+      ],
+      [
+       "yuki",
+       "…이건."
+      ],
+      [
+       "morgana",
+       "너희 일족은 이름을 남기지 않잖니. 그래서 내가 대신 기억했어. 맨 끝이 너야. 몇 해 전 숲 가장자리에서 표창 연습하던 꼬마."
+      ],
+      [
+       "yuki",
+       "봤어요? 그때?"
+      ],
+      [
+       "morgana",
+       "매일. 과녁을 한 번도 못 맞혀서 나무한테 사과하던 것까지."
+      ],
+      [
+       "yuki",
+       "그럼 저는… 이제 그림자 밖으로 나가도 되나요?"
+      ],
+      [
+       "morgana",
+       "처음부터 그래도 됐어. 다만 가끔 숲에 들러서 차는 마셔 주렴."
+      ],
+      [
+       "yuki",
+       "…네. 꼭."
+      ]
+     ]
+    },
+    {
+     "title": "3장 · 성의 그림자",
+     "lines": [
+      [
+       "nar",
+       "달 없는 성의 복도. 유키는 처음으로 앞장서지 않고 일행 사이에서 걸었다."
+      ],
+      [
+       "luna",
+       "요즘 유키가 시야에 계속 보여서 신기해. 원래 반은 안 보였잖아."
+      ],
+      [
+       "yuki",
+       "…연습 중이야. 보이는 거."
+      ],
+      [
+       "nar",
+       "쓰러진 벨리타가 그 모습을 보고 낮게 웃었다."
+      ],
+      [
+       "belita",
+       "그림자 일족이 대낮처럼 걷네. 성의 문지기들이 보면 놀라겠어."
+      ],
+      [
+       "yuki",
+       "…성에도 우리 일족이 있어?"
+      ],
+      [
+       "belita",
+       "몇 명. 닉스가 그림자를 좋아하거든. 숲에서 떠난 사람들은 다 이리로 왔어. 빚을 갚을 곳을 찾아서."
+      ],
+      [
+       "yuki",
+       "그 사람들한테 전해 줘. 빚은 없었다고. 처음부터."
+      ],
+      [
+       "belita",
+       "네가 직접 말해. 그들은 여왕 말보다 피붙이 말을 더 믿어."
+      ],
+      [
+       "nar",
+       "그날 밤, 성의 지하 회랑에서 유키는 검은 옷의 사람들 앞에 섰다. 처음으로 얼굴 가리개를 내리고."
+      ],
+      [
+       "yuki",
+       "나는 유키. 숲의 막내. …돌아가도 돼. 아무도 탓하지 않아."
+      ],
+      [
+       "nar",
+       "그림자들이 하나씩 가리개를 내렸다. 유키는 그 얼굴들을 하나도 빠짐없이 외웠다."
+      ],
+      [
+       "nar",
+       "회랑 끝에서 바람이 불었다. 얼굴을 드러낸 그림자들은 서로를 낯선 사람처럼 바라보았다. 같은 일족이었지만, 서로의 얼굴을 본 건 처음이었다."
+      ],
+      [
+       "yuki",
+       "…다들 이렇게 생겼었구나."
+      ],
+      [
+       "belita",
+       "얼굴 보니까 어때?"
+      ],
+      [
+       "yuki",
+       "시끄러울 것 같아. 다들 말하고 싶은 얼굴이야."
+      ],
+      [
+       "belita",
+       "그럼 들어 줘. 그게 막내 일이야."
+      ]
+     ]
+    },
+    {
+     "title": "4장 · 그림자 밖으로",
+     "lines": [
+      [
+       "nar",
+       "별의 첨탑 아래 시장. 유키는 노점 앞에서 오래 망설이고 있었다."
+      ],
+      [
+       "aria",
+       "뭘 그렇게 보고 있어?"
+      ],
+      [
+       "yuki",
+       "…머리핀. 청록색."
+      ],
+      [
+       "aria",
+       "사면 되지."
+      ],
+      [
+       "yuki",
+       "닌자는 반짝이는 거 안 해. 들키니까."
+      ],
+      [
+       "aria",
+       "이제 숨을 필요 없다며. 들켜도 돼. 우리가 옆에 있으니까."
+      ],
+      [
+       "nar",
+       "시장 골목에는 사람들이 북적였다. 유키는 반사적으로 지붕 위를 올려다봤다가, 다시 땅으로 시선을 내렸다."
+      ],
+      [
+       "yuki",
+       "…사람 많은 데선 원래 지붕으로 다녀."
+      ],
+      [
+       "aria",
+       "오늘은 길로 다녀 보자. 내가 앞에 설게. 밀려도 방패가 있으니까."
+      ],
+      [
+       "yuki",
+       "그거, 시장에서 방패 드는 사람 처음 봐."
+      ],
+      [
+       "aria",
+       "나도 시장에서 닌자랑 머리핀 고르는 건 처음이야."
+      ],
+      [
+       "nar",
+       "유키는 머리핀을 샀다. 그리고 바로 하지 못하고 한참 손에 쥐고만 있었다."
+      ],
+      [
+       "sera",
+       "줘 봐. 리본 바느질 빚 갚을게."
+      ],
+      [
+       "nar",
+       "세라가 서툰 손으로 유키의 단발머리에 핀을 꽂았다. 조금 비뚤었다."
+      ],
+      [
+       "luna",
+       "각도 7도 기울었어. 근데 예뻐."
+      ],
+      [
+       "yuki",
+       "…고쳐 주지 마. 이대로가 좋아."
+      ],
+      [
+       "sera",
+       "왜?"
+      ],
+      [
+       "yuki",
+       "비뚤어진 거, 너희가 해 준 거라서. 그림자 안에선 이런 거 못 받아."
+      ]
+     ]
+    },
+    {
+     "title": "5장 · 달빛 아래의 유키",
+     "lines": [
+      [
+       "nar",
+       "황혼의 옥좌. 닉스는 마지막 힘으로 그림자를 일으켰다. 그 그림자가 유키의 발목을 붙잡았다."
+      ],
+      [
+       "nyx",
+       "그림자 일족의 아이야. 넌 원래 내 쪽 사람이야. 밤은 너를 숨겨 주지. 돌아와."
+      ],
+      [
+       "yuki",
+       "숨는 건 이제 안 해도 돼. 숨겨 준 건 고맙지만."
+      ],
+      [
+       "nar",
+       "유키는 쿠나이로 자기 그림자를 베지 않았다. 대신 그 위에 똑바로 섰다. 달빛이 그녀의 그림자를 선명하게 만들었다."
+      ],
+      [
+       "yuki",
+       "그림자는 빛이 있어야 생겨. 밤만 있으면 그림자도 없어."
+      ],
+      [
+       "nyx",
+       "…그걸 깨닫는 데 백 년이 걸렸구나, 그림자 일족은."
+      ],
+      [
+       "nar",
+       "닉스의 그림자가 천천히 풀려 나갔다. 유키의 발목에 남은 건 차가운 감촉뿐이었다."
+      ],
+      [
+       "nyx",
+       "그럼 넌 이제 무엇으로 살 거지? 그림자 일족이 그림자를 버리면."
+      ],
+      [
+       "yuki",
+       "안 버려. 그림자는 내 거야. 빚이 아니라, 그냥 내 거."
+      ],
+      [
+       "sera",
+       "멋있다, 유키. 방금 그거 나중에 또 해 줘."
+      ],
+      [
+       "yuki",
+       "…두 번은 안 해. 부끄러워."
+      ],
+      [
+       "nar",
+       "봄이 왔다. 어스름 숲 오두막 마당에 긴 탁자가 놓였다. 모르가나가 차를 따르고, 가리개를 벗은 일족 사람들이 둘러앉았다."
+      ],
+      [
+       "morgana",
+       "막내가 사람을 이렇게 많이 데려올 줄은 몰랐네."
+      ],
+      [
+       "yuki",
+       "…다 같이 와도 된다고 했잖아요."
+      ],
+      [
+       "sera",
+       "유키! 여기 자리 비었어!"
+      ],
+      [
+       "nar",
+       "유키는 비뚤어진 머리핀을 만지며 탁자로 걸어갔다. 달빛 아래, 그녀의 그림자는 다른 그림자들과 겹쳐 하나처럼 보였다."
+      ],
+      [
+       "nar",
+       "(칭호 「달빛 아래의 유키」·프로필 금빛 테두리 해금)"
+      ]
+     ]
+    }
+   ],
+   "aria": [
+    {
+     "title": "1장 · 늦게 온 성기사",
+     "lines": [
+      [
+       "nar",
+       "벨리타를 쓰러뜨린 날 밤. 성의 지하 감옥 문을 연 사람들 앞에, 금빛 갑옷의 기사가 무릎을 꿇은 채 묶여 있었다."
+      ],
+      [
+       "aria",
+       "…드디어 누가 왔네. 성기사단 부단장 아리아야. 늦어서 미안하다고 말하고 싶은데, 늦은 건 나였지."
+      ],
+      [
+       "sera",
+       "혼자 여길 쳐들어온 거야?"
+      ],
+      [
+       "aria",
+       "기사단 열두 명이 같이 왔어. 지금은 나 혼자 남았고."
+      ],
+      [
+       "nar",
+       "아무도 말을 잇지 못했다. 아리아가 먼저 웃었다. 지친 웃음이었다."
+      ],
+      [
+       "aria",
+       "괜찮아. 다들 살아서 돌아갔어. 내가 후퇴를 막는 동안. 방패 하나로 마을 하나 지켰다는 소문, 사실은 그때 이야기야."
+      ],
+      [
+       "nar",
+       "감옥 바닥에는 긁힌 자국이 잔뜩 있었다. 하루에 한 줄. 아리아가 갇혀 지낸 날짜였다."
+      ],
+      [
+       "luna",
+       "…삼백 일이 넘네요."
+      ],
+      [
+       "aria",
+       "하루도 안 빼고 기도했어. 봉인을 다시 걸 방법을 알려 달라고. 대답은 없었지만."
+      ],
+      [
+       "yuki",
+       "…지금은 대답이 왔어?"
+      ],
+      [
+       "aria",
+       "응. 문이 열렸잖아. 생각했던 모양이랑은 많이 다르지만."
+      ],
+      [
+       "luna",
+       "그럼 왜 같이 돌아가지 않았어요?"
+      ],
+      [
+       "aria",
+       "우리 기사단이 300년 전에 닉스를 봉인했거든. 그 봉인이 풀린 게 3년 전이야. 마지막 봉인 담당이 나였어."
+      ],
+      [
+       "yuki",
+       "…네 탓이야?"
+      ],
+      [
+       "aria",
+       "그렇게 생각해. 그래서 혼자라도 끝까지 가야 해. 이 방패를 다시 들어도 된다면."
+      ],
+      [
+       "sera",
+       "들어. 대신 혼자 말고. 우리 원정대, 앞줄이 비어 있거든."
+      ],
+      [
+       "aria",
+       "…앞줄이라. 좋아. 뒤는 내가 지킬게. 너희는 앞만 봐."
+      ]
+     ]
+    },
+    {
+     "title": "2장 · 봉인의 기록",
+     "lines": [
+      [
+       "nar",
+       "숲의 마녀 모르가나는 기사단의 문장을 보자 얼굴을 찡그렸다."
+      ],
+      [
+       "morgana",
+       "성기사단이라. 300년 전 봉인 때도 이 숲을 지나갔지. 그때 기사들은 정말 시끄러웠어."
+      ],
+      [
+       "aria",
+       "그 봉인, 왜 풀렸는지 아세요? 기사단 기록에는 담당자의 기도가 약해져서라고만 적혀 있어요."
+      ],
+      [
+       "morgana",
+       "기도? 아니야. 봉인은 원래 300년짜리였어. 처음부터 그렇게 만들어졌지. 기사단도 알고 있었을 텐데."
+      ],
+      [
+       "aria",
+       "…처음부터 끝나게 되어 있었다고요?"
+      ],
+      [
+       "morgana",
+       "닉스를 영원히 가둘 방법은 없어. 밤은 없앨 수 있는 게 아니니까. 300년 동안 시간을 번 거야. 다음 사람들이 준비할 시간."
+      ],
+      [
+       "nar",
+       "모르가나는 오래된 기사단 문장을 손가락으로 쓸었다. 칠이 벗겨진 방패 그림 위에 작은 불꽃 문양이 새겨져 있었다."
+      ],
+      [
+       "morgana",
+       "300년 전 봉인을 걸던 기사도 너처럼 금발이었어. 떠나기 전에 이렇게 말하더구나. 다음 당번이 너무 자책하지 않았으면 좋겠다고."
+      ],
+      [
+       "aria",
+       "…그런 말이 기록에는 하나도 없었어요."
+      ],
+      [
+       "morgana",
+       "기록은 이긴 이야기만 남기니까. 지친 이야기는 숲이 기억해."
+      ],
+      [
+       "nar",
+       "아리아는 방패 안쪽 첫 번째 칸, 300년 전 이름을 오래 바라보았다."
+      ],
+      [
+       "nar",
+       "아리아는 방패 안쪽에 새겨진 이름들을 손가락으로 훑었다. 역대 봉인 담당자들. 마지막 칸에 그녀의 이름이 있었다."
+      ],
+      [
+       "aria",
+       "그럼 저는 실패한 게 아니라…"
+      ],
+      [
+       "morgana",
+       "마지막 당번이었던 거지. 시간이 다 됐을 뿐이야. 네 기도가 약했던 게 아니라."
+      ],
+      [
+       "aria",
+       "…3년 동안 매일 밤 그 생각만 했어요."
+      ],
+      [
+       "morgana",
+       "그럼 오늘부턴 다른 생각을 하렴. 다음 300년을 어떻게 할지 같은 거."
+      ]
+     ]
+    },
+    {
+     "title": "3장 · 지키지 못한 것",
+     "lines": [
+      [
+       "nar",
+       "벨리타와 아리아는 오래 서로를 노려보았다. 한쪽은 아리아를 가둔 여왕이었고, 한쪽은 성에 쳐들어온 기사였다."
+      ],
+      [
+       "belita",
+       "그 방패, 3년 전 루벨 마을에서 본 적 있어. 밤이 내려앉던 날."
+      ],
+      [
+       "aria",
+       "…거기 있었어?"
+      ],
+      [
+       "belita",
+       "아이들 곁에. 넌 마을 입구에서 그림자 짐승들을 막고 있었지. 방패 하나로. 마을 사람들은 다 살았어. 아이들만 잠들었고."
+      ],
+      [
+       "aria",
+       "아이들은 못 지켰어. 그게 내 실패야."
+      ],
+      [
+       "belita",
+       "그 아이들을 깨우려고 내가 닉스와 계약했어. 내 밤을 대신 내주고. 네가 입구를 막아 주지 않았다면 깨울 아이들도 남지 않았을 거야."
+      ],
+      [
+       "nar",
+       "아리아의 손에서 힘이 빠졌다. 방패가 바닥에 닿아 둔한 소리를 냈다."
+      ],
+      [
+       "aria",
+       "그럼… 그날 나는."
+      ],
+      [
+       "belita",
+       "네 몫을 했어. 나는 내 몫을 했고. 남은 몫은 닉스한테 있어."
+      ],
+      [
+       "nar",
+       "성 창문 너머로 루벨 마을 쪽 하늘이 보였다. 3년 동안 걷히지 않던 검은 구름이 아주 조금 옅어져 있었다."
+      ],
+      [
+       "belita",
+       "아이들 중 하나가 잠들기 직전에 그랬어. 금빛 기사님이 문 앞에 있으니까 괜찮다고."
+      ],
+      [
+       "aria",
+       "…그 아이 이름, 알아?"
+      ],
+      [
+       "belita",
+       "미라. 일곱 살. 깨어나면 기사가 되고 싶대."
+      ],
+      [
+       "aria",
+       "그럼 깨워야겠네. 꼭. 방패 드는 법은 내가 가르칠 테니까."
+      ],
+      [
+       "sera",
+       "그럼 다 같이 가서 받아 오면 되겠네."
+      ],
+      [
+       "aria",
+       "…그래. 이번엔 입구가 아니라 끝까지 간다."
+      ]
+     ]
+    },
+    {
+     "title": "4장 · 다시 든 방패",
+     "lines": [
+      [
+       "nar",
+       "별의 첨탑 대장간. 아리아는 금이 간 방패를 대장장이에게 맡기려다 멈췄다."
+      ],
+      [
+       "luna",
+       "왜? 수리비라면 내가 계산해 놨는데."
+      ],
+      [
+       "aria",
+       "금 간 자리마다 누군가를 지킨 기억이 있어서. 지우기 아까워."
+      ],
+      [
+       "yuki",
+       "…그럼 메우지 말고 덧대."
+      ],
+      [
+       "nar",
+       "대장장이는 금 간 자리를 녹이지 않고 금빛 띠로 감쌌다. 방패에 빛나는 줄무늬가 생겼다."
+      ],
+      [
+       "sera",
+       "오, 멋있다. 상처가 장식이 됐네."
+      ],
+      [
+       "aria",
+       "기사단에선 상처를 부끄러워하라고 배웠어. 지키지 못한 증거라고."
+      ],
+      [
+       "luna",
+       "계산해 보면 반대야. 금이 간 횟수만큼 공격을 막은 거잖아."
+      ],
+      [
+       "nar",
+       "대장간 화로가 붉게 타올랐다. 망치 소리 사이로 아리아는 오래 담아 둔 이야기를 꺼냈다."
+      ],
+      [
+       "aria",
+       "감옥에 있을 때, 너희가 오기 전까지 매일 생각했어. 다시 방패를 들 자격이 있을까. 지키지 못한 사람이 또 지키겠다고 해도 되는 걸까."
+      ],
+      [
+       "sera",
+       "답은 나왔어?"
+      ],
+      [
+       "aria",
+       "응. 자격은 묻는 게 아니라 지키면서 생기는 거더라. 너희 앞에 서는 동안 계속 생기고 있어."
+      ],
+      [
+       "yuki",
+       "…그거 좋다. 나중에 일족한테도 말해 줄게."
+      ],
+      [
+       "nar",
+       "아리아는 새 방패를 들어 올렸다. 예전보다 조금 무거웠지만, 팔은 떨리지 않았다."
+      ],
+      [
+       "aria",
+       "…다시 들어도 되는 거지, 이 방패."
+      ],
+      [
+       "sera",
+       "처음부터 내려놓은 적 없잖아. 감옥에서도 꼭 끌어안고 있었으면서."
+      ],
+      [
+       "aria",
+       "들켰네. 좋아, 다시 든 방패의 첫 맹세. 이번엔 아무도 두고 가지 않는다."
+      ]
+     ]
+    },
+    {
+     "title": "5장 · 여명의 성기사",
+     "lines": [
+      [
+       "nar",
+       "황혼의 옥좌가 무너지기 직전. 닉스는 방패를 든 아리아를 바라보았다."
+      ],
+      [
+       "nyx",
+       "또 성기사인가. 이번엔 몇 년짜리 봉인을 준비했지?"
+      ],
+      [
+       "aria",
+       "봉인은 없어. 너를 가두지 않을 거야."
+      ],
+      [
+       "nyx",
+       "…그럼 어떻게 할 생각이지?"
+      ],
+      [
+       "aria",
+       "약속을 할 거야. 밤은 밤의 몫만큼만, 아침은 아침의 몫만큼만. 다시 넘치면, 그때 또 우리가 올게."
+      ],
+      [
+       "nyx",
+       "감옥 대신 약속이라. 300년 동안 아무도 그런 말은 안 했어."
+      ],
+      [
+       "nar",
+       "닉스는 황혼 너머로 물러났다. 무너진 옥좌 위로 처음 보는 색의 아침이 밝았다."
+      ],
+      [
+       "nar",
+       "몇 달 뒤, 루벨 마을. 깨어난 아이들이 막대기를 방패 삼아 기사 놀이를 하고 있었다."
+      ],
+      [
+       "nar",
+       "일곱 살 미라가 아리아 앞에 막대기를 내밀었다. 금빛 기사님, 방패 드는 법 가르쳐 주세요."
+      ],
+      [
+       "aria",
+       "좋아. 첫 번째, 방패는 혼자 들지 않는다. 옆 사람이랑 어깨를 맞대."
+      ],
+      [
+       "sera",
+       "그거 기사단 교본에 있는 거야?"
+      ],
+      [
+       "aria",
+       "이제부터 있어. 내가 새로 썼거든."
+      ],
+      [
+       "nar",
+       "기사단 본부. 아리아는 방패 안쪽, 자기 이름이 새겨진 마지막 칸 아래에 새 칸을 하나 더 새겼다."
+      ],
+      [
+       "aria",
+       "세라, 루나, 유키. 그리고 벨리타, 셀레스, 모르가나. 봉인 담당자 명단이 아니라, 약속을 지킬 사람들 명단이야."
+      ],
+      [
+       "sera",
+       "우리 이름이 성기사 방패에? 출세했다."
+      ],
+      [
+       "aria",
+       "다음 300년 당번이야. 아무도 혼자 서지 않게."
+      ],
+      [
+       "nar",
+       "아리아는 방패를 등에 메고 문을 열었다. 여명이 금빛 띠 위에서 빛났다."
+      ],
+      [
+       "nar",
+       "(칭호 「여명의 성기사」·프로필 금빛 테두리 해금)"
+      ]
+     ]
+    }
+   ]
+  };
+  if (root.BD_DATA) root.BD_DATA.STORIES = STORIES;
+  if (typeof module !== 'undefined' && module.exports) module.exports = STORIES;
 })(typeof window !== 'undefined' ? window : globalThis);
 
 </script>
@@ -1320,7 +2965,7 @@ window.BD_ARTMAP = {
     const asc = Math.max(0, Math.min(10, opts.asc | 0));
     const run = {
       v: 2, seed, rng: seed, nextUid: 1, starter: starterId, cls: s.cls, asc,
-      unlocked: (opts.unlocked || []).slice(),
+      unlocked: (opts.unlocked || []).slice(), passive: opts.passive ? starterId : null, loadout: { relic: opts.relic || s.relic, deck: opts.deck ? 'alt' : 'base' },
       hp: s.hp, maxHp: s.hp, gold: s.gold, deck: [], relics: [], potions: [null, null, null],
       act: 1, floor: 0, totalFloor: 0, pos: null, visited: [], map: null, screen: 'map', over: false, won: false,
       combat: null, rewards: null, shop: null, event: null, treasure: null, pending: null,
@@ -1330,10 +2975,11 @@ window.BD_ARTMAP = {
       fx: []
     };
     if (asc >= 6) { run.maxHp -= 6; run.hp = run.maxHp; }
-    s.deck.forEach(id => run.deck.push(newCard(run, id)));
+    (opts.deck || s.deck).forEach(id => run.deck.push(newCard(run, id)));
     if (asc >= 7) run.deck.push(newCard(run, 'wound'));
     run.map = genMap(run, 1);
-    addRelic(run, s.relic);
+    addRelic(run, opts.relic || s.relic);
+    if (opts.potion) addPotion(run, randomPotion(run));
     return run;
   }
 
@@ -1466,6 +3112,7 @@ window.BD_ARTMAP = {
       const c = D.CARDS[k];
       if (!(c.cls === run.cls || c.cls === 'neutral')) return false;
       if (c.rarity === 'legend') return rarity === 'rare' && run.unlocked.includes(k);
+      if (c.mastery && !run.unlocked.includes(k)) return false;
       return c.rarity === rarity;
     });
   }
@@ -1537,6 +3184,15 @@ window.BD_ARTMAP = {
     if (hasRelic(run, 'b_mask')) for (let i = 0; i < 2; i++) c.hand.push(newCard(run, 'daze'));
     if (hasRelic(run, 'guard_charm')) P.block += 10;
     if (hasRelic(run, 'holy_sigil')) { P.block += 4; addSt(P, 'thorns', 1); }
+    if (hasRelic(run, 'crimson_sheath')) addSt(P, 'vigor', kind === 'monster' ? 6 : 10);
+    if (hasRelic(run, 'viper_ring')) c.enemies.forEach(e => addSt(e, 'poison', 2));
+    if (hasRelic(run, 'dawn_lamp')) addSt(P, 'sanctuary', 1);
+    // 히로인 레벨 5 패시브
+    if (run.passive === 'sera' && kind === 'boss') addSt(P, 'str', 1);
+    if (run.passive === 'sera' && kind === 'elite') addSt(P, 'vigor', 4);
+    if (run.passive === 'luna') addSt(P, 'arcane', 1);
+    if (run.passive === 'yuki' && kind !== 'monster' && c.hand.length < HAND_MAX) c.hand.push(newCard(run, 'shiv'));
+    if (run.passive === 'aria') addSt(P, 'retribution', 2);
     if (hasRelic(run, 'dragon_heart')) addSt(P, 'str', 1);
     if (hasRelic(run, 'silk_glove')) addSt(P, 'dex', 1);
     if (hasRelic(run, 'thorn_crown')) addSt(P, 'thorns', 3);
@@ -1685,7 +3341,7 @@ window.BD_ARTMAP = {
       + (c.turn === 1 && hasRelic(run, 'moon_pendant') ? 1 : 0)
       + (c.turn % 3 === 0 && hasRelic(run, 'sun_pin') ? 1 : 0);
     drawCards(run, BASE_DRAW + (P.st.drawUp || 0) + (hasRelic(run, 'b_hourglass') ? 1 : 0)
-      + (c.turn === 1 && hasRelic(run, 'firefly') ? 2 : 0) + (c.turn === 1 && hasRelic(run, 'moon_pendant') ? 1 : 0));
+      + (c.turn === 1 && hasRelic(run, 'firefly') ? 2 : 0) + (c.turn === 1 && hasRelic(run, 'moon_pendant') ? 1 : 0) + (c.turn % 2 === 0 && hasRelic(run, 'star_chart') ? 1 : 0));
     fx(run, { k: 'turn', who: 'p', turn: c.turn });
     checkCombatEnd(run);
   }
@@ -2004,7 +3660,7 @@ window.BD_ARTMAP = {
   }
 
   // ───────── 휴식 ─────────
-  function restHealAmount(run) { return hasRelic(run, 'b_ember') ? 0 : Math.floor(run.maxHp * (run.asc >= 5 ? 0.27 : 0.3)) + (hasRelic(run, 'teacup') ? 15 : 0); }
+  function restHealAmount(run) { return hasRelic(run, 'b_ember') ? 0 : Math.floor(run.maxHp * (run.asc >= 5 ? 0.27 : 0.3)) + (hasRelic(run, 'teacup') ? 15 : 0) + (hasRelic(run, 'dawn_lamp') ? 6 : 0); }
   function restHeal(run) {
     if (run.screen !== 'rest') return { ok: false };
     if (hasRelic(run, 'b_ember')) return { ok: false, reason: '영원의 불씨 때문에 쉴 수 없어.' };
@@ -2147,13 +3803,26 @@ window.BD_ARTMAP = {
   function newMeta() {
     return { v: 2, runs: 0, wins: 0, bestFloor: 0, bestAct: 0, kills: 0, elites: 0, bosses: {}, heroWins: {}, heroRuns: {}, heroBestAsc: {},
              cardsSeen: [], relicsSeen: [], enemiesSeen: [], ach: {}, ascMax: 0, maxHit: 0, cardsPlayed: 0, dmgDealt: 0, potionsUsed: 0,
-             goldEarned: 0, playMs: 0, tutorialDone: false, newGallery: [] };
+             goldEarned: 0, playMs: 0, tutorialDone: false, newGallery: [], heroXp: {}, storyRead: {} };
   }
   function migrateMeta(m) {
     const n = newMeta();
     if (!m || typeof m !== 'object') return n;
     for (const k of Object.keys(n)) if (m[k] !== undefined) n[k] = m[k];
     if (!Array.isArray(n.cardsSeen)) n.cardsSeen = [];
+    if (m.updatedAt) n.updatedAt = m.updatedAt;
+    if (m.xpMigratedFrom) n.xpMigratedFrom = m.xpMigratedFrom;
+    if (!n.heroXp || typeof n.heroXp !== 'object') n.heroXp = {};
+    if (!n.storyRead || typeof n.storyRead !== 'object') n.storyRead = {};
+    // v1.1 이하 기록: 히로인 경험치가 없으면 남아 있는 기록(히로인별 원정·클리어 수)으로 보수적으로 계산
+    if (m.heroXp === undefined && (m.runs || 0) > 0) {
+      for (const h of Object.keys(D.MASTERY.heroes)) {
+        const r = (n.heroRuns && n.heroRuns[h]) || 0, w = (n.heroWins && n.heroWins[h]) || 0;
+        n.heroXp[h] = Math.min(D.MASTERY.curve[D.MASTERY.curve.length - 1], Math.max(0, r - w) * 40 + w * 300);
+      }
+      n.xpMigratedFrom = 'v1.1';
+    }
+    n.v = 3;
     return n;
   }
   const GALLERY_REQ = { g_sera: 'win_sera', g_luna: 'win_luna', g_yuki: 'win_yuki', g_aria: 'win_aria', g_morgana: 'boss_morgana', g_belita: 'boss_belita',
@@ -2202,7 +3871,68 @@ window.BD_ARTMAP = {
     if (run) for (const cid of unlockedCards(meta)) if (!run.unlocked.includes(cid)) run.unlocked.push(cid);
     return got;
   }
+  // ───────── 히로인 레벨 ─────────
+  function levelOf(xp) {
+    const c = D.MASTERY.curve; let lv = 1;
+    for (let i = 1; i < c.length; i++) if (xp >= c[i]) lv = i + 1;
+    return lv;
+  }
+  function heroLevel(meta, h) {
+    const xp = (meta.heroXp && meta.heroXp[h]) || 0, c = D.MASTERY.curve, lv = levelOf(xp);
+    const cur = c[lv - 1], next = lv < c.length ? c[lv] : null;
+    return { lv, xp, cur, next, max: next == null, pct: next == null ? 1 : (xp - cur) / (next - cur) };
+  }
+  function masteryHas(meta, h, kind, id) {
+    if (!D.MASTERY.heroes[h]) return false;
+    const lv = heroLevel(meta, h).lv;
+    return D.MASTERY.track(h).some(t => t.kind === kind && (id === undefined || t.id === id || t.ch === id) && lv >= t.lv);
+  }
+  function masteryCards(meta) {
+    const out = [];
+    for (const h of Object.keys(D.MASTERY.heroes)) for (const t of D.MASTERY.track(h)) if (t.kind === 'card' && heroLevel(meta, h).lv >= t.lv) out.push(t.id);
+    return out;
+  }
+  function heroTitle(meta, h) {
+    const m = D.MASTERY.heroes[h]; if (!m) return null;
+    const lv = heroLevel(meta, h).lv;
+    return lv >= 10 ? m.titles[1] : lv >= 8 ? m.titles[0] : null;
+  }
+  // 원정 시작 옵션(레벨 보상 반영). choice = { relic: 'base'|'alt', deck: 'base'|'alt' }
+  function runOptions(meta, h, choice) {
+    choice = choice || {};
+    const m = D.MASTERY.heroes[h], o = { unlocked: unlockedCards(meta).concat(masteryCards(meta)) };
+    if (!m) return o;
+    if (choice.relic === 'alt' && masteryHas(meta, h, 'relic')) o.relic = m.relic;
+    if (choice.deck === 'alt' && masteryHas(meta, h, 'deck')) o.deck = m.deck.cards.slice();
+    o.passive = masteryHas(meta, h, 'passive');
+    o.potion = masteryHas(meta, h, 'potion');
+    return o;
+  }
+  function runXp(run) {
+    const X = D.MASTERY.xp, s = run.stats;
+    const floors = Math.max(0, (run.act - 1) * 11 + run.floor - (run.won ? 0 : 1));
+    const parts = [
+      { k: '오른 층', n: floors, xp: floors * X.floor },
+      { k: '엘리트', n: s.elites, xp: s.elites * X.elite },
+      { k: '보스', n: s.bosses.length, xp: s.bosses.length * X.boss }
+    ];
+    if (run.won) parts.push({ k: '원정 성공', n: 1, xp: X.win });
+    return { parts, total: parts.reduce((a, p) => a + p.xp, 0) };
+  }
+  function awardXp(meta, run) {
+    const h = run.starter;
+    if (!D.MASTERY.heroes[h]) return null;
+    meta.heroXp = meta.heroXp || {};
+    const before = heroLevel(meta, h), g = runXp(run);
+    const cap = D.MASTERY.curve[D.MASTERY.curve.length - 1];
+    meta.heroXp[h] = Math.min(cap, before.xp + g.total);
+    const after = heroLevel(meta, h);
+    const unlocks = D.MASTERY.track(h).filter(t => t.lv > before.lv && t.lv <= after.lv);
+    return { hero: h, before, after, gain: after.xp - before.xp, parts: g.parts, unlocks };
+  }
+
   function recordRun(meta, run) {
+    run.xpResult = awardXp(meta, run);
     meta.runs++; meta.kills += run.stats.kills; meta.elites += run.stats.elites;
     meta.cardsPlayed += run.stats.cardsPlayed; meta.dmgDealt += run.stats.dmgDealt; meta.potionsUsed += run.stats.potionsUsed; meta.goldEarned += run.stats.goldEarned;
     meta.maxHit = Math.max(meta.maxHit, run.stats.maxHit);
@@ -2318,7 +4048,7 @@ window.BD_ARTMAP = {
     takeGold, takeCard, skipCard, takeRelic, takeBossRelic, takePotion, leaveReward, synergy, rewardCount,
     restHeal, restHealAmount, restSmith, selectableCards, selectCard, cancelSelect,
     buy, shopRemove, removePrice, leaveShop, openChest, leaveTreasure, chooseEvent, eventOptionOk, leaveEvent,
-    newMeta, migrateMeta, recordRun, checkAchievements, heroUnlocked, unlockedCards, galleryUnlocked,
+    newMeta, migrateMeta, recordRun, heroLevel, masteryHas, masteryCards, heroTitle, runOptions, runXp, awardXp, levelOf, checkAchievements, heroUnlocked, unlockedCards, galleryUnlocked,
     describe, upgradeDiff, josa, hasRelic, startCombat
   };
   root.BD_ENGINE = E;
@@ -2340,8 +4070,9 @@ window.BD_ARTMAP = {
 
   let run = null;
   let meta = loadMeta();
-  const settings = Object.assign({ sound: false, vibe: true, reduce: false, fast: false, asc: 0 }, loadJSON(SET_KEY) || {});
-  const ui = { view: 'title', sel: null, potionSel: null, busy: false, modal: null, hold: false, deadShown: new Set(), runAch: [], tut: 0, lastScreen: null, codexTab: 'cards', codexCls: 'all', modalStack: [] };
+  const settings = Object.assign({ sound: false, vibe: true, reduce: false, fast: false, asc: 0, talk: true, loadout: {} }, loadJSON(SET_KEY) || {});
+  if (!settings.loadout || typeof settings.loadout !== 'object') settings.loadout = {};
+  const ui = { story: null, view: 'title', sel: null, potionSel: null, busy: false, modal: null, hold: false, deadShown: new Set(), runAch: [], tut: 0, lastScreen: null, codexTab: 'cards', codexCls: 'all', modalStack: [], pendingBackup: null };
 
   // ───────── 저장 ─────────
   function loadJSON(k) { try { const s = localStorage.getItem(k); return s ? JSON.parse(s) : null; } catch (e) { return null; } }
@@ -2353,7 +4084,7 @@ window.BD_ARTMAP = {
     if (m1) { m.runs = m1.runs || 0; m.wins = m1.wins || 0; m.kills = m1.kills || 0; m.bestFloor = m1.bestFloor || 0; saveJSON(META_KEY, m); }
     return m;
   }
-  function saveMeta() { saveJSON(META_KEY, meta); }
+  function saveMeta() { meta.updatedAt = new Date().toISOString(); saveJSON(META_KEY, meta); }
   function saveSettings() { saveJSON(SET_KEY, settings); applySettings(); }
   function saveRun() {
     if (!run) return;
@@ -2361,6 +4092,67 @@ window.BD_ARTMAP = {
       if (!run.recorded) { E.recordRun(meta, run); grantAch(); saveMeta(); }
       try { localStorage.removeItem(SAVE_KEY); } catch (e) { /* 무시 */ }
     } else saveJSON(SAVE_KEY, JSON.parse(JSON.stringify(run, (k, v) => (k === 'fx' ? undefined : v))));
+    stampSave();
+  }
+  function stampSave() {
+    meta.updatedAt = new Date().toISOString();
+    saveJSON(META_KEY, meta);
+  }
+  function saveStatusLine() {
+    const t = meta.updatedAt ? new Date(meta.updatedAt) : null;
+    const when = t && !isNaN(t) ? t.toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '아직 없음';
+    return `이 기기에만 저장 · 클라우드 동기화 없음 · 마지막 저장 ${when}`;
+  }
+  function buildBackup() {
+    const cur = run && !run.over ? JSON.parse(JSON.stringify(run, (k, v) => (k === 'fx' ? undefined : v))) : loadJSON(SAVE_KEY);
+    return {
+      v: 1,
+      game: 'beauty-deck',
+      exportedAt: new Date().toISOString(),
+      run: cur && !cur.over ? cur : null,
+      meta: JSON.parse(JSON.stringify(meta)),
+      settings: JSON.parse(JSON.stringify(settings))
+    };
+  }
+  function summarizeBackup(b) {
+    const m = b.meta || {};
+    const r = b.run;
+    const runTxt = r && r.starter && D.STARTERS[r.starter]
+      ? `${D.STARTERS[r.starter].title} · ${r.act < 4 ? r.act + '막' : '종막'}`
+      : '진행 중 원정 없음';
+    const lv = Object.keys(D.MASTERY.heroes).map(h => `${D.HEROINES[h].name} Lv${E.heroLevel(E.migrateMeta(m), h).lv}`).join(' ');
+    return `원정 ${m.runs || 0}회 · 클리어 ${m.wins || 0}회 · 승천 ${m.ascMax || 0} · ${lv} · ${runTxt}`;
+  }
+  function backupIsOlderThanLocal(b) {
+    const localTs = meta.updatedAt ? Date.parse(meta.updatedAt) : 0;
+    const fileTs = b.exportedAt ? Date.parse(b.exportedAt) : 0;
+    if (localTs && fileTs && localTs > fileTs) return true;
+    const lr = meta.runs || 0, lw = meta.wins || 0;
+    const fr = (b.meta && b.meta.runs) || 0, fw = (b.meta && b.meta.wins) || 0;
+    if (lr > fr || lw > fw) return true;
+    return false;
+  }
+  function applyBackup(b) {
+    if (!b || b.game !== 'beauty-deck' || b.v !== 1 || !b.meta) throw new Error('형식이 맞지 않는 백업이야');
+    meta = E.migrateMeta(b.meta);
+    meta.updatedAt = new Date().toISOString();
+    saveJSON(META_KEY, meta);
+    if (b.settings && typeof b.settings === 'object') {
+      Object.assign(settings, { sound: false, vibe: true, reduce: false, fast: false, asc: 0, talk: true, loadout: {} }, b.settings);
+      if (!settings.loadout || typeof settings.loadout !== 'object') settings.loadout = {};
+      saveSettings();
+    }
+    if (b.run && b.run.v === 2 && !b.run.over && D.STARTERS[b.run.starter]) {
+      saveJSON(SAVE_KEY, b.run);
+      run = null;
+    } else {
+      try { localStorage.removeItem(SAVE_KEY); } catch (e) { /* 무시 */ }
+      run = null;
+    }
+    ui.view = 'title'; ui.modal = null; ui.modalStack = []; ui.pendingBackup = null;
+    applySettings();
+    render();
+    toast('백업을 불러왔어.');
   }
   function grantAch() {
     const got = E.checkAchievements(meta, run);
@@ -2517,6 +4309,7 @@ window.BD_ARTMAP = {
     }
     const changed = scr !== ui.lastScreen; ui.lastScreen = scr;
     if (ui.modal) html += `<div class="modal-bg" data-act="closeModal"><div class="modal" data-act="noop">${ui.modal}</div></div>`;
+    if (ui.story) html += storyHTML();
     app.innerHTML = `<div class="screen ${changed && !reduced() ? 'enter' : ''} scr-${scr}" ${run && run.screen !== 'combat' ? `style="--actbg:${D.ACTS[run.act].bg[0]}"` : ''}>${html}</div>`;
     if (run && run.screen === 'map' && !ui.hold) scrollMap();
     if (run && (run.screen === 'combat' || ui.hold)) layoutHand();
@@ -2537,9 +4330,11 @@ window.BD_ARTMAP = {
         ${ok ? `<button class="btn primary block" data-act="continue">▶ 이어하기 <span class="small">(${esc(D.STARTERS[saved.starter].title)} · ${saved.act < 4 ? saved.act + '막' : '종막'})</span></button>` : ''}
         <button class="btn ${ok ? '' : 'primary'} block" data-act="newGame">⚔️ 새 원정 시작</button>
         <div class="row"><button class="btn block" data-act="codex">📖 도감${newG ? ' <span class="dot"></span>' : ''}</button><button class="btn block" data-act="achv">🏆 업적 ${achN}/${achT}</button></div>
+        <button class="btn block" data-act="heroes">💞 히로인 · 레벨 · 스토리${storyNewCount() ? ` <span class="dot"></span>` : ''}</button>
         <div class="row"><button class="btn block" data-act="help">❔ 도움말</button><button class="btn block" data-act="settings">⚙️ 설정</button></div>
       </div>
       <div class="dim small">원정 ${meta.runs}회 · 클리어 ${meta.wins}회 · 최고 승천 ${Math.max(0, meta.ascMax - (meta.wins ? 1 : 0))}${meta.ascMax ? ` · 승천 ${meta.ascMax}까지 열림` : ''}</div>
+      <div class="dim" style="font-size:11px">${esc(saveStatusLine())}</div>
       <div class="dim" style="font-size:11px">v${D.VERSION} · 모든 등장인물은 20대 이상의 성인입니다</div>
     </div></div>`;
   }
@@ -2566,13 +4361,15 @@ window.BD_ARTMAP = {
           <div class="hero-pick">${heroArt(s.hero, 'hp')}
             <div class="col" style="gap:4px">
               <h3>${esc(s.title)} ${wins ? `<span title="클리어">⭐${wins > 1 ? wins : ''}</span>` : ''}</h3>
+              ${lvMini(id)}
               <div><span class="tag">${esc(h.job)}</span><span class="tag">${h.age}세</span><span class="tag">❤️ ${s.hp - (asc >= 6 ? 6 : 0)}</span>${meta.heroBestAsc[id] != null && wins ? `<span class="tag">🔥${meta.heroBestAsc[id]}</span>` : ''}</div>
               <div class="small">${esc(s.pitch)}</div>
               <div class="quote">“${esc(s.line)}”</div>
             </div></div>
-          <div class="small"><b>${r.icon} ${esc(r.name)}</b> — ${esc(r.desc)}</div>
+          <div class="small"><b>${r.icon} ${esc(r.name)}</b> — ${esc(r.desc)}${E.masteryHas(meta, id, 'relic') ? ' <span class="dim">(기본)</span>' : ''}</div>
           <div class="archrow">${arch}</div>
-          <div class="row"><button class="btn" data-act="previewDeck" data-id="${id}">시작 덱</button>
+          ${loadoutHTML(id)}
+          <div class="row"><button class="btn" data-act="profile" data-id="${id}">💞 프로필</button><button class="btn" data-act="previewDeck" data-id="${id}">시작 덱</button>
           <button class="btn primary" style="flex:1" data-act="pick" data-id="${id}">이 히로인으로 출발</button></div>
         </div>`;
       }).join('')}
@@ -2791,6 +4588,137 @@ window.BD_ARTMAP = {
   }
 
   // ───────── 종료 ─────────
+  // ───────── 히로인 레벨 · 스토리 · 대사 (v1.2) ─────────
+  const TRACK_ICON = { story: '📖', card: '🃏', relic: '💎', passive: '✨', deck: '🗂️', title: '🎖️', potion: '🧪', frame: '🖼️' };
+  function trackLabel(h, t) {
+    const m = D.MASTERY.heroes[h];
+    switch (t.kind) {
+      case 'story': return `개인 스토리 「${D.STORIES ? D.STORIES[h][t.ch].title : (t.ch + 1) + '장'}」`;
+      case 'card': return `새 카드 「${D.CARDS[t.id].name}」 보상 풀 추가`;
+      case 'relic': return `시작 유물 선택지 「${D.RELICS[t.id].icon} ${D.RELICS[t.id].name}」`;
+      case 'passive': return `패시브 「${m.passive.name}」: ${m.passive.desc}`;
+      case 'deck': return `시작 덱 변형 「${m.deck.name}」`;
+      case 'title': return `칭호 「${m.titles[t.id]}」`;
+      case 'potion': return '원정 시작 시 무작위 물약 1개';
+      case 'frame': return '프로필 금빛 테두리';
+    }
+    return '';
+  }
+  function lvBar(info, cls) {
+    return `<div class="lvbar ${cls || ''}"><i style="width:${Math.round(info.pct * 100)}%"></i></div>`;
+  }
+  function lvMini(h) {
+    if (!D.MASTERY.heroes[h]) return '';
+    const L = E.heroLevel(meta, h), t = E.heroTitle(meta, h);
+    return `<div class="lvmini"><b>Lv ${L.lv}</b>${t ? ` <span class="htitle">「${esc(t)}」</span>` : ''}${lvBar(L)}<span class="small dim">${L.max ? 'MAX' : `${L.xp} / ${L.next} XP`}</span></div>`;
+  }
+  function loadoutHTML(h) {
+    const m = D.MASTERY.heroes[h]; if (!m) return '';
+    const L = Object.assign({ relic: 'base', deck: 'base' }, settings.loadout[h]);
+    const seg = (k, label, a, b, ok, lv) => ok
+      ? `<div class="seg"><span class="small dim">${label}</span><button class="segb ${L[k] !== 'alt' ? 'on' : ''}" data-act="loadout" data-h="${h}" data-k="${k}" data-v="base">${esc(a)}</button><button class="segb ${L[k] === 'alt' ? 'on' : ''}" data-act="loadout" data-h="${h}" data-k="${k}" data-v="alt">${esc(b)}</button></div>`
+      : `<div class="seg lockedseg" data-act="lockedTrack" data-h="${h}" data-lv="${lv}"><span class="small dim">${label}</span><span class="small dim">🔒 Lv ${lv}</span></div>`;
+    const R = D.RELICS, st = D.STARTERS[h];
+    const alt = L.relic === 'alt' && E.masteryHas(meta, h, 'relic') ? `<div class="small">${R[m.relic].icon} <b>${esc(R[m.relic].name)}</b> — ${esc(R[m.relic].desc)}</div>` : '';
+    const dk = L.deck === 'alt' && E.masteryHas(meta, h, 'deck') ? `<div class="small">🗂️ <b>${esc(m.deck.name)}</b> — ${esc(m.deck.desc)}</div>` : '';
+    return `<div class="loadout">${seg('relic', '시작 유물', R[st.relic].name, R[m.relic].name, E.masteryHas(meta, h, 'relic'), 3)}${seg('deck', '시작 덱', '기본', m.deck.name, E.masteryHas(meta, h, 'deck'), 6)}${alt}${dk}</div>`;
+  }
+  function storyNewCount(h) {
+    if (!D.STORIES) return 0;
+    let n = 0;
+    for (const hh of h ? [h] : Object.keys(D.MASTERY.heroes)) {
+      if (!E.heroUnlocked(meta, hh)) continue;
+      D.MASTERY.track(hh).forEach(t => { if (t.kind === 'story' && E.masteryHas(meta, hh, 'story', t.ch) && !meta.storyRead[hh + t.ch]) n++; });
+    }
+    return n;
+  }
+  function heroListHTML() {
+    return `<h2>💞 히로인</h2><div class="small dim">원정을 마칠 때마다(실패해도) 그 히로인이 경험치를 얻어. 레벨이 오르면 새 카드·시작 유물·덱 변형·패시브·개인 스토리가 열려.</div>
+      ${Object.keys(D.MASTERY.heroes).map(h => {
+        const ok = E.heroUnlocked(meta, h), n = storyNewCount(h);
+        if (!ok) return `<div class="list-btn" data-act="lockedHero"><div class="artbox hl locked">${A.html('hero:' + h, heroInfo(h, 'hero', { silhouette: true }))}</div><span style="flex:1">??? · ${esc(D.HEROINES[h].job)}<br><span class="small dim">${esc(D.STARTERS[h].unlockText)}</span></span></div>`;
+        return `<button class="list-btn heroline" data-act="profile" data-id="${h}">${heroArt(h, 'hl')}<span style="flex:1;text-align:left">${esc(D.STARTERS[h].title)}${n ? ' <span class="dot"></span>' : ''}<br>${lvMini(h)}</span></button>`;
+      }).join('')}
+      <button class="btn block primary" data-act="closeModal">닫기</button>`;
+  }
+  function profileHTML(h) {
+    const L = E.heroLevel(meta, h), Hn = D.HEROINES[h], t = E.heroTitle(meta, h), lv = L.lv;
+    const frame = E.masteryHas(meta, h, 'frame');
+    const tr = D.MASTERY.track(h).map(x => {
+      const got = lv >= x.lv;
+      return `<div class="trackrow ${got ? 'got' : 'locked'}"><span class="tlv">Lv${x.lv}</span><span class="tic">${got ? TRACK_ICON[x.kind] : '🔒'}</span><span class="small" style="flex:1">${esc(trackLabel(h, x))}</span></div>`;
+    }).join('');
+    const stories = D.STORIES ? D.STORIES[h].map((st, i) => {
+      const lvReq = D.MASTERY.track(h).find(x => x.kind === 'story' && x.ch === i).lv;
+      const ok = lv >= lvReq, isNew = ok && !meta.storyRead[h + i];
+      return ok ? `<button class="list-btn" data-act="story" data-h="${h}" data-ch="${i}"><span style="flex:1;text-align:left">📖 ${esc(st.title)}${isNew ? ' <span class="newtag">NEW</span>' : ''}</span><span>▶</span></button>`
+        : `<div class="list-btn locked" data-act="lockedTrack" data-h="${h}" data-lv="${lvReq}"><span style="flex:1">🔒 ${i + 1}장 · ???</span><span class="small dim">Lv ${lvReq}</span></div>`;
+    }).join('') : '';
+    const runs = meta.heroRuns[h] || 0, wins = meta.heroWins[h] || 0;
+    return `<div class="profile">
+      <div class="prof-top ${frame ? 'goldframe' : ''}">${heroArt(h, 'prof')}
+        <div class="col" style="gap:4px;flex:1">
+          <h2 style="margin:0">${esc(Hn.name)} <span class="small dim">${esc(Hn.job)} · ${Hn.age}세</span></h2>
+          ${t ? `<div class="htitle">「${esc(t)}」</div>` : ''}
+          <div><b class="lvbig">Lv ${lv}</b> <span class="small dim">${L.max ? '최대 레벨' : `다음 레벨까지 ${L.next - L.xp} XP`}</span></div>
+          ${lvBar(L, 'big')}
+          <div class="small dim">원정 ${runs}회 · 클리어 ${wins}회</div>
+          <div class="small">${esc(Hn.bio)}</div>
+        </div></div>
+      ${meta.xpMigratedFrom ? '<div class="small dim" style="margin:6px 0">이전 버전 기록(원정·클리어 수)으로 시작 경험치를 계산해 넣었어.</div>' : ''}
+      <div class="section-title" style="padding-left:0">📖 개인 스토리</div>${stories}
+      <div class="section-title" style="padding-left:0">🎁 레벨 보상</div><div class="track">${tr}</div>
+      <div class="small dim" style="margin-top:6px">경험치: 오른 층 ×${D.MASTERY.xp.floor} · 엘리트 ×${D.MASTERY.xp.elite} · 보스 ×${D.MASTERY.xp.boss} · 원정 성공 +${D.MASTERY.xp.win}</div>
+      <button class="btn block primary" data-act="closeModal">닫기</button></div>`;
+  }
+  function speakerArt(id) {
+    if (D.HEROINES[id]) return `<div class="artbox sp">${A.html('hero:' + id, heroInfo(id, 'hero'))}</div>`;
+    if (D.ENEMIES[id]) return `<div class="artbox sp">${A.html('enemy:' + id, enemyInfo(id))}</div>`;
+    return '';
+  }
+  function speakerName(id) { return D.HEROINES[id] ? D.HEROINES[id].name : D.ENEMIES[id] ? D.ENEMIES[id].name : ''; }
+  function storyHTML() {
+    const st = D.STORIES[ui.story.h][ui.story.ch], i = ui.story.i, [who, text] = st.lines[i];
+    const nar = who === 'nar';
+    return `<div class="story-bg" data-act="storyNext">
+      <div class="story-head"><span>${esc(D.HEROINES[ui.story.h].name)} · ${esc(st.title)}</span><button class="tb" data-act="storyClose" aria-label="닫기">✕</button></div>
+      <div class="story-stage">${nar ? '' : speakerArt(who)}</div>
+      <div class="story-box ${nar ? 'nar' : ''}">${nar ? '' : `<div class="story-name">${esc(speakerName(who))}</div>`}<div class="story-text">${esc(text)}</div>
+        <div class="story-foot small dim"><span>${i + 1} / ${st.lines.length}</span><span>${i < st.lines.length - 1 ? '터치해서 계속 ▶' : '터치해서 닫기'}</span></div></div>
+    </div>`;
+  }
+  function pickLine(h, kind) { const a = D.LINES[h] && D.LINES[h][kind]; return a && a.length ? a[Math.floor(Math.random() * a.length)] : null; }
+  function endLine() {
+    if (!ui.endLine || ui.endLine.run !== run.seed) ui.endLine = { run: run.seed, text: pickLine(run.starter, run.won ? 'win' : 'loss') || '' };
+    return ui.endLine.text;
+  }
+  function heroSay(kind, delay) {
+    if (!settings.talk || !run) return;
+    const h = run.starter, text = pickLine(h, kind);
+    if (!text) return;
+    setTimeout(() => {
+      document.querySelectorAll('.herosay.live').forEach(x => x.remove());
+      const b = document.createElement('div');
+      b.className = 'herosay live';
+      b.innerHTML = `<span class="hs-name">${esc(D.HEROINES[h].name)}</span> ${esc(text)}`;
+      fxLayer.appendChild(b); setTimeout(() => b.remove(), 3400);
+    }, delay || 0);
+  }
+  function xpPanelHTML() {
+    const x = run.xpResult; if (!x) return '';
+    const before = x.before, after = x.after, up = after.lv > before.lv;
+    const parts = x.parts.filter(p => p.n).map(p => `<span>${esc(p.k)} ${p.n}</span><b>+${p.xp}</b>`).join('');
+    const unl = x.unlocks.map(t => `<div class="trackrow got"><span class="tic">${TRACK_ICON[t.kind]}</span><span class="small" style="flex:1">${esc(trackLabel(x.hero, t))}</span></div>`).join('');
+    const beforePct = up ? 0 : before.pct;
+    return `<div class="panel col xppanel" style="width:100%;max-width:340px">
+      <div class="row" style="justify-content:space-between"><b>💞 ${esc(D.HEROINES[x.hero].name)} 경험치 +${x.gain}</b><span>${up ? `<span class="lvup">Lv ${before.lv} → Lv ${after.lv}!</span>` : `Lv ${after.lv}`}</span></div>
+      <div class="lvbar big xpanim"><i class="old" style="width:${Math.round(beforePct * 100)}%"></i><i class="new" style="width:${Math.round(after.pct * 100)}%"></i></div>
+      <div class="small dim">${after.max ? '최대 레벨' : `${after.xp} / ${after.next} XP`}${x.gain === 0 && after.max ? '' : ''}</div>
+      ${parts ? `<div class="statgrid small">${parts}</div>` : '<div class="small dim">이번엔 층을 넘지 못했어. 그래도 다음엔 더 멀리!</div>'}
+      ${unl ? `<b style="color:var(--gold)">새로 열린 것</b>${unl}` : ''}
+      ${x.unlocks.some(t => t.kind === 'story') ? `<button class="btn gold block" data-act="profile" data-id="${x.hero}">📖 새 개인 스토리 보기</button>` : ''}
+    </div>`;
+  }
   function renderEnd() {
     const won = run.won, s = D.STARTERS[run.starter];
     const st = run.stats;
@@ -2800,6 +4728,8 @@ window.BD_ARTMAP = {
       <div class="logo" style="font-size:34px">${won ? '원정 성공!' : '원정 실패…'}</div>
       ${won ? artBox('gallery:g_' + run.starter, galleryInfo('g_' + run.starter), 'endart', { cap: D.GALLERY['g_' + run.starter].title }) : heroArt(s.hero, 'endart')}
       <div class="bubble">${won ? esc(D.GALLERY['g_' + run.starter].cap) : esc('조금만… 더 갈 수 있었는데. 다음엔 꼭.')}</div>
+      ${settings.talk ? `<div class="herosay static"><span class="hs-name">${esc(D.HEROINES[s.hero].name)}</span> ${esc(endLine())}</div>` : ''}
+      ${xpPanelHTML()}
       <div class="panel statgrid" style="width:100%;max-width:340px">
         <span>도달</span><b>${won ? '황혼 너머' : `${run.act < 4 ? run.act + '막' : '종막'} ${run.floor}층`}</b>
         <span>승천</span><b>🔥${run.asc}</b>
@@ -2869,17 +4799,23 @@ window.BD_ARTMAP = {
     • 보스를 이기면 <b>👑보스 유물</b> 3개 중 하나. 강하지만 대가가 있어.<br>
     • 2막 보스를 이기면 새 히로인 <b>아리아</b> 합류. 업적을 달성하면 <b>전설 카드</b>가 보상에 나오기 시작해.<br>
     • 클리어하면 <b>🔥승천</b>이 열려. 최대 10단계까지.<br>
-    • 진행은 자동 저장돼. 홈 화면에 추가하면 앱처럼 쓸 수 있어.</div>
+    • 진행은 <b>이 기기에만</b> 자동 저장돼. 클라우드 동기화는 없어. 설정에서 백업 파일로 내보내/가져오기를 할 수 있어.<br>
+    • 홈 화면에 추가하면 앱처럼 쓸 수 있어.</div>
     <button class="btn block" data-act="tutReplay">첫 전투 튜토리얼 다시 보기</button>
     <button class="btn block primary" data-act="closeModal">알겠어!</button>`;
   }
   function settingsHTML() {
     const row = (k, label, sub) => `<button class="list-btn toggle ${settings[k] ? 'on' : ''}" data-act="toggle" data-k="${k}"><span style="flex:1">${label}<br><span class="small dim">${sub}</span></span><span class="sw">${settings[k] ? 'ON' : 'OFF'}</span></button>`;
     return `<h2>⚙️ 설정</h2>
+      <div class="panel small dim" style="margin-bottom:8px">${esc(saveStatusLine())}</div>
       ${row('sound', '🔊 효과음', '기본은 꺼져 있어. 켜면 합성 효과음이 나와.')}
       ${row('vibe', '📳 진동', '피격·보스 격파 때 짧게 진동 (지원 기기만)')}
       ${row('reduce', '🧘 움직임 줄이기', '화면 흔들림·카드 날아가기 같은 연출을 줄여')}
       ${row('fast', '⏩ 빠른 연출', '적 턴 연출 속도 2배')}
+      ${row('talk', '💬 히로인 대사', '엘리트·보스·이벤트·상점·휴식에서 짧은 말풍선')}
+      <div class="section-title" style="padding-left:0;margin-top:8px">💾 백업</div>
+      <button class="btn block" data-act="exportBackup">⬇️ 백업 파일 내보내기</button>
+      <button class="btn block" data-act="importPick">⬆️ 백업 파일 가져오기</button>
       <button class="btn block" data-act="resetConfirm" style="color:var(--red)">🗑️ 모든 기록 초기화</button>
       <button class="btn block primary" data-act="closeModal">닫기</button>`;
   }
@@ -2992,6 +4928,9 @@ window.BD_ARTMAP = {
     if (!run.over && run.screen !== 'combat') grantAch();
     render();
     const dur = playFx(fxs);
+    if (before !== run.screen && run.screen === 'combat' && run.combat && run.combat.kind !== 'monster') heroSay(run.combat.kind === 'boss' ? 'boss' : 'elite', 600);
+    if (fxs.some(f => f.k === 'bosswin')) heroSay('bossWin', 1600);
+    if (before !== run.screen && ['event', 'shop', 'rest'].includes(run.screen)) heroSay(run.screen, 350);
     if (leftCombat) {
       ui.busy = true;
       const boss = fxs.some(f => f.k === 'victory' || f.k === 'defeat' || f.k === 'bosswin');
@@ -3096,7 +5035,7 @@ window.BD_ARTMAP = {
   }
   function startRun(id) {
     const asc = Math.min(settings.asc, meta.ascMax);
-    run = E.newRun(id, null, { asc, unlocked: E.unlockedCards(meta) });
+    run = E.newRun(id, null, Object.assign(E.runOptions(meta, id, settings.loadout[id]), { asc }));
     ui.sel = null; ui.modal = null; ui.modalStack = []; ui.deadShown = new Set(); ui.runAch = []; ui.tut = 0;
     saveRun(); render();
     if (!meta.runs) setTimeout(() => toast('지도에서 빛나는 칸을 골라 출발해!'), 300);
@@ -3113,13 +5052,61 @@ window.BD_ARTMAP = {
     toggle(d) { settings[d.k] = !settings[d.k]; saveSettings(); if (d.k === 'sound' && settings.sound) sfx('ach'); if (d.k === 'vibe' && settings.vibe) buzz(40); ui.modal = settingsHTML(); render(); },
     resetConfirm() { openModal(`<h2>정말 초기화할까?</h2><div class="small dim">업적·도감·갤러리·승천·진행 중인 원정이 모두 지워져.</div><div class="row"><button class="btn block" data-act="closeModal">아니</button><button class="btn block primary" data-act="resetYes">초기화</button></div>`, true); },
     resetYes() { meta = E.newMeta(); saveMeta(); try { localStorage.removeItem(SAVE_KEY); } catch (e) { /* 무시 */ } run = null; ui.view = 'title'; ui.modal = null; ui.modalStack = []; render(); toast('기록을 초기화했어.'); },
+    exportBackup() {
+      try {
+        const b = buildBackup();
+        const blob = new Blob([JSON.stringify(b, null, 2)], { type: 'application/json' });
+        const a = document.createElement('a');
+        const stamp = (b.exportedAt || '').slice(0, 10) || 'backup';
+        a.href = URL.createObjectURL(blob);
+        a.download = `beauty-deck-backup-${stamp}.json`;
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+        toast('백업 파일을 저장했어.');
+      } catch (e) { toast('내보내기 실패: ' + esc(e.message)); }
+    },
+    importPick() {
+      let inp = document.getElementById('bd-backup-file');
+      if (!inp) {
+        inp = document.createElement('input');
+        inp.type = 'file'; inp.accept = 'application/json,.json'; inp.id = 'bd-backup-file';
+        inp.style.display = 'none';
+        document.body.appendChild(inp);
+        inp.addEventListener('change', () => {
+          const f = inp.files && inp.files[0];
+          inp.value = '';
+          if (!f) return;
+          const reader = new FileReader();
+          reader.onload = () => {
+            try {
+              const b = JSON.parse(reader.result);
+              if (!b || b.game !== 'beauty-deck' || b.v !== 1 || !b.meta) throw new Error('미녀 덱 백업 파일이 아니야');
+              ui.pendingBackup = b;
+              const older = backupIsOlderThanLocal(b);
+              openModal(`<h2>이 백업을 불러올까?</h2>
+                <div class="small dim">파일: ${esc(summarizeBackup(b))}</div>
+                <div class="small dim" style="margin-top:6px">지금 이 기기: ${esc(summarizeBackup({ meta, run: loadJSON(SAVE_KEY) }))}</div>
+                ${older ? '<div class="small" style="color:var(--red);margin-top:8px">지금 이 기기 기록이 더 새롭거나 더 많을 수 있어. 가져오면 지금 기록을 덮어써.</div>' : '<div class="small dim" style="margin-top:8px">가져오면 지금 이 기기의 기록을 이 파일로 바꿔.</div>'}
+                <div class="row" style="margin-top:10px"><button class="btn block" data-act="closeModal">아니</button><button class="btn block primary" data-act="importConfirm">가져오기</button></div>`, true);
+            } catch (e) { toast('가져오기 실패: ' + esc(e.message)); }
+          };
+          reader.onerror = () => toast('파일을 읽지 못했어.');
+          reader.readAsText(f);
+        });
+      }
+      inp.click();
+    },
+    importConfirm() {
+      try { applyBackup(ui.pendingBackup); }
+      catch (e) { toast('가져오기 실패: ' + esc(e.message)); }
+    },
     codex() { ui.codexTab = 'cards'; openModal(codexHTML()); },
     codexGallery() { ui.codexTab = 'gallery'; openModal(codexHTML()); },
     codexTab(d) { ui.codexTab = d.t; ui.modal = codexHTML(); render(); },
     codexCls(d) { ui.codexCls = d.c; ui.modal = codexHTML(); render(); },
     achv() { openModal(achHTML(false)); },
     lockedHero() { toast('🔒 ' + esc(D.STARTERS.aria.unlockText)); },
-    lockedCard(d) { const c = D.CARDS[d.id]; toast(c.unlock ? `🔒 업적 「${esc(D.ACHIEVEMENTS[c.unlock].name)}」: ${esc(D.ACHIEVEMENTS[c.unlock].desc)}` : '아직 만나지 못한 카드야. 보상·상점에서 찾아봐.'); },
+    lockedCard(d) { const c = D.CARDS[d.id]; if (c.mastery) { const t = D.MASTERY.track(c.mastery).find(x => x.id === d.id); toast(`🔒 ${esc(D.HEROINES[c.mastery].name)} 레벨 ${t.lv}에서 보상 풀에 추가돼.`); return; } toast(c.unlock ? `🔒 업적 「${esc(D.ACHIEVEMENTS[c.unlock].name)}」: ${esc(D.ACHIEVEMENTS[c.unlock].desc)}` : '아직 만나지 못한 카드야. 보상·상점에서 찾아봐.'); },
     lockedRelic() { toast('아직 찾지 못한 유물이야.'); },
     lockedEnemy() { toast('아직 만나지 못한 적이야.'); },
     lockedGal(d) { toast('🔒 해금 조건: ' + esc(D.GALLERY[d.id].how)); },
@@ -3130,7 +5117,14 @@ window.BD_ARTMAP = {
     tutReplay() { meta.tutorialDone = false; ui.tut = 0; saveMeta(); closeModal(); toast('다음 전투에서 튜토리얼이 다시 나와.'); },
     asc(d) { settings.asc = Math.max(0, Math.min(meta.ascMax, Math.min(settings.asc, meta.ascMax) + +d.d)); saveSettings(); render(); },
     continue() { const s = loadJSON(SAVE_KEY); if (s && s.v === 2) { run = s; run.fx = []; ui.modal = null; ui.deadShown = new Set(); ui.runAch = []; render(); } },
-    previewDeck(d) { const s = D.STARTERS[d.id]; openModal(deckModal(s.deck.map(id => ({ id, up: false })), s.title + ' 시작 덱')); },
+    previewDeck(d) { const s = D.STARTERS[d.id], o = E.runOptions(meta, d.id, settings.loadout[d.id]); openModal(deckModal((o.deck || s.deck).map(id => ({ id, up: false })), s.title + (o.deck ? ' 시작 덱 (변형)' : ' 시작 덱'))); },
+    heroes() { openModal(heroListHTML()); },
+    profile(d) { openModal(profileHTML(d.id), !!ui.modal); },
+    loadout(d) { const L = settings.loadout[d.h] = Object.assign({ relic: 'base', deck: 'base' }, settings.loadout[d.h]); L[d.k] = d.v; saveSettings(); render(); },
+    story(d) { ui.story = { h: d.h, ch: +d.ch, i: 0 }; meta.storyRead[d.h + (+d.ch)] = Date.now(); saveMeta(); render(); },
+    storyNext() { const st = D.STORIES[ui.story.h][ui.story.ch]; if (ui.story.i < st.lines.length - 1) { ui.story.i++; render(); } else H.storyClose(); },
+    storyClose() { const h = ui.story.h; ui.story = null; if (ui.modal) ui.modal = profileHTML(h); render(); },
+    lockedTrack(d) { toast('🔒 ' + esc(D.HEROINES[d.h].name) + ' 레벨 ' + d.lv + '에서 열려.'); },
     pick(d) { startRun(d.id); },
     again() { const id = run.starter; run = null; startRun(id); },
     viewDeckEnd() { openModal(deckModal(run.deck, '최종 덱')); },

@@ -10,8 +10,9 @@
 
   let run = null;
   let meta = loadMeta();
-  const settings = Object.assign({ sound: false, vibe: true, reduce: false, fast: false, asc: 0 }, loadJSON(SET_KEY) || {});
-  const ui = { view: 'title', sel: null, potionSel: null, busy: false, modal: null, hold: false, deadShown: new Set(), runAch: [], tut: 0, lastScreen: null, codexTab: 'cards', codexCls: 'all', modalStack: [], pendingBackup: null };
+  const settings = Object.assign({ sound: false, vibe: true, reduce: false, fast: false, asc: 0, talk: true, loadout: {} }, loadJSON(SET_KEY) || {});
+  if (!settings.loadout || typeof settings.loadout !== 'object') settings.loadout = {};
+  const ui = { story: null, view: 'title', sel: null, potionSel: null, busy: false, modal: null, hold: false, deadShown: new Set(), runAch: [], tut: 0, lastScreen: null, codexTab: 'cards', codexCls: 'all', modalStack: [], pendingBackup: null };
 
   // ───────── 저장 ─────────
   function loadJSON(k) { try { const s = localStorage.getItem(k); return s ? JSON.parse(s) : null; } catch (e) { return null; } }
@@ -59,7 +60,8 @@
     const runTxt = r && r.starter && D.STARTERS[r.starter]
       ? `${D.STARTERS[r.starter].title} · ${r.act < 4 ? r.act + '막' : '종막'}`
       : '진행 중 원정 없음';
-    return `원정 ${m.runs || 0}회 · 클리어 ${m.wins || 0}회 · 승천 ${m.ascMax || 0} · ${runTxt}`;
+    const lv = Object.keys(D.MASTERY.heroes).map(h => `${D.HEROINES[h].name} Lv${E.heroLevel(E.migrateMeta(m), h).lv}`).join(' ');
+    return `원정 ${m.runs || 0}회 · 클리어 ${m.wins || 0}회 · 승천 ${m.ascMax || 0} · ${lv} · ${runTxt}`;
   }
   function backupIsOlderThanLocal(b) {
     const localTs = meta.updatedAt ? Date.parse(meta.updatedAt) : 0;
@@ -76,7 +78,8 @@
     meta.updatedAt = new Date().toISOString();
     saveJSON(META_KEY, meta);
     if (b.settings && typeof b.settings === 'object') {
-      Object.assign(settings, { sound: false, vibe: true, reduce: false, fast: false, asc: 0 }, b.settings);
+      Object.assign(settings, { sound: false, vibe: true, reduce: false, fast: false, asc: 0, talk: true, loadout: {} }, b.settings);
+      if (!settings.loadout || typeof settings.loadout !== 'object') settings.loadout = {};
       saveSettings();
     }
     if (b.run && b.run.v === 2 && !b.run.over && D.STARTERS[b.run.starter]) {
@@ -246,6 +249,7 @@
     }
     const changed = scr !== ui.lastScreen; ui.lastScreen = scr;
     if (ui.modal) html += `<div class="modal-bg" data-act="closeModal"><div class="modal" data-act="noop">${ui.modal}</div></div>`;
+    if (ui.story) html += storyHTML();
     app.innerHTML = `<div class="screen ${changed && !reduced() ? 'enter' : ''} scr-${scr}" ${run && run.screen !== 'combat' ? `style="--actbg:${D.ACTS[run.act].bg[0]}"` : ''}>${html}</div>`;
     if (run && run.screen === 'map' && !ui.hold) scrollMap();
     if (run && (run.screen === 'combat' || ui.hold)) layoutHand();
@@ -266,6 +270,7 @@
         ${ok ? `<button class="btn primary block" data-act="continue">▶ 이어하기 <span class="small">(${esc(D.STARTERS[saved.starter].title)} · ${saved.act < 4 ? saved.act + '막' : '종막'})</span></button>` : ''}
         <button class="btn ${ok ? '' : 'primary'} block" data-act="newGame">⚔️ 새 원정 시작</button>
         <div class="row"><button class="btn block" data-act="codex">📖 도감${newG ? ' <span class="dot"></span>' : ''}</button><button class="btn block" data-act="achv">🏆 업적 ${achN}/${achT}</button></div>
+        <button class="btn block" data-act="heroes">💞 히로인 · 레벨 · 스토리${storyNewCount() ? ` <span class="dot"></span>` : ''}</button>
         <div class="row"><button class="btn block" data-act="help">❔ 도움말</button><button class="btn block" data-act="settings">⚙️ 설정</button></div>
       </div>
       <div class="dim small">원정 ${meta.runs}회 · 클리어 ${meta.wins}회 · 최고 승천 ${Math.max(0, meta.ascMax - (meta.wins ? 1 : 0))}${meta.ascMax ? ` · 승천 ${meta.ascMax}까지 열림` : ''}</div>
@@ -296,13 +301,15 @@
           <div class="hero-pick">${heroArt(s.hero, 'hp')}
             <div class="col" style="gap:4px">
               <h3>${esc(s.title)} ${wins ? `<span title="클리어">⭐${wins > 1 ? wins : ''}</span>` : ''}</h3>
+              ${lvMini(id)}
               <div><span class="tag">${esc(h.job)}</span><span class="tag">${h.age}세</span><span class="tag">❤️ ${s.hp - (asc >= 6 ? 6 : 0)}</span>${meta.heroBestAsc[id] != null && wins ? `<span class="tag">🔥${meta.heroBestAsc[id]}</span>` : ''}</div>
               <div class="small">${esc(s.pitch)}</div>
               <div class="quote">“${esc(s.line)}”</div>
             </div></div>
-          <div class="small"><b>${r.icon} ${esc(r.name)}</b> — ${esc(r.desc)}</div>
+          <div class="small"><b>${r.icon} ${esc(r.name)}</b> — ${esc(r.desc)}${E.masteryHas(meta, id, 'relic') ? ' <span class="dim">(기본)</span>' : ''}</div>
           <div class="archrow">${arch}</div>
-          <div class="row"><button class="btn" data-act="previewDeck" data-id="${id}">시작 덱</button>
+          ${loadoutHTML(id)}
+          <div class="row"><button class="btn" data-act="profile" data-id="${id}">💞 프로필</button><button class="btn" data-act="previewDeck" data-id="${id}">시작 덱</button>
           <button class="btn primary" style="flex:1" data-act="pick" data-id="${id}">이 히로인으로 출발</button></div>
         </div>`;
       }).join('')}
@@ -521,6 +528,137 @@
   }
 
   // ───────── 종료 ─────────
+  // ───────── 히로인 레벨 · 스토리 · 대사 (v1.2) ─────────
+  const TRACK_ICON = { story: '📖', card: '🃏', relic: '💎', passive: '✨', deck: '🗂️', title: '🎖️', potion: '🧪', frame: '🖼️' };
+  function trackLabel(h, t) {
+    const m = D.MASTERY.heroes[h];
+    switch (t.kind) {
+      case 'story': return `개인 스토리 「${D.STORIES ? D.STORIES[h][t.ch].title : (t.ch + 1) + '장'}」`;
+      case 'card': return `새 카드 「${D.CARDS[t.id].name}」 보상 풀 추가`;
+      case 'relic': return `시작 유물 선택지 「${D.RELICS[t.id].icon} ${D.RELICS[t.id].name}」`;
+      case 'passive': return `패시브 「${m.passive.name}」: ${m.passive.desc}`;
+      case 'deck': return `시작 덱 변형 「${m.deck.name}」`;
+      case 'title': return `칭호 「${m.titles[t.id]}」`;
+      case 'potion': return '원정 시작 시 무작위 물약 1개';
+      case 'frame': return '프로필 금빛 테두리';
+    }
+    return '';
+  }
+  function lvBar(info, cls) {
+    return `<div class="lvbar ${cls || ''}"><i style="width:${Math.round(info.pct * 100)}%"></i></div>`;
+  }
+  function lvMini(h) {
+    if (!D.MASTERY.heroes[h]) return '';
+    const L = E.heroLevel(meta, h), t = E.heroTitle(meta, h);
+    return `<div class="lvmini"><b>Lv ${L.lv}</b>${t ? ` <span class="htitle">「${esc(t)}」</span>` : ''}${lvBar(L)}<span class="small dim">${L.max ? 'MAX' : `${L.xp} / ${L.next} XP`}</span></div>`;
+  }
+  function loadoutHTML(h) {
+    const m = D.MASTERY.heroes[h]; if (!m) return '';
+    const L = Object.assign({ relic: 'base', deck: 'base' }, settings.loadout[h]);
+    const seg = (k, label, a, b, ok, lv) => ok
+      ? `<div class="seg"><span class="small dim">${label}</span><button class="segb ${L[k] !== 'alt' ? 'on' : ''}" data-act="loadout" data-h="${h}" data-k="${k}" data-v="base">${esc(a)}</button><button class="segb ${L[k] === 'alt' ? 'on' : ''}" data-act="loadout" data-h="${h}" data-k="${k}" data-v="alt">${esc(b)}</button></div>`
+      : `<div class="seg lockedseg" data-act="lockedTrack" data-h="${h}" data-lv="${lv}"><span class="small dim">${label}</span><span class="small dim">🔒 Lv ${lv}</span></div>`;
+    const R = D.RELICS, st = D.STARTERS[h];
+    const alt = L.relic === 'alt' && E.masteryHas(meta, h, 'relic') ? `<div class="small">${R[m.relic].icon} <b>${esc(R[m.relic].name)}</b> — ${esc(R[m.relic].desc)}</div>` : '';
+    const dk = L.deck === 'alt' && E.masteryHas(meta, h, 'deck') ? `<div class="small">🗂️ <b>${esc(m.deck.name)}</b> — ${esc(m.deck.desc)}</div>` : '';
+    return `<div class="loadout">${seg('relic', '시작 유물', R[st.relic].name, R[m.relic].name, E.masteryHas(meta, h, 'relic'), 3)}${seg('deck', '시작 덱', '기본', m.deck.name, E.masteryHas(meta, h, 'deck'), 6)}${alt}${dk}</div>`;
+  }
+  function storyNewCount(h) {
+    if (!D.STORIES) return 0;
+    let n = 0;
+    for (const hh of h ? [h] : Object.keys(D.MASTERY.heroes)) {
+      if (!E.heroUnlocked(meta, hh)) continue;
+      D.MASTERY.track(hh).forEach(t => { if (t.kind === 'story' && E.masteryHas(meta, hh, 'story', t.ch) && !meta.storyRead[hh + t.ch]) n++; });
+    }
+    return n;
+  }
+  function heroListHTML() {
+    return `<h2>💞 히로인</h2><div class="small dim">원정을 마칠 때마다(실패해도) 그 히로인이 경험치를 얻어. 레벨이 오르면 새 카드·시작 유물·덱 변형·패시브·개인 스토리가 열려.</div>
+      ${Object.keys(D.MASTERY.heroes).map(h => {
+        const ok = E.heroUnlocked(meta, h), n = storyNewCount(h);
+        if (!ok) return `<div class="list-btn" data-act="lockedHero"><div class="artbox hl locked">${A.html('hero:' + h, heroInfo(h, 'hero', { silhouette: true }))}</div><span style="flex:1">??? · ${esc(D.HEROINES[h].job)}<br><span class="small dim">${esc(D.STARTERS[h].unlockText)}</span></span></div>`;
+        return `<button class="list-btn heroline" data-act="profile" data-id="${h}">${heroArt(h, 'hl')}<span style="flex:1;text-align:left">${esc(D.STARTERS[h].title)}${n ? ' <span class="dot"></span>' : ''}<br>${lvMini(h)}</span></button>`;
+      }).join('')}
+      <button class="btn block primary" data-act="closeModal">닫기</button>`;
+  }
+  function profileHTML(h) {
+    const L = E.heroLevel(meta, h), Hn = D.HEROINES[h], t = E.heroTitle(meta, h), lv = L.lv;
+    const frame = E.masteryHas(meta, h, 'frame');
+    const tr = D.MASTERY.track(h).map(x => {
+      const got = lv >= x.lv;
+      return `<div class="trackrow ${got ? 'got' : 'locked'}"><span class="tlv">Lv${x.lv}</span><span class="tic">${got ? TRACK_ICON[x.kind] : '🔒'}</span><span class="small" style="flex:1">${esc(trackLabel(h, x))}</span></div>`;
+    }).join('');
+    const stories = D.STORIES ? D.STORIES[h].map((st, i) => {
+      const lvReq = D.MASTERY.track(h).find(x => x.kind === 'story' && x.ch === i).lv;
+      const ok = lv >= lvReq, isNew = ok && !meta.storyRead[h + i];
+      return ok ? `<button class="list-btn" data-act="story" data-h="${h}" data-ch="${i}"><span style="flex:1;text-align:left">📖 ${esc(st.title)}${isNew ? ' <span class="newtag">NEW</span>' : ''}</span><span>▶</span></button>`
+        : `<div class="list-btn locked" data-act="lockedTrack" data-h="${h}" data-lv="${lvReq}"><span style="flex:1">🔒 ${i + 1}장 · ???</span><span class="small dim">Lv ${lvReq}</span></div>`;
+    }).join('') : '';
+    const runs = meta.heroRuns[h] || 0, wins = meta.heroWins[h] || 0;
+    return `<div class="profile">
+      <div class="prof-top ${frame ? 'goldframe' : ''}">${heroArt(h, 'prof')}
+        <div class="col" style="gap:4px;flex:1">
+          <h2 style="margin:0">${esc(Hn.name)} <span class="small dim">${esc(Hn.job)} · ${Hn.age}세</span></h2>
+          ${t ? `<div class="htitle">「${esc(t)}」</div>` : ''}
+          <div><b class="lvbig">Lv ${lv}</b> <span class="small dim">${L.max ? '최대 레벨' : `다음 레벨까지 ${L.next - L.xp} XP`}</span></div>
+          ${lvBar(L, 'big')}
+          <div class="small dim">원정 ${runs}회 · 클리어 ${wins}회</div>
+          <div class="small">${esc(Hn.bio)}</div>
+        </div></div>
+      ${meta.xpMigratedFrom ? '<div class="small dim" style="margin:6px 0">이전 버전 기록(원정·클리어 수)으로 시작 경험치를 계산해 넣었어.</div>' : ''}
+      <div class="section-title" style="padding-left:0">📖 개인 스토리</div>${stories}
+      <div class="section-title" style="padding-left:0">🎁 레벨 보상</div><div class="track">${tr}</div>
+      <div class="small dim" style="margin-top:6px">경험치: 오른 층 ×${D.MASTERY.xp.floor} · 엘리트 ×${D.MASTERY.xp.elite} · 보스 ×${D.MASTERY.xp.boss} · 원정 성공 +${D.MASTERY.xp.win}</div>
+      <button class="btn block primary" data-act="closeModal">닫기</button></div>`;
+  }
+  function speakerArt(id) {
+    if (D.HEROINES[id]) return `<div class="artbox sp">${A.html('hero:' + id, heroInfo(id, 'hero'))}</div>`;
+    if (D.ENEMIES[id]) return `<div class="artbox sp">${A.html('enemy:' + id, enemyInfo(id))}</div>`;
+    return '';
+  }
+  function speakerName(id) { return D.HEROINES[id] ? D.HEROINES[id].name : D.ENEMIES[id] ? D.ENEMIES[id].name : ''; }
+  function storyHTML() {
+    const st = D.STORIES[ui.story.h][ui.story.ch], i = ui.story.i, [who, text] = st.lines[i];
+    const nar = who === 'nar';
+    return `<div class="story-bg" data-act="storyNext">
+      <div class="story-head"><span>${esc(D.HEROINES[ui.story.h].name)} · ${esc(st.title)}</span><button class="tb" data-act="storyClose" aria-label="닫기">✕</button></div>
+      <div class="story-stage">${nar ? '' : speakerArt(who)}</div>
+      <div class="story-box ${nar ? 'nar' : ''}">${nar ? '' : `<div class="story-name">${esc(speakerName(who))}</div>`}<div class="story-text">${esc(text)}</div>
+        <div class="story-foot small dim"><span>${i + 1} / ${st.lines.length}</span><span>${i < st.lines.length - 1 ? '터치해서 계속 ▶' : '터치해서 닫기'}</span></div></div>
+    </div>`;
+  }
+  function pickLine(h, kind) { const a = D.LINES[h] && D.LINES[h][kind]; return a && a.length ? a[Math.floor(Math.random() * a.length)] : null; }
+  function endLine() {
+    if (!ui.endLine || ui.endLine.run !== run.seed) ui.endLine = { run: run.seed, text: pickLine(run.starter, run.won ? 'win' : 'loss') || '' };
+    return ui.endLine.text;
+  }
+  function heroSay(kind, delay) {
+    if (!settings.talk || !run) return;
+    const h = run.starter, text = pickLine(h, kind);
+    if (!text) return;
+    setTimeout(() => {
+      document.querySelectorAll('.herosay.live').forEach(x => x.remove());
+      const b = document.createElement('div');
+      b.className = 'herosay live';
+      b.innerHTML = `<span class="hs-name">${esc(D.HEROINES[h].name)}</span> ${esc(text)}`;
+      fxLayer.appendChild(b); setTimeout(() => b.remove(), 3400);
+    }, delay || 0);
+  }
+  function xpPanelHTML() {
+    const x = run.xpResult; if (!x) return '';
+    const before = x.before, after = x.after, up = after.lv > before.lv;
+    const parts = x.parts.filter(p => p.n).map(p => `<span>${esc(p.k)} ${p.n}</span><b>+${p.xp}</b>`).join('');
+    const unl = x.unlocks.map(t => `<div class="trackrow got"><span class="tic">${TRACK_ICON[t.kind]}</span><span class="small" style="flex:1">${esc(trackLabel(x.hero, t))}</span></div>`).join('');
+    const beforePct = up ? 0 : before.pct;
+    return `<div class="panel col xppanel" style="width:100%;max-width:340px">
+      <div class="row" style="justify-content:space-between"><b>💞 ${esc(D.HEROINES[x.hero].name)} 경험치 +${x.gain}</b><span>${up ? `<span class="lvup">Lv ${before.lv} → Lv ${after.lv}!</span>` : `Lv ${after.lv}`}</span></div>
+      <div class="lvbar big xpanim"><i class="old" style="width:${Math.round(beforePct * 100)}%"></i><i class="new" style="width:${Math.round(after.pct * 100)}%"></i></div>
+      <div class="small dim">${after.max ? '최대 레벨' : `${after.xp} / ${after.next} XP`}${x.gain === 0 && after.max ? '' : ''}</div>
+      ${parts ? `<div class="statgrid small">${parts}</div>` : '<div class="small dim">이번엔 층을 넘지 못했어. 그래도 다음엔 더 멀리!</div>'}
+      ${unl ? `<b style="color:var(--gold)">새로 열린 것</b>${unl}` : ''}
+      ${x.unlocks.some(t => t.kind === 'story') ? `<button class="btn gold block" data-act="profile" data-id="${x.hero}">📖 새 개인 스토리 보기</button>` : ''}
+    </div>`;
+  }
   function renderEnd() {
     const won = run.won, s = D.STARTERS[run.starter];
     const st = run.stats;
@@ -530,6 +668,8 @@
       <div class="logo" style="font-size:34px">${won ? '원정 성공!' : '원정 실패…'}</div>
       ${won ? artBox('gallery:g_' + run.starter, galleryInfo('g_' + run.starter), 'endart', { cap: D.GALLERY['g_' + run.starter].title }) : heroArt(s.hero, 'endart')}
       <div class="bubble">${won ? esc(D.GALLERY['g_' + run.starter].cap) : esc('조금만… 더 갈 수 있었는데. 다음엔 꼭.')}</div>
+      ${settings.talk ? `<div class="herosay static"><span class="hs-name">${esc(D.HEROINES[s.hero].name)}</span> ${esc(endLine())}</div>` : ''}
+      ${xpPanelHTML()}
       <div class="panel statgrid" style="width:100%;max-width:340px">
         <span>도달</span><b>${won ? '황혼 너머' : `${run.act < 4 ? run.act + '막' : '종막'} ${run.floor}층`}</b>
         <span>승천</span><b>🔥${run.asc}</b>
@@ -612,6 +752,7 @@
       ${row('vibe', '📳 진동', '피격·보스 격파 때 짧게 진동 (지원 기기만)')}
       ${row('reduce', '🧘 움직임 줄이기', '화면 흔들림·카드 날아가기 같은 연출을 줄여')}
       ${row('fast', '⏩ 빠른 연출', '적 턴 연출 속도 2배')}
+      ${row('talk', '💬 히로인 대사', '엘리트·보스·이벤트·상점·휴식에서 짧은 말풍선')}
       <div class="section-title" style="padding-left:0;margin-top:8px">💾 백업</div>
       <button class="btn block" data-act="exportBackup">⬇️ 백업 파일 내보내기</button>
       <button class="btn block" data-act="importPick">⬆️ 백업 파일 가져오기</button>
@@ -727,6 +868,9 @@
     if (!run.over && run.screen !== 'combat') grantAch();
     render();
     const dur = playFx(fxs);
+    if (before !== run.screen && run.screen === 'combat' && run.combat && run.combat.kind !== 'monster') heroSay(run.combat.kind === 'boss' ? 'boss' : 'elite', 600);
+    if (fxs.some(f => f.k === 'bosswin')) heroSay('bossWin', 1600);
+    if (before !== run.screen && ['event', 'shop', 'rest'].includes(run.screen)) heroSay(run.screen, 350);
     if (leftCombat) {
       ui.busy = true;
       const boss = fxs.some(f => f.k === 'victory' || f.k === 'defeat' || f.k === 'bosswin');
@@ -831,7 +975,7 @@
   }
   function startRun(id) {
     const asc = Math.min(settings.asc, meta.ascMax);
-    run = E.newRun(id, null, { asc, unlocked: E.unlockedCards(meta) });
+    run = E.newRun(id, null, Object.assign(E.runOptions(meta, id, settings.loadout[id]), { asc }));
     ui.sel = null; ui.modal = null; ui.modalStack = []; ui.deadShown = new Set(); ui.runAch = []; ui.tut = 0;
     saveRun(); render();
     if (!meta.runs) setTimeout(() => toast('지도에서 빛나는 칸을 골라 출발해!'), 300);
@@ -902,7 +1046,7 @@
     codexCls(d) { ui.codexCls = d.c; ui.modal = codexHTML(); render(); },
     achv() { openModal(achHTML(false)); },
     lockedHero() { toast('🔒 ' + esc(D.STARTERS.aria.unlockText)); },
-    lockedCard(d) { const c = D.CARDS[d.id]; toast(c.unlock ? `🔒 업적 「${esc(D.ACHIEVEMENTS[c.unlock].name)}」: ${esc(D.ACHIEVEMENTS[c.unlock].desc)}` : '아직 만나지 못한 카드야. 보상·상점에서 찾아봐.'); },
+    lockedCard(d) { const c = D.CARDS[d.id]; if (c.mastery) { const t = D.MASTERY.track(c.mastery).find(x => x.id === d.id); toast(`🔒 ${esc(D.HEROINES[c.mastery].name)} 레벨 ${t.lv}에서 보상 풀에 추가돼.`); return; } toast(c.unlock ? `🔒 업적 「${esc(D.ACHIEVEMENTS[c.unlock].name)}」: ${esc(D.ACHIEVEMENTS[c.unlock].desc)}` : '아직 만나지 못한 카드야. 보상·상점에서 찾아봐.'); },
     lockedRelic() { toast('아직 찾지 못한 유물이야.'); },
     lockedEnemy() { toast('아직 만나지 못한 적이야.'); },
     lockedGal(d) { toast('🔒 해금 조건: ' + esc(D.GALLERY[d.id].how)); },
@@ -913,7 +1057,14 @@
     tutReplay() { meta.tutorialDone = false; ui.tut = 0; saveMeta(); closeModal(); toast('다음 전투에서 튜토리얼이 다시 나와.'); },
     asc(d) { settings.asc = Math.max(0, Math.min(meta.ascMax, Math.min(settings.asc, meta.ascMax) + +d.d)); saveSettings(); render(); },
     continue() { const s = loadJSON(SAVE_KEY); if (s && s.v === 2) { run = s; run.fx = []; ui.modal = null; ui.deadShown = new Set(); ui.runAch = []; render(); } },
-    previewDeck(d) { const s = D.STARTERS[d.id]; openModal(deckModal(s.deck.map(id => ({ id, up: false })), s.title + ' 시작 덱')); },
+    previewDeck(d) { const s = D.STARTERS[d.id], o = E.runOptions(meta, d.id, settings.loadout[d.id]); openModal(deckModal((o.deck || s.deck).map(id => ({ id, up: false })), s.title + (o.deck ? ' 시작 덱 (변형)' : ' 시작 덱'))); },
+    heroes() { openModal(heroListHTML()); },
+    profile(d) { openModal(profileHTML(d.id), !!ui.modal); },
+    loadout(d) { const L = settings.loadout[d.h] = Object.assign({ relic: 'base', deck: 'base' }, settings.loadout[d.h]); L[d.k] = d.v; saveSettings(); render(); },
+    story(d) { ui.story = { h: d.h, ch: +d.ch, i: 0 }; meta.storyRead[d.h + (+d.ch)] = Date.now(); saveMeta(); render(); },
+    storyNext() { const st = D.STORIES[ui.story.h][ui.story.ch]; if (ui.story.i < st.lines.length - 1) { ui.story.i++; render(); } else H.storyClose(); },
+    storyClose() { const h = ui.story.h; ui.story = null; if (ui.modal) ui.modal = profileHTML(h); render(); },
+    lockedTrack(d) { toast('🔒 ' + esc(D.HEROINES[d.h].name) + ' 레벨 ' + d.lv + '에서 열려.'); },
     pick(d) { startRun(d.id); },
     again() { const id = run.starter; run = null; startRun(id); },
     viewDeckEnd() { openModal(deckModal(run.deck, '최종 덱')); },

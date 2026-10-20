@@ -217,6 +217,20 @@
   C('ex_aegis', '절대 성역', 'holy', 'skill', 'legend', 2, 'aria', ['aegis'], '👼', [blk(20), self('sanctuary', 5)], { effects: [blk(26), self('sanctuary', 6)] }, { quote: '여기 있는 한, 아무도 못 다쳐.', unlock: 'block50' });
   C('ex_encore', '앙코르', 'neutral', 'skill', 'legend', 0, 'lyra', ['spell'], '🎤', [draw(2), { t: 'energy', v: 2 }], { effects: [draw(3), { t: 'energy', v: 2 }] }, { exhaust: true, quote: '한 곡 더! 한 곡 더!', unlock: 'elite10' });
 
+  // ── 히로인 숙련 카드 (v1.2: 히로인 레벨로 보상 풀에 추가됨, mastery 표시)
+  C('sx_flurry', '홍련 연참', 'sword', 'attack', 'uncommon', 1, 'sera', ['multi', 'str'], '🌺', [dmg(4, { hits: 2 }), self('str', 1)], { effects: [dmg(5, { hits: 2 }), self('str', 1)] }, { exhaust: true, mastery: 'sera', quote: '베고, 다시 벤다. 그때마다 더 무거워져.' });
+  C('sx_vow', '붉은 맹세', 'sword', 'skill', 'common', 1, 'sera', ['blood', 'guard'], '🎀', [{ t: 'loseHp', v: 2 }, blk(10)], { effects: [{ t: 'loseHp', v: 2 }, blk(13)] }, { mastery: 'sera', quote: '이 정도 피는 약속값이야.' });
+  C('sx_dawn', '새벽 검무', 'sword', 'power', 'rare', 2, 'sera', ['multi', 'str'], '🌅', [self('trance', 1), self('str', 1)], { cost: 1 }, { mastery: 'sera', quote: '밤이 끝나는 걸, 칼끝으로 보여 줄게.' });
+  C('lx_comet', '꼬리별', 'magic', 'attack', 'common', 1, 'luna', ['aoe', 'spell'], '☄️', [{ t: 'dmgAll', v: 5 }, draw(1)], { effects: [{ t: 'dmgAll', v: 7 }, draw(1)] }, { mastery: 'luna', quote: '하나 떨어뜨리고, 다음 계산.' });
+  C('lx_veil', '서리 장막', 'magic', 'skill', 'uncommon', 1, 'luna', ['frost'], '🌫️', [blk(7), appAll('weak', 1)], { effects: [blk(10), appAll('weak', 2)] }, { mastery: 'luna', quote: '추우면 다들 얌전해지거든.' });
+  C('lx_orbit', '별자리 공명', 'magic', 'power', 'rare', 1, 'luna', ['spell'], '🪐', [self('arcane', 2), draw(1)], { effects: [self('arcane', 3), draw(1)] }, { mastery: 'luna', quote: '주문 하나마다 별 하나가 대답해.' });
+  C('yx_mist', '안개 걸음', 'ninja', 'skill', 'common', 0, 'yuki', ['evade'], '🌁', [blk(2), draw(1)], { effects: [blk(4), draw(1)] }, { mastery: 'yuki', quote: '…방금 여기 있었는데?' });
+  C('yx_needle', '독침 연사', 'ninja', 'attack', 'uncommon', 1, 'yuki', ['poison', 'combo'], '🪡', [dmg(3, { hits: 2 }), app('poison', 3)], { effects: [dmg(3, { hits: 2 }), app('poison', 5)] }, { mastery: 'yuki', quote: '따끔. 그다음은 천천히.' });
+  C('yx_moon', '달그림자 난무', 'ninja', 'skill', 'rare', 1, 'yuki', ['shiv', 'combo'], '🌘', [{ t: 'add', id: 'shiv', n: 4, to: 'hand' }], { effects: [{ t: 'add', id: 'shiv', n: 5, to: 'hand' }] }, { exhaust: true, mastery: 'yuki', quote: '달이 숨은 동안만, 끝까지.' });
+  C('ax_lantern', '순례자의 등불', 'holy', 'skill', 'common', 1, 'aria', ['heal', 'aegis'], '🏮', [blk(5), { t: 'heal', v: 2 }], { effects: [blk(7), { t: 'heal', v: 3 }] }, { mastery: 'aria', quote: '불은 꺼뜨리지 않아. 누구 앞에서도.' });
+  C('ax_oath', '수호 서약', 'holy', 'skill', 'uncommon', 1, 'aria', ['judge', 'aegis'], '📜', [blk(6), self('thorns', 1)], { effects: [blk(9), self('thorns', 2)] }, { mastery: 'aria', quote: '맹세는 방패에 새기는 거야.' });
+  C('ax_dawnshield', '여명의 방패', 'holy', 'skill', 'rare', 2, 'aria', ['aegis'], '🌄', [blk(14), self('metal', 2)], { effects: [blk(18), self('metal', 3)] }, { exhaust: true, mastery: 'aria', quote: '해가 뜰 때까지, 여기 서 있을게.' });
+
   // ── 토큰 / 상태 카드 (보상에 안 나옴)
   C('shiv', '표창', 'token', 'attack', 'special', 0, 'yuki', ['shiv'], '✴️', [dmg(4)], { effects: [dmg(6)] }, { exhaust: true, quote: '휙.' });
   C('burn', '화상', 'status', 'status', 'special', 0, null, [], '🔥', [], null, { unplayable: true, endTurnInHand: 2, text: '사용 불가. 턴 종료 시 손에 있으면 체력 2를 잃어.', quote: '앗 뜨거…' });
@@ -379,6 +393,10 @@
     moon_pendant: { name: '달의 펜던트', icon: '🌙', starter: true, desc: '매 전투 첫 턴에 에너지 1, 카드 1장을 더 얻어.' },
     shadow_hood:  { name: '그림자 두건', icon: '🥷', starter: true, desc: '전투 시작 시 표창 3장을 손에 넣어.' },
     holy_sigil:   { name: '성기사의 인장', icon: '🔰', starter: true, desc: '전투 시작 시 방어도 4, 가시 1.' },
+    crimson_sheath:{ name: '핏빛 칼집', icon: '🗡️', starter: true, mastery: 'sera', desc: '전투 시작 시 활력 6. 엘리트·보스 전투에서는 대신 활력 10.' },
+    star_chart:   { name: '별자리 지도', icon: '🗺️', starter: true, mastery: 'luna', desc: '짝수 턴마다 카드를 1장 더 뽑아.' },
+    viper_ring:   { name: '독사의 반지', icon: '💍', starter: true, mastery: 'yuki', desc: '전투 시작 시 모든 적에게 중독 2.' },
+    dawn_lamp:    { name: '새벽 등불', icon: '🪔', starter: true, mastery: 'aria', desc: '턴 시작 시 방어도 1 (성역 1). 휴식 시 회복량 +6.' },
     guard_charm:  { name: '수호의 부적', icon: '🧿', desc: '전투 시작 시 방어도를 10 얻어.' },
     dragon_heart: { name: '용의 심장', icon: '❤️‍🔥', desc: '전투 시작 시 힘을 1 얻어.' },
     viper_fang:   { name: '독사의 송곳니', icon: '🐍', desc: '전투 시작 시 모든 적에게 취약 1.' },
@@ -596,8 +614,92 @@
   const ART = root.BD_ARTMAP || {};
 
   for (const k of Object.keys(CARDS)) CARDS[k].id = k;
-  const DATA = { HEROINES, STATUS, ARCH, CLASS_ARCH, CARDS, STARTERS, ACTS, ENEMIES, ENCOUNTERS, RELICS, POTIONS, EVENTS, ACHIEVEMENTS, GALLERY, ASCENSION, ART,
-    TITLE: '미녀 덱: 밤의 여왕', VERSION: '1.1.1' };
+  // ───────── 히로인 레벨·숙련 (v1.2) ─────────
+  // 경험치는 원정이 끝날 때마다(실패해도) 얻음. curve[i] = 레벨 i+1에 필요한 누적 경험치.
+  const MASTERY = {
+    curve: [0, 100, 250, 450, 700, 1000, 1400, 1900, 2500, 3200],
+    xp: { floor: 10, elite: 25, boss: 60, win: 150 },
+    heroes: {
+      sera: { cards: ['sx_vow', 'sx_flurry', 'sx_dawn'], relic: 'crimson_sheath',
+        passive: { name: '전장의 감', desc: '보스 전투 시작 시 힘 1, 엘리트 전투 시작 시 활력 4.' },
+        deck: { name: '연타·피의 각오형', desc: '붉은 일섬 대신 피의 맹세로 시작. 체력을 깎아 에너지를 당겨 쓰는 덱.', cards: ['s_strike', 's_strike', 's_strike', 's_strike', 's_strike', 's_guard', 's_guard', 's_guard', 's_guard', 's_bloodoath'] },
+        titles: ['두 번째 리본', '새벽의 검'] },
+      luna: { cards: ['lx_comet', 'lx_veil', 'lx_orbit'], relic: 'star_chart',
+        passive: { name: '별의 속삭임', desc: '전투 시작 시 마력 공명 1 (스킬을 낼 때마다 무작위 적에게 피해 1).' },
+        deck: { name: '서리 제어형', desc: '별똥별 대신 눈보라로 시작. 적을 약하게 만들며 버티는 덱.', cards: ['m_bolt', 'm_bolt', 'm_bolt', 'm_bolt', 'm_ward', 'm_ward', 'm_ward', 'm_ward', 'm_blizzard', 'm_focus'] },
+        titles: ['별을 세는 사람', '밤하늘의 사서'] },
+      yuki: { cards: ['yx_mist', 'yx_needle', 'yx_moon'], relic: 'viper_ring',
+        passive: { name: '그림자 숙련', desc: '엘리트·보스 전투 시작 시 표창 1장을 손에 넣어.' },
+        deck: { name: '표창 연계형', desc: '독 대신 표창 난무로 시작. 표창을 쏟아붓는 덱.', cards: ['n_slash', 'n_slash', 'n_slash', 'n_slash', 'n_slash', 'n_dodge', 'n_dodge', 'n_dodge', 'n_dodge', 'n_blades'] },
+        titles: ['그림자 밖으로', '달빛 아래의 유키'] },
+      aria: { cards: ['ax_lantern', 'ax_oath', 'ax_dawnshield'], relic: 'dawn_lamp',
+        passive: { name: '응보의 맹세', desc: '전투 시작 시 응보 2 (공격을 방어도로 전부 막으면 그 적에게 피해 2).' },
+        deck: { name: '치유·응보형', desc: '천벌 대신 응징으로 시작. 막고 맞받아치는 덱.', cards: ['h_strike', 'h_strike', 'h_strike', 'h_strike', 'h_guard', 'h_guard', 'h_guard', 'h_guard', 'h_guard', 'h_retort'] },
+        titles: ['다시 든 방패', '여명의 성기사'] }
+    }
+  };
+  // 레벨 보상 순서 (모든 히로인 공통 틀)
+  MASTERY.track = h => {
+    const m = MASTERY.heroes[h];
+    return [
+      { lv: 2, kind: 'story', ch: 0 }, { lv: 2, kind: 'card', id: m.cards[0] },
+      { lv: 3, kind: 'relic', id: m.relic },
+      { lv: 4, kind: 'story', ch: 1 }, { lv: 4, kind: 'card', id: m.cards[1] },
+      { lv: 5, kind: 'passive' },
+      { lv: 6, kind: 'story', ch: 2 }, { lv: 6, kind: 'deck' },
+      { lv: 7, kind: 'card', id: m.cards[2] },
+      { lv: 8, kind: 'story', ch: 3 }, { lv: 8, kind: 'title', id: 0 },
+      { lv: 9, kind: 'potion' },
+      { lv: 10, kind: 'story', ch: 4 }, { lv: 10, kind: 'title', id: 1 }, { lv: 10, kind: 'frame' }
+    ];
+  };
+
+  // ───────── 히로인 짧은 대사 (설정에서 끌 수 있음) ─────────
+  const LINES = {
+    sera: {
+      elite: ['강해 보이네. 그래서 좋아.', '저 녀석, 제대로 베어 볼 만하겠어.', '뒤로 빠지지 마. 정면이야.'],
+      boss: ['여기까지 왔으면 끝까지 가는 거야.', '리본 꽉 묶었어. 간다!', '네가 길을 막는 마지막 벽이야?'],
+      bossWin: ['…후. 아직 칼은 안 무뎌졌어.', '다음 문으로 가자. 쉬는 건 그다음.'],
+      event: ['수상한데… 그래도 들여다보긴 할래.', '뭐든 칼로 안 되면 머리로 해 보지.'],
+      shop: ['날 좀 갈아 줄 숫돌 있어?', '돈은 아끼는 거 아니야. 살아남는 데 쓰는 거지.'],
+      rest: ['불 앞에선 잠깐 칼 내려놓을게.', '리본 다시 묶고… 좋아, 아직 괜찮아.'],
+      win: ['봤지? 끝까지 왔어.', '밤이 걷혔어. 이제 좀 자도 되겠다.'],
+      loss: ['…다음엔 한 걸음 더 갈 거야.', '아파도 괜찮아. 배운 건 남으니까.', '칼은 또 들 수 있어. 다시 가자.']
+    },
+    luna: {
+      elite: ['변수가 하나 늘었네. 재밌다.', '저건 계산식이 좀 길겠는걸.', '졸리지만… 집중할게.'],
+      boss: ['별이 여기서 멈추라고 했어. 난 안 멈출 거지만.', '다 계산해 뒀어. 아마도.', '좋아, 큰 거 한 방 준비할게.'],
+      bossWin: ['예상보다 3초 빨랐어. 훌륭해.', '…휴, 오차 범위 안이었어.'],
+      event: ['기록에 없는 현상이야. 메모해 둬야지.', '함정일 확률 40퍼센트. 그래도 궁금해.'],
+      shop: ['마도서 할인은 안 해?', '이 돌, 마력 순도가 좋네.'],
+      rest: ['잠깐만 눈 좀 붙일게… 오 분만.', '별자리 다시 그려 볼게. 길이 보여.'],
+      win: ['계산대로야. 아니, 계산보다 좋았어.', '밤하늘이 다시 제자리로 돌아왔어.'],
+      loss: ['오차가 컸어. 다음 식은 고칠게.', '실패도 데이터야. 꽤 많이 모였어.', '…좀 자고 다시 계산하자.']
+    },
+    yuki: {
+      elite: ['…강하다. 조용히 끝낸다.', '그림자 쪽으로 돌아갈게.', '저건 독이 잘 들 거야.'],
+      boss: ['…여기서 숨지 않아.', '이번엔 정면이야. 이상하지?', '끝내자.'],
+      bossWin: ['…끝.', '숨, 다시 쉬어도 돼.'],
+      event: ['…기척이 있어.', '조심해. 아니, 내가 먼저 볼게.'],
+      shop: ['표창, 스무 개.', '…독은 어디 있어?'],
+      rest: ['불빛은 싫지만, 오늘은 괜찮아.', '…잠깐 앉을게.'],
+      win: ['…해냈어. 같이라서.', '그림자 밖도, 나쁘지 않네.'],
+      loss: ['…다음엔 더 조용히.', '실수했어. 기억해 둘게.', '아직 끝 아니야.']
+    },
+    aria: {
+      elite: ['모두 내 뒤로! 첫 공격은 내가 받는다.', '강한 상대일수록 방패가 빛나지.', '물러서지 않아.'],
+      boss: ['이번엔 지켜 낼 거야. 반드시.', '맹세를 걸고, 여기서 막는다.', '성기사단 부단장 아리아, 간다!'],
+      bossWin: ['다친 사람 없지? 좋아.', '빛은 아직 꺼지지 않았어.'],
+      event: ['누군가 도움이 필요한 걸지도 몰라.', '신중하게. 하지만 외면하진 말자.'],
+      shop: ['방패 손질할 기름 있나요?', '필요한 만큼만 사자. 나머진 남을 위해.'],
+      rest: ['모두 쉬어. 불침번은 내가 설게.', '기도 한 번 하고 쉴게.'],
+      win: ['지켜 냈어. 이번에는, 정말로.', '여명이야. 모두 수고했어.'],
+      loss: ['다음엔 더 단단해질게.', '쓰러져도 다시 일어나는 게 기사야.', '…미안. 다시 지킬게.']
+    }
+  };
+
+  const DATA = { MASTERY, LINES, HEROINES, STATUS, ARCH, CLASS_ARCH, CARDS, STARTERS, ACTS, ENEMIES, ENCOUNTERS, RELICS, POTIONS, EVENTS, ACHIEVEMENTS, GALLERY, ASCENSION, ART,
+    TITLE: '미녀 덱: 밤의 여왕', VERSION: '1.2.0' };
   root.BD_DATA = DATA;
   if (typeof module !== 'undefined' && module.exports) module.exports = DATA;
 })(typeof window !== 'undefined' ? window : globalThis);
