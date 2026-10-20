@@ -159,7 +159,7 @@
     while (box.children.length > 3) box.removeChild(box.firstChild);
     setTimeout(() => t.remove(), (ms || 2600) + 100);
   }
-  const HAIR = { sera: 1, luna: 0, yuki: 2, aria: 3 };
+  const HAIR = { sera: 1, luna: 0, yuki: 2, aria: 3, mariel: 3, serena: 0, odette: 2 };
   function heroInfo(hid, kind, extra) {
     const h = D.HEROINES[hid];
     return Object.assign({ kind, woman: true, c1: h ? h.colors[0] : '#888', c2: h ? h.colors[1] : '#222', hair: HAIR[hid] != null ? HAIR[hid] : (A.hash(hid) % 4) }, extra || {});
@@ -197,11 +197,13 @@
     const info = cardInfo(d); if (d.hero) info.fallback = 'hero:' + d.hero;
     const art = `<div class="art">${A.html('card:' + d.id, info)}</div>`;
     const cost = d.unplayable ? '' : `<div class="cost">${d.cost === -1 ? 'X' : d.cost}</div>`;
-    const desc = E.describe(d, o.ctx);
+    const desc = E.describe(d, o.ctx ? Object.assign({ fn: card.fn || 0, allies: run && run.combat ? run.combat.allies.length : null }, o.ctx) : o.ctx);
     const cls = ['card', 't-' + d.type, 'r-' + d.rarity, card.up ? 'up' : '', o.big ? 'big' : '', o.cls || ''].join(' ');
     const attrs = o.act ? `data-act="${o.act}" ${Object.entries(o.data || {}).map(([k, v]) => `data-${k}="${esc(v)}"`).join(' ')}` : '';
     const syn = o.syn ? synBadge(d.id) : '';
-    return `<div class="${cls}" ${attrs}>${cost}${art}<div class="cname">${esc(d.name)}</div><div class="chero">${h ? esc(h.name) : esc(RAR_KO[d.rarity] || '')}</div><div class="cdesc"><span>${desc}</span></div><div class="ctype">${TYPE_KO[d.type] || ''}</div>${syn}</div>`;
+    const fnb = card.fn ? `<div class="fnbadge">📝${card.fn}</div>` : (d.retain ? '<div class="fnbadge ret">보존</div>' : '');
+    const moonb = d.moon ? `<div class="moonbadge ${run && run.combat && run.combat.moon === d.moon.p ? 'on' : ''}">${E.MOON_ICON[d.moon.p]}</div>` : '';
+    return `<div class="${cls}" ${attrs}>${cost}${art}${fnb}${moonb}<div class="cname">${esc(d.name)}</div><div class="chero">${h ? esc(h.name) : esc(RAR_KO[d.rarity] || '')}</div><div class="cdesc"><span>${desc}</span></div><div class="ctype">${TYPE_KO[d.type] || ''}</div>${syn}</div>`;
   }
   function synBadge(id) {
     if (!run) return '';
@@ -394,15 +396,15 @@
     else if (!c.hand.some(cd => E.canPlay(run, cd))) hint = '낼 카드가 없어 → 턴 종료';
     const incoming = E.incomingDamage(run);
     const noMore = !c.hand.some(cd => E.canPlay(run, cd));
-    const net = Math.max(0, incoming - P.block);
+    const net = E.incomingNet(run);
     const tut = !meta.tutorialDone && ui.tut < TUT.length ? `<div class="tutbox tut-${TUT[ui.tut].at}"><div>${TUT[ui.tut].t}</div><div class="row" style="justify-content:flex-end;margin-top:6px"><button class="btn sm ghost" data-act="tutSkip">건너뛰기</button><button class="btn sm primary" data-act="tutNext">${ui.tut === TUT.length - 1 ? '알겠어!' : '다음 ▶'} <span class="small">${ui.tut + 1}/${TUT.length}</span></button></div></div>` : '';
     return `${topBar()}
     <div class="battle" data-act="bg" style="--actbg:${D.ACTS[run.act].bg[0]}">
       <div class="enemies n${c.enemies.length}">${enemies}</div>
       <div class="player" data-who="p">
         <div class="pportrait" data-act="viewArt" data-key="hero:${sid}" data-info="${esc(JSON.stringify(heroInfo(sid, 'hero')))}" data-cap="${esc(h.name)}">${A.html('hero:' + sid, heroInfo(sid, 'hero'))}</div>
-        <div class="pinfo"><div class="row" style="justify-content:space-between"><b>${esc(h.name)}</b>${incoming ? `<span class="small incoming ${net ? '' : 'safe'}">🗡️${incoming}${P.block ? ` − 🛡️${P.block}` : ''} → <b>${net ? '−' + net : '안전'}</b></span>` : '<span class="small dim">공격 예고 없음</span>'}</div>
-        ${hpBarHTML(run.hp, run.maxHp, P.block)}${chipsHTML(P.st, true)}</div>
+        <div class="pinfo"><div class="row" style="justify-content:space-between"><b>${esc(h.name)}</b>${incoming ? `<span class="small incoming ${net ? '' : 'safe'}">🗡️${incoming}${P.block ? ` − 🛡️${P.block}` : ''}${c.allies.length ? ` − 🪆` : ''} → <b>${net ? '−' + net : '안전'}</b></span>` : '<span class="small dim">공격 예고 없음</span>'}</div>
+        ${hpBarHTML(run.hp, run.maxHp, P.block)}${chipsHTML(P.st, true)}${mechHTML(c)}</div>
       </div>
       <div class="controls">
         <div class="energy ${c.energy ? '' : 'zero'}">${c.energy}/${E.maxEnergy(run)}</div>
@@ -416,6 +418,18 @@
     </div>
     <div class="hand ${ui.deal ? 'deal' : ''}" id="hand">${c.hand.map((cd, i) => cardHTML(cd, { act: 'card', data: { uid: cd.uid }, ctx: { p: P }, cls: (cd.uid === ui.sel ? 'sel ' : '') + (E.canPlay(run, cd) ? 'playable' : 'unplayable') }).replace('<div class="card', `<div style="--i:${i}" class="card`)).join('')}</div>
 `;
+  }
+  // v1.3: 인형(마리엘) · 달 위상(세레나) 표시 — 한 줄짜리라 화면 높이를 거의 안 늘림
+  function mechHTML(c) {
+    let h = '';
+    if (run.cls === 'moon') {
+      const nx = (c.moon + 1) % 4;
+      h += `<div class="mech moonrow" data-act="mechInfo" data-k="moon">${[0, 1, 2, 3].map(i => `<span class="mph ${i === c.moon ? 'on' : ''}">${E.MOON_ICON[i]}</span>`).join('')}<span class="small">지금 <b>${E.MOON[c.moon]}</b> → 다음 ${E.MOON[nx]}</span></div>`;
+    }
+    if (c.allies.length || run.cls === 'puppet') {
+      h += `<div class="mech dollrow" data-act="mechInfo" data-k="doll">${c.allies.length ? c.allies.map((d, i) => `<span class="doll ${i === 0 ? 'front' : ''}" data-who="doll${i}">${d.dodo ? '🛡️' : '🪆'}<b>${d.hp}</b>/${d.maxHp} ⚔${d.atk + (c.p.st.dollCraft || 0)}</span>`).join('') : '<span class="small dim">인형 없음</span>'}</div>`;
+    }
+    return h;
   }
   function layoutHand() {
     const hand = document.getElementById('hand'); if (!hand) return;
@@ -772,7 +786,7 @@
     let body = '';
     if (tab === 'cards') {
       const all = Object.values(D.CARDS).filter(c => E.isCollectible(c));
-      const clsTabs = [['all', '전체'], ['sword', '세라'], ['magic', '루나'], ['ninja', '유키'], ['holy', '아리아'], ['neutral', '공용'], ['legend', '전설']];
+      const clsTabs = [['all', '전체'], ['sword', '세라'], ['magic', '루나'], ['ninja', '유키'], ['holy', '아리아'], ['puppet', '마리엘'], ['moon', '세레나'], ['lore', '오데트'], ['neutral', '공용'], ['legend', '전설']];
       const list = all.filter(c => ui.codexCls === 'all' || (ui.codexCls === 'legend' ? c.rarity === 'legend' : c.cls === ui.codexCls && c.rarity !== 'legend'));
       const seenN = all.filter(c => S.cards.has(c.id)).length;
       body = `<div class="small dim">발견 ${seenN} / ${all.length} · 아직 못 본 카드는 실루엣으로 보여</div>
@@ -1083,6 +1097,7 @@
     abandonYes() { ui.modal = null; ui.modalStack = []; run.over = true; run.won = false; run.screen = 'gameover'; run.combat = null; saveRun(); render(); },
     deck() { openModal(deckModal(run.deck, '내 덱')); },
     relic(d) { const r = D.RELICS[d.id]; toast(`${r.icon} <b>${esc(r.name)}</b>${r.boss ? ' 👑' : ''}<br>${esc(r.desc)}`); },
+    mechInfo(d) { toast(d.k === 'moon' ? '🌙 <b>달의 위상</b><br>카드를 낼 때마다 🌒초승→🌓반달→🌕보름→🌑그믐 순으로 1칸. 카드 오른쪽 위 달이 지금 위상과 같으면 추가 효과.' : '🪆 <b>인형</b> (최대 3체)<br>적의 공격은 방어도 → 맨 앞 인형 → 체력 순으로 받아. 턴 종료 시 인형마다 무작위 적을 공격.', 4200); },
     status(d) { const s = D.STATUS[d.s]; toast(`${s.icon} <b>${esc(s.name)}</b> ${s.flag ? '' : d.v}<br>${esc(s.desc(+d.v))}`); },
     cardInfo(d) { openModal(cardDetail({ id: d.id, up: d.up === '1' }), true); },
     node(d) { sfx('tap'); doAct(() => E.chooseNode(run, d.id)); },

@@ -26,6 +26,9 @@ function checkInvariants(run) {
     }
     assert(c.enemies.length <= 4, 'too many enemies', run);
     for (const k in c.p.st) assert(Number.isFinite(c.p.st[k]), 'player status NaN ' + k, run);
+    assert(c.allies.length <= 3 && c.allies.every(d => Number.isFinite(d.hp) && d.hp > 0 && d.hp <= d.maxHp), 'doll state', run);
+    assert(c.moon >= 0 && c.moon <= 3, 'moon phase ' + c.moon, run);
+    for (const cd of c.hand) assert(cd.fn == null || (Number.isFinite(cd.fn) && cd.fn > 0), 'footnote', run);
     // 설명문 생성이 깨지지 않는지
     for (const cd of c.hand) { const s = E.describe(E.cardDef(cd), { p: c.p }); assert(typeof s === 'string' && !s.includes('undefined') && !s.includes('NaN'), 'bad desc ' + cd.id + ': ' + s, run); }
     for (const e of c.enemies) if (!e.dead) E.intentView(run, e);
@@ -86,10 +89,29 @@ function cardScore(run, cd, incoming) {
   if (d.unplayable || !E.canPlay(run, cd)) return -1;
   const al = E.aliveEnemies(run);
   let s = 0;
-  const needBlock = Math.max(0, incoming - P.block);
+  const needBlock = Math.max(0, incoming - P.block - c.allies.reduce((a, x) => a + (x === c.allies[0] ? x.hp : 0), 0));
   const atk = (v, o) => E.calcAttack(P, null, v, o);
-  for (const e of d.effects) {
+  const fn = cd.fn || 0;
+  const effs = d.effects.map(e => e.fn ? Object.assign({}, e, { v: e.v + e.fn * fn }) : e);
+  if (d.moon && run.cls === 'moon' && c.moon === d.moon.p) effs.push(...d.moon.effects);
+  // 오데트: 각주가 적은 보존 카드는 아껴 둠(다른 낼 카드가 있으면)
+  if (d.retain && d.effects.some(e => e.fn) && fn < 2 && c.turn > 0 && needBlock === 0) s -= 8;
+  for (const e of effs) {
     switch (e.t) {
+      case 'doll': s += c.allies.length < 3 ? 8 + e.hp * 1.2 + e.atk * 3 : e.hp; break;
+      case 'dollHp': s += c.allies.length * e.v; break;
+      case 'dmgPerDoll': s += atk(e.v) * (c.allies.length + 1); break;
+      case 'blockPerDoll': { const v = (e.base || 0) + e.v * c.allies.length; s += needBlock > 0 ? Math.min(needBlock, v) * 1.6 + 1 : 1; break; }
+      case 'breakDoll': { const dl = c.allies[c.allies.length - 1]; if (!dl) { s -= 20; break; } s += (e.draw || 0) * 6 + (e.energy || 0) * 12 + (e.boom ? dl.maxHp * e.boom * al.length : 0) - (dl.hp + dl.atk * 3); break; }
+      case 'dollAct': s += c.allies.reduce((a, x) => a + x.atk + (P.st.dollCraft || 0), 0) * (e.n || 1); break;
+      case 'reviveDolls': s += c.broken.length * 10; break;
+      case 'moonShift': s += 3; break;
+      case 'moonSet': s += 6; break;
+      case 'dmgMoon': s += atk(e.v) * (c.moonMoves + 1); break;
+      case 'fnAll': s += c.hand.filter(x => E.cardDef(x).retain).length * 4 * e.v; break;
+      case 'blockFn': { const v = (e.base || 0) + e.m * c.hand.reduce((a, x) => a + (x.fn || 0), 0); s += needBlock > 0 ? Math.min(needBlock, v) * 1.6 + 1 : 1; break; }
+      case 'recall': s += c.disc.length ? 6 : 0; break;
+      case 'upgradeRetain': s += 5; break;
       case 'dmg': s += atk(e.v, { strMult: e.strMult, shiv: cd.id === 'shiv' }) * (e.hitsFrom === 'atk' ? c.atkThisTurn : e.hitsFrom === 'skill' ? c.skillThisTurn : (e.hits || 1)) + (e.bonusIfWeak && al.some(x => x.st.weak) ? e.bonusIfWeak : 0); break;
       case 'dmgAll': s += atk(e.v) * al.length * (e.hits === 'X' ? c.energy : (e.hits || 1)) * 1.1; break;
       case 'dmgRandom': s += atk(e.v) * e.hits; break;
@@ -154,6 +176,7 @@ function smartStep(run, R) {
         if (!(p.effects[0] && p.effects[0].t === 'heal' && run.hp > run.maxHp - 15)) return E.usePotion(run, slot, ti);
       }
       const incoming = E.incomingDamage(run);
+      if (c.cardsThisTurn >= 40) return E.endTurn(run); // 0코스트 드로우 순환 방지(봇 전용)
       let best = null, bs = 0;
       for (const cd of c.hand) { const s = cardScore(run, cd, incoming); if (s > bs) { bs = s; best = cd; } }
       if (!best) return E.endTurn(run);
@@ -236,7 +259,7 @@ function batch(name, stepFn, n) {
   console.log(`\n== ${name}: ${n} runs per heroine ==`);
   const summary = {};
   let errors = 0;
-  for (const s of Object.keys(D.STARTERS)) {
+  for (const s of Object.keys(D.STARTERS).filter(h => !process.env.HEROES || process.env.HEROES.split(',').includes(h))) {
     let wins = 0, floors = 0, deaths = {}, acts = [0, 0, 0, 0, 0];
     for (let i = 0; i < n; i++) {
       try {
@@ -257,7 +280,7 @@ function batch(name, stepFn, n) {
 }
 
 let errs = 0;
-errs += batch('random bot (crash/softlock hunt)', randomStep, N);
+if (!process.env.SMART_ONLY) errs += batch('random bot (crash/softlock hunt)', randomStep, N);
 errs += batch('smart bot (balance)', smartStep, N);
 console.log(errs ? `\nFAILED with ${errs} errors` : '\nALL OK: no crashes, softlocks, or invariant violations');
 process.exit(errs ? 1 : 0);
