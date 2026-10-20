@@ -19,10 +19,11 @@ const MX = ['sx_flurry', 'sx_vow', 'sx_dawn', 'lx_comet', 'lx_veil', 'lx_orbit',
   const S = require(path.join(ROOT, 'story.js'));
   const lens = []; for (const h in S) S[h].forEach((c, i) => lens.push([h + (i + 1), c.lines.map(l => l[1]).join('').length]));
   const out = lens.filter(([, n]) => n < 600 || n > 900);
-  ok(lens.length === 20 && out.length === 0, `스토리 20장 모두 600~900자 (최소 ${Math.min(...lens.map(x => x[1]))}, 최대 ${Math.max(...lens.map(x => x[1]))}) ` + out.join(' '));
+  ok(lens.length >= 20 && out.length === 0, `스토리 ${lens.length}장 모두 600~900자 (최소 ${Math.min(...lens.map(x => x[1]))}, 최대 ${Math.max(...lens.map(x => x[1]))}) ` + out.join(' '));
   const sw = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8'), idx = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
   const ver = require(path.join(ROOT, 'data.js')) && (globalThis.BD_DATA || {}).VERSION;
-  ok(sw.includes("'beautydeck-v1.2.1'") && !/1\.2\.0/.test(sw + idx), 'sw 캐시 이름·index 쿼리 v1.2.1');
+  const CUR = (globalThis.BD_DATA || {}).VERSION;
+  ok(sw.includes(`'beautydeck-v${CUR}'`) && idx.includes(`?v=${CUR}`) && !/1\.2\.0/.test(sw + idx), `sw 캐시 이름·index 쿼리 = 현재 버전 v${CUR}`);
   // 2) 브라우저
   const browser = await puppeteer.launch({ executablePath: process.env.CHROME || '/usr/bin/google-chrome', headless: 'new', args: ['--no-sandbox'] });
   const page = await browser.newPage();
@@ -39,7 +40,7 @@ const MX = ['sx_flurry', 'sx_vow', 'sx_dawn', 'lx_comet', 'lx_veil', 'lx_orbit',
   await page.evaluate(m => localStorage.setItem('beautydeck.meta.v2', JSON.stringify(m)), v120);
   await page.reload(); await wait(600);
   const m = await page.evaluate(() => { const m = window.BD_UI.meta; return { xp: m.heroXp, read: m.storyRead, runs: m.runs, ach: Object.keys(m.ach).length, from: m.xpMigratedFrom, ver: window.BD_DATA.VERSION }; });
-  ok(m.ver === '1.2.1', '게임 버전 1.2.1');
+  ok(m.ver === (globalThis.BD_DATA || {}).VERSION, '게임 버전 ' + m.ver);
   ok(m.runs === 20 && m.ach === 3 && m.xp.sera === 1800 && m.xp.aria === 400 && m.read.sera3 && m.read.yuki0 && !m.from, 'v1.2.0 저장 그대로 유지(경험치 재계산 없음·읽은 스토리 유지)');
   // 도감 → 히로인별 카드 탭, 숙련 카드 그림 확인
   for (const [cls, h] of [['sword', 'sera'], ['magic', 'luna'], ['ninja', 'yuki'], ['holy', 'aria']]) {

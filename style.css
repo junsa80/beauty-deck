@@ -377,3 +377,14 @@ h2.upname { color: var(--green); }
 .herosay.static { width: 100%; max-width: 340px; }
 .xppanel .trackrow, .xppanel .statgrid { text-align: left; }
 .story-head .tb { background: #ffffff1f; color: #fff; border: 1px solid #ffffff33; border-radius: 12px; font-size: 18px; }
+
+/* v1.3 새 히로인 메커니즘 */
+.mech { display: flex; gap: 4px; align-items: center; justify-content: center; flex-wrap: wrap; margin-top: 2px; }
+.mech .mph { font-size: 14px; opacity: .35; filter: grayscale(.6); }
+.mech .mph.on { opacity: 1; filter: none; font-size: 18px; text-shadow: 0 0 6px #fff8; }
+.mech .doll { font-size: 11px; padding: 1px 5px; border-radius: 8px; background: #2a1840cc; border: 1px solid #c0395a88; white-space: nowrap; }
+.mech .doll.front { border-color: #ffd36e; box-shadow: 0 0 4px #ffd36e88; }
+.card .fnbadge { position: absolute; right: 3px; top: 3px; z-index: 3; font-size: 10px; font-weight: 700; padding: 0 4px; border-radius: 6px; background: #3a2614ee; color: #ffe2a8; border: 1px solid #e0b46a; }
+.card .fnbadge.ret { font-weight: 400; opacity: .9; }
+.card .moonbadge { position: absolute; right: 3px; top: 3px; z-index: 3; font-size: 13px; opacity: .55; }
+.card .moonbadge.on { opacity: 1; filter: drop-shadow(0 0 4px #fff); }

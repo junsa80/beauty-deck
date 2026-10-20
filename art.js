@@ -13,7 +13,7 @@
     r = Math.round((t - r) * p) + r; g = Math.round((t - g) * p) + g; b = Math.round((t - b) * p) + b;
     return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
   }
-  const CLS_COL = { sword: ['#ff6f91', '#3a0d1f'], magic: ['#8f7bff', '#160f3a'], ninja: ['#58e0b5', '#0b2a24'], holy: ['#ffd36e', '#4a3008'], neutral: ['#c9b3ff', '#241a3a'], status: ['#777', '#222'], curse: ['#777', '#222'] };
+  const CLS_COL = { sword: ['#ff6f91', '#3a0d1f'], magic: ['#8f7bff', '#160f3a'], ninja: ['#58e0b5', '#0b2a24'], holy: ['#ffd36e', '#4a3008'], puppet: ['#c0395a', '#1f3a2a'], moon: ['#b9c6ff', '#1a2050'], lore: ['#e0b46a', '#3a2614'], neutral: ['#c9b3ff', '#241a3a'], status: ['#777', '#222'], curse: ['#777', '#222'] };
 
   function sparkles(R, n, col) {
     let s = '';

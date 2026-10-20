@@ -50,7 +50,7 @@
   }
   const canUpgrade = card => !card.up && !!(D.CARDS[card.id] && D.CARDS[card.id].up);
   function newCard(run, id, up) { return { uid: run.nextUid++, id, up: !!up }; }
-  function needsTarget(def) { return def.effects.some(e => ['dmg', 'apply', 'multiplyPoison', 'rawDmg', 'dmgBlock', 'dmgPoison'].includes(e.t)); }
+  function needsTarget(def) { const T = ['dmg', 'apply', 'multiplyPoison', 'rawDmg', 'dmgBlock', 'dmgPoison', 'dmgPerDoll', 'dmgMoon']; return def.effects.concat(def.moon ? def.moon.effects : []).some(e => T.includes(e.t)); }
   const isCollectible = c => !['token', 'status'].includes(c.cls);
 
   // ───────── 런 생성 ─────────
@@ -268,7 +268,8 @@
     const c = run.combat = {
       kind, enemies: ids.map(id => mkEnemy(run, id)), draw: [], hand: [], disc: [], exh: [],
       energy: 0, p: { isPlayer: true, block: 0, st: {} }, turn: 0, atkThisTurn: 0, skillThisTurn: 0, cardsThisTurn: 0,
-      cardsTotal: 0, dmgTaken: 0, over: false, fromEvent: !!(opts && opts.fromEvent)
+      cardsTotal: 0, dmgTaken: 0, over: false, fromEvent: !!(opts && opts.fromEvent),
+      allies: [], broken: [], moon: 0, moonMoves: 0
     };
     const deck = shuffle(run, run.deck.map(cd => ({ uid: cd.uid, id: cd.id, up: cd.up })));
     const innate = deck.filter(cd => cardDef(cd).innate), rest = deck.filter(cd => !cardDef(cd).innate);
@@ -290,6 +291,13 @@
     if (run.passive === 'luna') addSt(P, 'arcane', 1);
     if (run.passive === 'yuki' && kind !== 'monster' && c.hand.length < HAND_MAX) c.hand.push(newCard(run, 'shiv'));
     if (run.passive === 'aria') addSt(P, 'retribution', 2);
+    // v1.3 새 히로인
+    if (hasRelic(run, 'silver_thimble')) summonDoll(run, 5, 2);
+    if (hasRelic(run, 'sewing_box')) { summonDoll(run, 4, 2); summonDoll(run, 4, 2); }
+    if (run.passive === 'mariel' && kind === 'boss') summonDoll(run, 6, 2, true);
+    if (hasRelic(run, 'silver_ring')) c.moon = 2;
+    if (hasRelic(run, 'brass_key')) c.hand.push(newCard(run, 'lo_mark'));
+    if (run.passive === 'odette' && kind !== 'monster') { const nc = newCard(run, 'lo_read'); nc.fn = 2; c.hand.push(nc); }
     if (hasRelic(run, 'dragon_heart')) addSt(P, 'str', 1);
     if (hasRelic(run, 'silk_glove')) addSt(P, 'dex', 1);
     if (hasRelic(run, 'thorn_crown')) addSt(P, 'thorns', 3);
@@ -325,6 +333,61 @@
     }
     e.firstDone = true;
     e.intent = key;
+  }
+
+  // ───────── v1.3 인형 (마리엘) ─────────
+  const DOLL_MAX = 3;
+  function summonDoll(run, hp, atk, dodo) {
+    const c = C(run); if (!c) return;
+    if (c.allies.length >= DOLL_MAX) { const f = c.allies[0]; f.maxHp += hp; f.hp += hp; fx(run, { k: 'doll', v: hp }); return; }
+    const bonus = (c.p.st.dollCraft || 0);
+    c.allies.push({ uid: run.nextUid++, name: dodo ? '도도' : '인형', hp: hp + bonus, maxHp: hp + bonus, atk, dodo: !!dodo });
+    fx(run, { k: 'doll', v: hp });
+  }
+  function breakDoll(run) {
+    const c = C(run); if (!c || !c.allies.length) return null;
+    const d = c.allies.pop(); c.broken.push({ maxHp: d.maxHp, atk: d.atk, dodo: d.dodo, name: d.name }); fx(run, { k: 'dollBreak' });
+    return d;
+  }
+  function dollsAct(run, n) {
+    const c = C(run), P = c.p;
+    for (let k = 0; k < n; k++) for (const d of c.allies.slice()) {
+      const al = aliveEnemies(run); if (!al.length || run.over || c.over) return;
+      const t = pick(run, al); const v = calcAttack({ st: {} }, t, d.atk + (P.st.dollCraft || 0));
+      applyDamage(run, t, v, P, false); fx(run, { k: 'dollHit', v });
+    }
+  }
+  // 적의 공격 한 번: 방어도 → 맨 앞 인형 → 체력 순으로 받음
+  function hitPlayer(run, e, amount) {
+    const c = C(run), P = c.p;
+    if (!c.allies.length) return applyDamage(run, P, amount, e, true);
+    const blocked = Math.min(P.block, amount); P.block -= blocked;
+    let rem = amount - blocked;
+    if (blocked) fx(run, { k: 'dmg', who: 'p', v: 0, blocked });
+    const d = c.allies[0];
+    if (rem > 0 && d) {
+      const take = Math.min(rem, d.hp); d.hp -= take; rem -= take; fx(run, { k: 'dollHurt', v: take });
+      if (d.hp <= 0) { c.allies.shift(); c.broken.push({ maxHp: d.maxHp, atk: d.atk, dodo: d.dodo, name: d.name }); fx(run, { k: 'dollBreak' }); }
+    }
+    if (rem > 0) return applyDamage(run, P, rem, e, true);
+    if (P.st.thorns && !e.dead) applyDamage(run, e, P.st.thorns, P, false);
+    return 0;
+  }
+  // ───────── v1.3 달 위상 (세레나) ─────────
+  const MOON = ['초승', '반달', '보름', '그믐'], MOON_ICON = ['🌒', '🌓', '🌕', '🌑'];
+  function moonAdvance(run, n) {
+    const c = C(run), P = c.p;
+    if (P.st.moonHold) return;
+    for (let i = 0; i < n; i++) {
+      const was = c.moon; c.moon = (c.moon + 1) % 4; c.moonMoves++;
+      if (c.moonMoves === 1 && run.passive === 'serena') gainBlock(run, P, 3);
+      if (was === 3) {
+        fx(run, { k: 'moonCycle' });
+        if (hasRelic(run, 'crescent_pin')) gainBlock(run, P, 3);
+        if (P.st.moonCycle) for (const t of aliveEnemies(run)) { if (run.over || c.over) break; applyDamage(run, t, P.st.moonCycle, P, false); }
+      }
+      if (run.over || c.over) return;
+    }
   }
 
   // src: 공격자, tgt: 대상, base: 기본 피해, o: { vigor, strMult, bonusIfWeak, shiv }
@@ -427,6 +490,7 @@
     c.turn++; run.stats.turns++;
     c.atkThisTurn = 0; c.skillThisTurn = 0; c.cardsThisTurn = 0;
     if (c.turn > 1 && !P.st.barricade) P.block = 0;
+    c.moonMoves = 0; c.onceE = 0; if (P.st.moonHold) delete P.st.moonHold;
     if (P.st.poison) { const p = P.st.poison; addSt(P, 'poison', -1); loseHp(run, P, p); if (run.over) return; }
     if (P.st.ritual) addSt(P, 'str', P.st.ritual);
     if (P.st.sanctuary) gainBlock(run, P, P.st.sanctuary);
@@ -435,7 +499,7 @@
     if (P.st.shivGen) for (let i = 0; i < P.st.shivGen && c.hand.length < HAND_MAX; i++) c.hand.push(newCard(run, 'shiv'));
     const bossE = ['b_crown', 'b_ember', 'b_mask'].filter(r => hasRelic(run, r)).length;
     c.energy = BASE_ENERGY + bossE + (P.st.energyUp || 0)
-      + (c.turn === 1 && hasRelic(run, 'moon_pendant') ? 1 : 0)
+      + (c.turn === 1 && hasRelic(run, 'moon_pendant') ? 1 : 0) + (c.turn === 1 && hasRelic(run, 'silver_ring') ? 1 : 0)
       + (c.turn % 3 === 0 && hasRelic(run, 'sun_pin') ? 1 : 0);
     drawCards(run, BASE_DRAW + (P.st.drawUp || 0) + (hasRelic(run, 'b_hourglass') ? 1 : 0)
       + (c.turn === 1 && hasRelic(run, 'firefly') ? 2 : 0) + (c.turn === 1 && hasRelic(run, 'moon_pendant') ? 1 : 0) + (c.turn % 2 === 0 && hasRelic(run, 'star_chart') ? 1 : 0));
@@ -461,17 +525,18 @@
   function runEffects(run, effects, target, ctx) {
     const c = C(run), P = c.p;
     const ao = e => ({ vigor: ctx.vigor, strMult: e.strMult, bonusIfWeak: e.bonusIfWeak, shiv: ctx.shiv });
+    const fv = e => e.v + (e.fn ? e.fn * (ctx.fn || 0) : 0);
     for (const e of effects) {
       if (run.over || c.over) return;
       switch (e.t) {
         case 'dmg': {
           const hits = e.hitsFrom === 'atk' ? c.atkThisTurn : e.hitsFrom === 'skill' ? c.skillThisTurn : (e.hits || 1);
-          for (let h = 0; h < hits; h++) { if (!target || target.dead || run.over) break; applyDamage(run, target, calcAttack(P, target, e.v, ao(e)), P, true); }
+          for (let h = 0; h < hits; h++) { if (!target || target.dead || run.over) break; applyDamage(run, target, calcAttack(P, target, fv(e), ao(e)), P, true); }
           break;
         }
         case 'dmgAll': {
           const hits = e.hits === 'X' ? ctx.x : (e.hits || 1);
-          for (let h = 0; h < hits; h++) for (const t of aliveEnemies(run)) { if (run.over) break; applyDamage(run, t, calcAttack(P, t, e.v, ao(e)), P, true); }
+          for (let h = 0; h < hits; h++) for (const t of aliveEnemies(run)) { if (run.over) break; applyDamage(run, t, calcAttack(P, t, fv(e), ao(e)), P, true); }
           break;
         }
         case 'dmgRandom': {
@@ -484,12 +549,32 @@
         case 'dmgAllThorns': { const v = (P.st.thorns || 0) * (e.m || 1); for (const t of aliveEnemies(run)) { if (run.over) break; applyDamage(run, t, calcAttack(P, t, v, ao(e)), P, true); } break; }
         case 'rawDmg': if (target && !target.dead) applyDamage(run, target, e.v, P, false); break;
         case 'rawDmgAll': for (const t of aliveEnemies(run)) { if (run.over) break; applyDamage(run, t, e.v, P, false); } break;
-        case 'block': playerBlock(run, e.v); break;
+        case 'block': playerBlock(run, fv(e)); break;
+        case 'doll': summonDoll(run, e.hp, e.atk); break;
+        case 'dollHp': c.allies.forEach(d => { d.hp += e.v; d.maxHp += e.v; }); if (c.allies.length) fx(run, { k: 'doll', v: e.v }); break;
+        case 'dmgPerDoll': { const hits = c.allies.length + 1; for (let h = 0; h < hits; h++) { if (!target || target.dead || run.over) break; applyDamage(run, target, calcAttack(P, target, e.v, ao(e)), P, true); } break; }
+        case 'blockPerDoll': playerBlock(run, (e.base || 0) + e.v * c.allies.length); break;
+        case 'breakDoll': {
+          const d = breakDoll(run); if (!d) break;
+          if (e.draw) drawCards(run, e.draw);
+          if (e.energy) c.energy += e.energy;
+          if (e.boom) for (const t of aliveEnemies(run)) { if (run.over || c.over) break; applyDamage(run, t, calcAttack(P, t, d.maxHp * e.boom, ao(e)), P, true); }
+          break;
+        }
+        case 'dollAct': dollsAct(run, e.n || 1); break;
+        case 'reviveDolls': { const b = c.broken.splice(0); for (const d of b) { if (c.allies.length >= DOLL_MAX) break; c.allies.push({ uid: run.nextUid++, name: d.name, hp: Math.max(1, Math.ceil(d.maxHp / 2)), maxHp: d.maxHp, atk: d.atk, dodo: d.dodo }); } fx(run, { k: 'doll', v: 0 }); break; }
+        case 'moonShift': moonAdvance(run, e.v); break;
+        case 'moonSet': c.moon = e.v; fx(run, { k: 'moon' }); break;
+        case 'dmgMoon': { const hits = c.moonMoves + 1; for (let h = 0; h < hits; h++) { if (!target || target.dead || run.over) break; applyDamage(run, target, calcAttack(P, target, e.v, ao(e)), P, true); } break; }
+        case 'fnAll': c.hand.forEach(cd => { if (cardDef(cd).retain) cd.fn = (cd.fn || 0) + e.v; }); break;
+        case 'blockFn': playerBlock(run, (e.base || 0) + e.m * c.hand.reduce((a, cd) => a + (cd.fn || 0), 0)); break;
+        case 'recall': { if (c.disc.length && c.hand.length < HAND_MAX) { const cd = c.disc.pop(); c.hand.push(cd); } break; }
+        case 'upgradeRetain': c.hand.forEach(cd => { if (cardDef(cd).retain && canUpgrade(cd)) cd.up = true; }); break;
         case 'blockDex': gainBlock(run, P, Math.max(0, (P.st.dex || 0) * e.m)); break;
         case 'rawBlock': gainBlock(run, P, e.v); break;
         case 'doubleBlock': gainBlock(run, P, P.block); break;
         case 'draw': drawCards(run, e.v); break;
-        case 'energy': c.energy += e.v; break;
+        case 'energy': if (e.once) { if (c.onceE) break; c.onceE = 1; } c.energy += e.v; break;
         case 'energyIfAtk': if (c.atkThisTurn + 1 >= e.n) c.energy += e.v; break; // 이 카드 포함
         case 'apply': if (target && !target.dead) { if (e.s === 'poison') addPoison(run, target, e.v); else addSt(target, e.s, e.v); fx(run, { k: 'debuff', who: target.uid, s: e.s }); } break;
         case 'applyAll': aliveEnemies(run).forEach(t => { if (e.s === 'poison') addPoison(run, t, e.v); else addSt(t, e.s, e.v); fx(run, { k: 'debuff', who: t.uid, s: e.s }); }); break;
@@ -555,7 +640,12 @@
     const P = c.p;
     if (P.st.afterImage) gainBlock(run, P, P.st.afterImage);
     const vigor = d.type === 'attack' ? (P.st.vigor || 0) : 0;
-    runEffects(run, d.effects, target, { x, vigor, shiv: card.id === 'shiv' });
+    const fnv = card.fn || 0, moonAt = c.moon;
+    runEffects(run, d.effects, target, { x, vigor, shiv: card.id === 'shiv', fn: fnv });
+    if (d.moon && run.cls === 'moon' && moonAt === d.moon.p && !run.over && !c.over) { fx(run, { k: 'moonBonus', p: moonAt }); runEffects(run, d.moon.effects, target && !target.dead ? target : null, { x, vigor: 0, fn: fnv }); }
+    if (fnv >= 3 && hasRelic(run, 'archive_lamp')) c.energy += 1;
+    delete card.fn;
+    if (run.cls === 'moon' && !run.over && !c.over) moonAdvance(run, 1);
     if (!run.over && !c.over) {
       if (d.type === 'attack') {
         if (vigor) delete P.st.vigor;
@@ -594,8 +684,10 @@
     if (P.st.regen) { healPlayer(run, P.st.regen); addSt(P, 'regen', -1); }
     if (c.over) return { ok: true };
     for (const cd of c.hand) { const d = cardDef(cd); if (d.endTurnInHand) { loseHp(run, P, d.endTurnInHand); if (run.over) return { ok: true }; } }
-    for (const cd of c.hand) { if (cardDef(cd).ethereal) c.exh.push(cd); else c.disc.push(cd); }
-    c.hand = [];
+    const keep = [];
+    for (const cd of c.hand) { const dd = cardDef(cd); if (dd.retain) { cd.fn = (cd.fn || 0) + 1 + (P.st.annotate || 0); keep.push(cd); } else if (dd.ethereal) c.exh.push(cd); else c.disc.push(cd); }
+    c.hand = keep;
+    if (c.allies.length) { dollsAct(run, 1 + (P.st.puppetry || 0)); checkCombatEnd(run); if (c.over || run.over) return { ok: true }; }
     for (const s of ['weak', 'vuln']) if (P.st[s]) addSt(P, s, -1);
     fx(run, { k: 'turn', who: 'e' });
     for (const e of c.enemies.slice()) {
@@ -623,7 +715,7 @@
     if (!m) return;
     if (m.say) fx(run, { k: 'say', who: e.uid, text: m.say });
     fx(run, { k: 'act', who: e.uid, name: m.name, atk: !!m.dmg });
-    if (m.dmg) for (let h = 0; h < (m.hits || 1); h++) { if (e.dead || run.over) break; applyDamage(run, c.p, calcAttack(e, c.p, m.dmg), e, true); }
+    if (m.dmg) for (let h = 0; h < (m.hits || 1); h++) { if (e.dead || run.over) break; hitPlayer(run, e, calcAttack(e, c.p, m.dmg)); }
     if (run.over || e.dead) { e.hist.push(e.intent); return; }
     if (m.block) gainBlock(run, e, m.block);
     if (m.blockAll) aliveEnemies(run).forEach(x => gainBlock(run, x, m.blockAll));
@@ -661,6 +753,17 @@
     return aliveEnemies(run).reduce((s, e) => s + intentView(run, e).parts.filter(p => p.k === 'atk').reduce((a, p) => a + p.total, 0), 0);
   }
 
+  // 예상 순손실(방어도 → 인형 → 체력 순)
+  function incomingNet(run) {
+    const c = C(run); if (!c) return 0;
+    let blk = c.p.block, dolls = c.allies.map(d => d.hp), net = 0;
+    for (const e of aliveEnemies(run)) for (const p of intentView(run, e).parts) if (p.k === 'atk') for (let h = 0; h < p.hits; h++) {
+      let v = p.v; const b = Math.min(blk, v); blk -= b; v -= b;
+      while (v > 0 && dolls.length) { const t = Math.min(v, dolls[0]); dolls[0] -= t; v -= t; if (dolls[0] <= 0) dolls.shift(); }
+      net += v;
+    }
+    return net;
+  }
   function usePotion(run, slot, targetIdx) {
     const id = run.potions[slot];
     if (!id) return { ok: false, reason: '빈 칸이야.' };
@@ -936,7 +1039,7 @@
     const won = run && run.over && run.won;
     switch (id) {
       case 'first_win': return won || meta.wins > 0;
-      case 'win_sera': case 'win_luna': case 'win_yuki': case 'win_aria': return won && run.starter === id.slice(4);
+      case 'win_sera': case 'win_luna': case 'win_yuki': case 'win_aria': case 'win_mariel': case 'win_serena': case 'win_odette': return won && run.starter === id.slice(4);
       case 'boss_morgana': case 'boss_belita': case 'boss_celes': case 'boss_nyx': return !!s && s.bosses.includes(id.slice(5));
       case 'big_hit': return !!s && s.maxHit >= 40;
       case 'chain10': return !!s && s.maxCardsTurn >= 10;
@@ -1068,28 +1171,46 @@
       return cls ? `<b class="${cls}">${v}</b>` : String(v);
     };
     const S = s => D.STATUS[s].name;
-    for (const e of def.effects) {
+    const fnC = (ctx && ctx.fn) || 0;
+    const effList = def.effects;
+    for (const e of effList) {
       switch (e.t) {
         case 'dmg': {
           let s;
           if (e.hitsFrom === 'atk') s = `이번 턴에 낸 공격 카드 1장당 피해 ${num(e.v, 'atk', e)}.`;
           else if (e.hitsFrom === 'skill') s = `이번 턴에 낸 스킬 카드 1장당 피해 ${num(e.v, 'atk', e)}.`;
-          else s = (e.hits || 1) > 1 ? `피해 ${num(e.v, 'atk', e)}를 ${e.hits}번.` : `피해 ${num(e.v, 'atk', e)}.`;
+          else s = (e.hits || 1) > 1 ? `피해 ${num(e.v + (e.fn ? e.fn * fnC : 0), 'atk', e)}를 ${e.hits}번.` : `피해 ${num(e.v + (e.fn ? e.fn * fnC : 0), 'atk', e)}.`;
+          if (e.fn) s += ` 각주당 +${e.fn}.`;
           if (e.strMult) s += ` 힘이 ${e.strMult}배로 적용.`;
           if (e.bonusIfWeak) s += ` 약화된 적에겐 +${e.bonusIfWeak}.`;
           out.push(s); break;
         }
-        case 'dmgAll': out.push(e.hits === 'X' ? `모든 적에게 피해 ${num(e.v, 'atk')}를 X번.` : (e.hits || 1) > 1 ? `모든 적에게 피해 ${num(e.v, 'atk')}를 ${e.hits}번.` : `모든 적에게 피해 ${num(e.v, 'atk')}.`); break;
+        case 'dmgAll': if (e.fn) { out.push(`모든 적에게 피해 ${num(e.v + e.fn * fnC, 'atk')}. 각주당 +${e.fn}.`); break; }
+          out.push(e.hits === 'X' ? `모든 적에게 피해 ${num(e.v, 'atk')}를 X번.` : (e.hits || 1) > 1 ? `모든 적에게 피해 ${num(e.v, 'atk')}를 ${e.hits}번.` : `모든 적에게 피해 ${num(e.v, 'atk')}.`); break;
         case 'dmgRandom': out.push(`무작위 적에게 피해 ${num(e.v, 'atk')}를 ${e.hits}번.`); break;
         case 'dmgBlock': out.push('현재 방어도만큼 피해.'); break;
         case 'dmgBlockAll': out.push('현재 방어도만큼 모든 적에게 피해.'); break;
         case 'dmgPoison': out.push(e.m > 1 ? `대상 중독 수치의 ${e.m}배만큼 피해.` : '대상 중독 수치만큼 피해.'); break;
         case 'dmgAllThorns': out.push(`가시 수치 ×${e.m}만큼 모든 적에게 피해.`); break;
-        case 'block': out.push(`방어도 ${num(e.v, 'blk')}.`); break;
+        case 'block': out.push(`방어도 ${num(e.v + (e.fn ? e.fn * fnC : 0), 'blk')}.` + (e.fn ? ` 각주당 +${e.fn}.` : '')); break;
+        case 'doll': out.push(`인형(체력 ${e.hp}·공격 ${e.atk}) 세우기.`); break;
+        case 'dollHp': out.push(`모든 인형 체력 +${e.v}.`); break;
+        case 'dmgPerDoll': out.push(`피해 ${num(e.v, 'atk')}를 (인형 수+1)번${P && ctx.allies != null ? ` (지금 ${ctx.allies + 1}번)` : ''}.`); break;
+        case 'blockPerDoll': out.push(`방어도 ${e.base ? e.base + ' + ' : ''}인형 1체당 ${e.v}.`); break;
+        case 'breakDoll': out.push('맨 뒤 인형 1체를 부숴서' + [e.draw ? ` 카드 ${e.draw}장 뽑기` : '', e.energy ? ` 에너지 +${e.energy}` : '', e.boom ? ` 모든 적에게 그 인형 최대 체력×${e.boom} 피해` : ''].filter(Boolean).join(',') + '. (인형이 없으면 효과 없음)'); break;
+        case 'dollAct': out.push(e.n > 1 ? `인형 전원 즉시 ${e.n}번 행동.` : '인형 전원 즉시 행동.'); break;
+        case 'reviveDolls': out.push('부서진 인형을 체력 절반으로 모두 복구(최대 3체).'); break;
+        case 'moonShift': out.push(`달의 위상을 ${e.v}칸 더 넘김.`); break;
+        case 'moonSet': out.push(`다음 카드를 ${['🌒초승', '🌓반달', '🌕보름', '🌑그믐'][(e.v + 1) % 4]} 위상에서 내도록 맞춤.`); break;
+        case 'dmgMoon': out.push(`피해 ${num(e.v, 'atk')}를 (이번 턴 위상이 바뀐 수+1)번.`); break;
+        case 'fnAll': out.push(`손의 보존 카드 각주 +${e.v}.`); break;
+        case 'blockFn': out.push(`방어도 ${e.base || 0} + 손 카드 각주 합×${e.m}.`); break;
+        case 'recall': out.push('버린 더미 맨 위 카드를 손으로.'); break;
+        case 'upgradeRetain': out.push('손의 보존 카드 모두 강화.'); break;
         case 'blockDex': out.push(`민첩 ×${e.m}만큼 방어도.`); break;
         case 'doubleBlock': out.push('방어도를 2배로.'); break;
         case 'draw': out.push(`카드 ${e.v}장 뽑기.`); break;
-        case 'energy': out.push(`에너지 +${e.v}.`); break;
+        case 'energy': out.push(`에너지 +${e.v}${e.once ? ' (턴당 1번)' : ''}.`); break;
         case 'energyIfAtk': out.push(`이번 턴 공격 카드 ${e.n}장째면 에너지 +${e.v}.`); break;
         case 'apply': out.push(`${S(e.s)} ${e.v} 부여.`); break;
         case 'applyAll': out.push(`모든 적에게 ${S(e.s)} ${e.v}.`); break;
@@ -1110,8 +1231,10 @@
         case 'rawBlock': out.push(`방어도 ${e.v}.`); break;
       }
     }
+    if (def.moon) { const sub = describe({ effects: def.moon.effects, type: def.type, id: def.id }, ctx); out.push(`${['🌒초승', '🌓반달', '🌕보름', '🌑그믐'][def.moon.p]}이면: ${sub}`); }
     if (def.text) out.push(def.text);
     const kw = [];
+    if (def.retain) kw.push('보존');
     if (def.innate) kw.push('선천성');
     if (def.ethereal) kw.push('휘발성');
     if (def.exhaust) kw.push('소멸');
@@ -1133,7 +1256,7 @@
     const changes = [];
     if (cost) changes.push(`비용 ${cost[0] === -1 ? 'X' : cost[0]} → ${cost[1] === -1 ? 'X' : cost[1]}`);
     if (!!a.exhaust !== !!b.exhaust) changes.push(b.exhaust ? '소멸 추가' : '소멸 제거');
-    const strip = t => t.replace(/ ?(선천성|휘발성|소멸)( · (선천성|휘발성|소멸))*\.$/, '');
+    const strip = t => t.replace(/ ?(보존|선천성|휘발성|소멸)( · (보존|선천성|휘발성|소멸))*\.$/, '');
     if (strip(ta) !== strip(tb)) changes.push('효과 강화');
     if (strip(ta) === strip(tb) && ta !== tb) html = strip(tb).replace(/[&<>]/g, '');
     return { cost, html, changes, before: ta, after: tb };
@@ -1141,12 +1264,12 @@
 
   const E = {
     D, LAST_ACT, rnd, cardDef, canUpgrade, needsTarget, isCollectible, newRun, genMap, availableNodes, chooseNode,
-    canPlay, playCard, endTurn, usePotion, discardPotion, intentView, incomingDamage, calcAttack, aliveEnemies, maxEnergy,
+    canPlay, playCard, endTurn, usePotion, discardPotion, intentView, incomingDamage, incomingNet, calcAttack, aliveEnemies, maxEnergy,
     takeGold, takeCard, skipCard, takeRelic, takeBossRelic, takePotion, leaveReward, synergy, rewardCount,
     restHeal, restHealAmount, restSmith, selectableCards, selectCard, cancelSelect,
     buy, shopRemove, removePrice, leaveShop, openChest, leaveTreasure, chooseEvent, eventOptionOk, leaveEvent,
     newMeta, migrateMeta, recordRun, heroLevel, masteryHas, masteryCards, heroTitle, runOptions, runXp, awardXp, levelOf, checkAchievements, heroUnlocked, unlockedCards, galleryUnlocked,
-    describe, upgradeDiff, josa, hasRelic, startCombat
+    describe, upgradeDiff, josa, hasRelic, startCombat, summonDoll, moonAdvance, MOON, MOON_ICON, DOLL_MAX
   };
   root.BD_ENGINE = E;
   if (typeof module !== 'undefined' && module.exports) module.exports = E;

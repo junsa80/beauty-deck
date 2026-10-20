@@ -16,6 +16,12 @@
              look: 'short black bob hair with teal inner color, cool teal eyes, calm expression, sleek dark navy kunoichi outfit with teal scarf and armored sleeves, kunai' },
     aria:  { name: '아리아', job: '성기사',   age: 27, colors: ['#ffd36e', '#a5741b'], bio: '성기사단 부단장. 방패 하나로 마을 하나를 지켜낸 적이 있다.',
              look: 'golden blonde hair in a braided crown, blue eyes, warm determined smile, white and gold paladin plate armor with blue cape, large round holy shield' },
+    mariel: { name: '마리엘', job: '인형사',   age: 23, colors: ['#c0395a', '#1f3a2a'], bio: '루벨 마을 출신 인형 장인. 은실로 나무 기사 「도도」를 움직인다. 말투는 차분하고 손은 늘 바쁘다.',
+             look: 'deep wine-red hair in a braided half-up style, calm grey eyes, round silver glasses, dark green workshop coat buttoned to the neck, brown leather apron, silver thimbles and silver threads, half-size wooden knight puppet' },
+    serena: { name: '세레나', job: '월무검사', age: 22, colors: ['#b9c6ff', '#1a2050'], bio: '닉스의 옛 궁정 무희. 달의 위상에 맞춰 두 자루 곡도로 춤춘다. 박자를 놓치는 걸 제일 싫어한다.',
+             look: 'long silver-white hair tied low, crescent moon hairpin, deep navy eyes, long navy and silver dancer overcoat with trousers and boots, twin curved sabers' },
+    odette: { name: '오데트', job: '기록관',   age: 24, colors: ['#e0b46a', '#3a2614'], bio: '셀레스 첨탑 서고의 기록관. 모든 것을 적어 두고, 아껴 둔 카드를 각주로 키운다.',
+             look: 'short chestnut bob with a feather quill headband, hazel green eyes, dark brown scholar coat with brass buttons, white high-collared shirt, ribbon tie, long skirt, ring of brass keys, glowing tome' },
     kaira: { name: '카이라', job: '창술사',   age: 28, colors: ['#ff9a3c', '#7a3010'], bio: '사막 출신 용병. 시원시원한 성격에 창끝은 더 시원하다.',
              look: 'tan skin, wild orange hair, green eyes, bold grin, desert mercenary leather armor with orange sash and gold bangles, long spear' },
     sion:  { name: '시엘',   job: '정령사',   age: 21, colors: ['#7fe3ff', '#1b5a8a'], bio: '바람 정령과 계약한 정령사. 호기심이 많아 늘 사고를 친다.',
@@ -62,6 +68,11 @@
     permafrost:{ name: '영구 동토', icon: '❄️', type: 'buff', desc: v => `턴 시작 시 모든 적에게 약화 ${v}.`, power: true },
     pyro:      { name: '연소 촉매', icon: '🌋', type: 'buff', desc: v => `「화상」을 뽑을 때마다 모든 적에게 피해 ${v}.`, power: true },
     blessing:  { name: '성녀의 축복', icon: '😇', type: 'buff', desc: v => `턴 시작 시 체력 ${v} 회복.`, power: true },
+    puppetry:  { name: '조종실', icon: '🎭', type: 'buff', desc: v => `턴 종료 시 인형이 ${v}번 더 행동해.`, power: true },
+    dollCraft: { name: '도도 개량', icon: '🔧', type: 'buff', desc: v => `인형 공격 피해가 ${v} 증가해.`, power: true },
+    moonHold:  { name: '달 멈춤', icon: '⏸️', type: 'buff', desc: () => `이번 턴에는 달의 위상이 바뀌지 않아.`, flag: true },
+    moonCycle: { name: '별비 무도', icon: '🌠', type: 'buff', desc: v => `달이 한 바퀴 돌 때마다(그믐→초승) 모든 적에게 피해 ${v}.`, power: true },
+    annotate:  { name: '서고의 주인', icon: '🖋️', type: 'buff', desc: v => `턴 종료 시 보존한 카드의 각주가 ${v} 더 늘어.`, power: true },
     enrage:    { name: '분노',   icon: '😤', type: 'buff',   desc: v => `상대가 스킬 카드를 쓸 때마다 힘을 ${v} 얻어.` },
     vigor:     { name: '활력',   icon: '✨', type: 'buff',   desc: v => `다음 공격 카드의 피해가 ${v} 증가해. (1회)` },
     curl:      { name: '웅크리기', icon: '🐚', type: 'buff', desc: v => `처음 피해를 받으면 방어도 ${v}를 얻어. (1회)` }
@@ -69,12 +80,15 @@
 
   // ───────── 조합(아키타입) ─────────
   const ARCH = {
+    legion: { name: '인형 군단', icon: '🪆' }, sacrifice: { name: '인형 희생', icon: '💥' }, craft: { name: '도도 강화', icon: '🔧' },
+    fullmoon: { name: '보름 폭딜', icon: '🌕' }, newmoon: { name: '그믐 순환', icon: '🌑' }, phase: { name: '위상 조절', icon: '🌓' },
+    footnote: { name: '각주 축적', icon: '📝' }, index: { name: '색인·드로우', icon: '📑' }, archive: { name: '보관 방어', icon: '🗄️' },
     str: { name: '힘 축적', icon: '💪' }, guard: { name: '방패·반격', icon: '🛡️' }, multi: { name: '연타', icon: '⚔️' }, blood: { name: '피의 각오', icon: '🩸' },
     spell: { name: '마나 순환', icon: '📖' }, aoe: { name: '광역 마법', icon: '☄️' }, frost: { name: '서리 제어', icon: '❄️' }, burn: { name: '화상 폭주', icon: '🔥' },
     poison: { name: '맹독', icon: '☠️' }, shiv: { name: '표창', icon: '🌀' }, evade: { name: '회피·민첩', icon: '🍃' }, combo: { name: '연계', icon: '🔗' },
     aegis: { name: '수호', icon: '🏰' }, heal: { name: '치유', icon: '🌿' }, judge: { name: '응보', icon: '⚖️' }, smite: { name: '신벌', icon: '✝️' }
   };
-  const CLASS_ARCH = { sword: ['str', 'guard', 'multi', 'blood'], magic: ['spell', 'aoe', 'frost', 'burn'], ninja: ['poison', 'shiv', 'evade', 'combo'], holy: ['aegis', 'heal', 'judge', 'smite'] };
+  const CLASS_ARCH = { puppet: ['legion', 'sacrifice', 'craft'], moon: ['fullmoon', 'newmoon', 'phase'], lore: ['footnote', 'index', 'archive'], sword: ['str', 'guard', 'multi', 'blood'], magic: ['spell', 'aoe', 'frost', 'burn'], ninja: ['poison', 'shiv', 'evade', 'combo'], holy: ['aegis', 'heal', 'judge', 'smite'] };
 
   // ───────── 카드 ─────────
   // type: attack | skill | power | status · cls: sword | magic | ninja | holy | neutral | token | status
@@ -88,7 +102,7 @@
     CARDS[id] = Object.assign({ name, cls, type, rarity, cost, hero, tags, icon, effects, up }, extra || {});
   }
   const dmg = (v, o) => Object.assign({ t: 'dmg', v }, o || {});
-  const blk = v => ({ t: 'block', v });
+  const blk = (v, o) => Object.assign({ t: 'block', v }, o || {});
   const self = (s, v) => ({ t: 'self', s, v });
   const app = (s, v) => ({ t: 'apply', s, v });
   const appAll = (s, v) => ({ t: 'applyAll', s, v });
@@ -231,6 +245,59 @@
   C('ax_oath', '수호 서약', 'holy', 'skill', 'uncommon', 1, 'aria', ['judge', 'aegis'], '📜', [blk(6), self('thorns', 1)], { effects: [blk(9), self('thorns', 2)] }, { mastery: 'aria', quote: '맹세는 방패에 새기는 거야.' });
   C('ax_dawnshield', '여명의 방패', 'holy', 'skill', 'rare', 2, 'aria', ['aegis'], '🌄', [blk(14), self('metal', 2)], { effects: [blk(18), self('metal', 3)] }, { exhaust: true, mastery: 'aria', quote: '해가 뜰 때까지, 여기 서 있을게.' });
 
+  // ── v1.3 마리엘(인형사): 인형(최대 3체)이 적의 공격을 대신 받고, 턴 종료 시 공격
+  const doll = (hp, atk) => ({ t: 'doll', hp, atk });
+  C('pm_strike', '바늘 찌르기', 'puppet', 'attack', 'starter', 1, 'mariel', [], '🪡', [dmg(6)], { effects: [dmg(9)] }, { quote: '따끔할 거야. 미리 말했어.' });
+  C('pm_guard', '천 덧대기', 'puppet', 'skill', 'starter', 1, 'mariel', [], '🧵', [blk(5)], { effects: [blk(8)] }, { quote: '찢어진 데는 덧대면 돼.' });
+  C('pm_doll', '인형 세우기', 'puppet', 'skill', 'starter', 1, 'mariel', ['legion'], '🪆', [doll(5, 2)], { effects: [doll(7, 3)] }, { quote: '도도, 앞으로.' });
+  C('pm_chorus', '합창', 'puppet', 'attack', 'common', 1, 'mariel', ['legion'], '🎶', [{ t: 'dmgPerDoll', v: 3 }], { effects: [{ t: 'dmgPerDoll', v: 4 }] }, { quote: '다 같이, 한 목소리로.' });
+  C('pm_stitch', '실 꿰기', 'puppet', 'skill', 'common', 1, 'mariel', ['craft'], '🪢', [blk(5), { t: 'dollHp', v: 3 }], { effects: [blk(7), { t: 'dollHp', v: 5 }] }, { quote: '한 땀이면 하루를 더 버텨.' });
+  C('pm_twin', '쌍둥이 인형', 'puppet', 'skill', 'common', 2, 'mariel', ['legion'], '👯', [doll(4, 2), doll(4, 2)], { cost: 1 }, { quote: '둘이 있으면 덜 무섭대.' });
+  C('pm_scrap', '분해', 'puppet', 'skill', 'common', 0, 'mariel', ['sacrifice'], '🔩', [{ t: 'breakDoll', draw: 2, energy: 1 }], { effects: [{ t: 'breakDoll', draw: 3, energy: 1 }] }, { quote: '부품은 버리지 않아. 다시 쓰지.' });
+  C('pm_heart', '불꽃 심장', 'puppet', 'attack', 'uncommon', 1, 'mariel', ['sacrifice'], '❤️‍🔥', [{ t: 'breakDoll', boom: 2 }], { effects: [{ t: 'breakDoll', boom: 3 }] }, { quote: '고마워. 마지막 박수는 네 거야.' });
+  C('pm_wall', '인형 방벽', 'puppet', 'skill', 'uncommon', 1, 'mariel', ['legion'], '🧱', [{ t: 'blockPerDoll', v: 4, base: 3 }], { effects: [{ t: 'blockPerDoll', v: 5, base: 5 }] }, { quote: '앞줄, 어깨 붙여.' });
+  C('pm_upgrade', '도도 개량', 'puppet', 'power', 'uncommon', 1, 'mariel', ['craft'], '🔧', [self('dollCraft', 1), { t: 'dollHp', v: 2 }], { effects: [self('dollCraft', 2), { t: 'dollHp', v: 3 }] }, { quote: '관절 하나만 더 깎으면 완벽해.' });
+  C('pm_booth', '조종실', 'puppet', 'power', 'rare', 2, 'mariel', ['legion', 'craft'], '🎭', [self('puppetry', 1)], { cost: 1 }, { quote: '실은 열 손가락, 무대는 하나.' });
+  C('pm_cut', '실 끊기', 'puppet', 'skill', 'rare', 1, 'mariel', ['legion'], '✂️', [appAll('weak', 2), { t: 'dollAct', n: 1 }], { effects: [appAll('weak', 3), { t: 'dollAct', n: 1 }] }, { quote: '네 실은 여기까지야.' });
+  C('mx_net', '은실 그물', 'puppet', 'skill', 'common', 1, 'mariel', ['legion'], '🕸️', [appAll('weak', 1), { t: 'blockPerDoll', v: 3, base: 3 }], { effects: [appAll('weak', 1), { t: 'blockPerDoll', v: 4, base: 5 }] }, { mastery: 'mariel', quote: '걸리면 못 빠져나가.' });
+  C('mx_curtain', '커튼콜', 'puppet', 'skill', 'uncommon', 1, 'mariel', ['legion', 'craft'], '🎪', [{ t: 'dollAct', n: 1 }, { t: 'dollHp', v: 2 }], { effects: [{ t: 'dollAct', n: 2 }] }, { mastery: 'mariel', quote: '한 번 더! 관객이 원하잖아.' });
+  C('mx_finale', '마지막 무대', 'puppet', 'skill', 'rare', 2, 'mariel', ['sacrifice'], '🎬', [{ t: 'reviveDolls' }, { t: 'dollHp', v: 3 }], { cost: 1 }, { exhaust: true, mastery: 'mariel', quote: '부서진 아이들도 커튼콜엔 나와야지.' });
+
+  // ── v1.3 세레나(월무검사): 카드를 낼 때마다 달의 위상 🌒초승→🌓반달→🌕보름→🌑그믐, 위상이 맞으면 추가 효과
+  const moon = (p, effects) => ({ moon: { p, effects } });
+  C('sm_slash', '초승 베기', 'moon', 'attack', 'starter', 1, 'serena', ['phase'], '🌒', [dmg(6)], Object.assign({ effects: [dmg(8)] }, moon(0, [dmg(4)])), Object.assign({ quote: '첫 박자는 가볍게.' }, moon(0, [dmg(3)])));
+  C('sm_step', '달그림자 스텝', 'moon', 'skill', 'starter', 1, 'serena', ['newmoon'], '🌑', [blk(5)], Object.assign({ effects: [blk(8)] }, moon(3, [draw(1)])), Object.assign({ quote: '그림자 쪽으로 반 박자.' }, moon(3, [draw(1)])));
+  C('sm_full', '보름 일섬', 'moon', 'attack', 'starter', 2, 'serena', ['fullmoon'], '🌕', [dmg(9)], Object.assign({ effects: [dmg(12)] }, moon(2, [dmg(9)])), Object.assign({ quote: '달이 차오르면, 칼도 차올라.' }, moon(2, [dmg(6)])));
+  C('sm_wane', '그믐 숨결', 'moon', 'skill', 'common', 0, 'serena', ['newmoon'], '🌘', [draw(1)], Object.assign({ effects: [draw(1), blk(3)] }, moon(3, [{ t: 'energy', v: 1, once: true }])), Object.assign({ quote: '숨을 비우면 다음 박자가 들려.' }, moon(3, [{ t: 'energy', v: 1, once: true }])));
+  C('sm_crescent', '초승 연격', 'moon', 'attack', 'common', 1, 'serena', ['phase'], '🌙', [dmg(3, { hits: 2 })], Object.assign({ effects: [dmg(4, { hits: 2 })] }, moon(0, [dmg(5)])), Object.assign({ quote: '하나, 둘. 아직 초승이야.' }, moon(0, [dmg(4)])));
+  C('sm_tide', '조수 간만', 'moon', 'skill', 'common', 1, 'serena', ['fullmoon'], '🌊', [blk(7)], Object.assign({ effects: [blk(9)] }, moon(2, [blk(9)])), Object.assign({ quote: '밀물엔 버티고, 썰물엔 나가.' }, moon(2, [blk(7)])));
+  C('sm_skip', '위상 건너뛰기', 'moon', 'skill', 'common', 0, 'serena', ['phase'], '⏭️', [{ t: 'moonShift', v: 1 }], { effects: [{ t: 'moonShift', v: 1 }, blk(3)] }, { quote: '박자 하나는 건너뛰어도 돼.' });
+  C('sm_eclipse', '월식', 'moon', 'attack', 'uncommon', 1, 'serena', ['phase'], '🌗', [{ t: 'dmgMoon', v: 3 }], { effects: [{ t: 'dmgMoon', v: 4 }] }, { quote: '돈 만큼, 벤다.' });
+  C('sm_halo', '달무리', 'moon', 'skill', 'uncommon', 1, 'serena', ['phase'], '🌓', [blk(6)], Object.assign({ effects: [blk(9)] }, moon(1, [appAll('weak', 2)])), Object.assign({ quote: '반달 그늘 아래선 다들 느려져.' }, moon(1, [appAll('weak', 1)])));
+  C('sm_spin', '은빛 회전', 'moon', 'attack', 'uncommon', 1, 'serena', ['fullmoon'], '💫', [{ t: 'dmgAll', v: 5 }], Object.assign({ effects: [{ t: 'dmgAll', v: 7 }] }, moon(2, [{ t: 'dmgAll', v: 7 }])), Object.assign({ quote: '한 바퀴. 은빛이 번져.' }, moon(2, [{ t: 'dmgAll', v: 5 }])));
+  C('sm_hold', '달 멈춤', 'moon', 'skill', 'rare', 1, 'serena', ['fullmoon', 'phase'], '⏸️', [self('moonHold', 1), draw(2)], { cost: 0 }, { exhaust: true, quote: '지금 이 위상, 조금만 더.' });
+  C('sm_rain', '별비 무도', 'moon', 'power', 'rare', 2, 'serena', ['newmoon', 'phase'], '🌠', [self('moonCycle', 4)], { effects: [self('moonCycle', 6)] }, { quote: '한 바퀴 돌 때마다 별이 내려.' });
+  C('mx_zanwol', '잔월', 'moon', 'attack', 'common', 1, 'serena', ['newmoon'], '🌘', [dmg(7)], Object.assign({ effects: [dmg(10)] }, moon(3, [{ t: 'energy', v: 1, once: true }])), Object.assign({ mastery: 'serena', quote: '새벽에 남은 달처럼, 한 번 더.' }, moon(3, [{ t: 'energy', v: 1, once: true }])));
+  C('mx_galaxy', '은하 스텝', 'moon', 'skill', 'uncommon', 1, 'serena', ['fullmoon', 'phase'], '🌌', [{ t: 'moonSet', v: 1 }, blk(6)], { effects: [{ t: 'moonSet', v: 1 }, blk(9)] }, { mastery: 'serena', quote: '다음 박자를 보름에 맞출게.' });
+  C('mx_lastsong', '닉스의 마지막 곡', 'moon', 'attack', 'rare', 2, 'serena', ['fullmoon'], '🎼', [dmg(12)], Object.assign({ effects: [dmg(15)] }, moon(2, [dmg(15, { hits: 2 })])), Object.assign({ exhaust: true, mastery: 'serena', quote: '이 곡은, 아침에 끝나요.' }, moon(2, [dmg(12, { hits: 2 })])));
+
+  // ── v1.3 오데트(기록관): 「보존」 카드는 턴이 끝나도 손에 남고 각주가 1 늘어. 각주만큼 강해짐 (고르는 창 없음)
+  C('lo_strike', '펜촉 찌르기', 'lore', 'attack', 'starter', 1, 'odette', [], '🖋️', [dmg(6)], { effects: [dmg(9)] }, { quote: '여기, 오탈자.' });
+  C('lo_guard', '장서 방벽', 'lore', 'skill', 'starter', 1, 'odette', [], '📚', [blk(5)], { effects: [blk(8)] }, { quote: '책장은 생각보다 단단해.' });
+  C('lo_read', '낭독', 'lore', 'attack', 'starter', 1, 'odette', ['footnote'], '📖', [dmg(5, { fn: 3 })], { effects: [dmg(7, { fn: 4 })] }, { retain: true, quote: '각주까지 전부 읽어 줄게.' });
+  C('lo_mark', '책갈피', 'lore', 'skill', 'common', 0, 'odette', ['index'], '🔖', [draw(1), blk(2, { fn: 1 })], { effects: [draw(2), blk(2, { fn: 1 })] }, { retain: true, quote: '여기까지 읽었어. 표시해 둘게.' });
+  C('lo_note', '각주 달기', 'lore', 'skill', 'common', 1, 'odette', ['footnote'], '📝', [blk(5), { t: 'fnAll', v: 1 }], { effects: [blk(7), { t: 'fnAll', v: 2 }] }, { quote: '본문보다 각주가 재밌을 때가 있지.' });
+  C('lo_index', '색인', 'lore', 'skill', 'common', 1, 'odette', ['index'], '📑', [draw(2), blk(3)], { effects: [draw(3), blk(3)] }, { quote: '찾는 건 3초면 돼.' });
+  C('lo_quote', '인용', 'lore', 'skill', 'common', 1, 'odette', ['index'], '💬', [{ t: 'recall' }, blk(4)], { effects: [{ t: 'recall' }, blk(7)] }, { quote: '방금 그 문장, 다시 인용할게.' });
+  C('lo_seal', '금서 봉인', 'lore', 'skill', 'uncommon', 0, 'odette', ['index'], '🔏', [{ t: 'energy', v: 1 }, draw(1)], { effects: [{ t: 'energy', v: 2 }, draw(1)] }, { exhaust: true, quote: '이 책은 오늘 닫아 둘게.' });
+  C('lo_tome', '두꺼운 사전', 'lore', 'attack', 'uncommon', 2, 'odette', ['footnote'], '📕', [dmg(10, { fn: 4 })], { effects: [dmg(13, { fn: 5 })] }, { retain: true, quote: '이걸로 맞으면, 꽤 아파.' });
+  C('lo_vault', '기록 보관소', 'lore', 'skill', 'uncommon', 1, 'odette', ['archive', 'footnote'], '🗄️', [blk(5, { fn: 2 })], { effects: [blk(7, { fn: 3 })] }, { retain: true, quote: '보관해 둔 만큼 단단해져.' });
+  C('lo_revise', '개정판', 'lore', 'skill', 'rare', 1, 'odette', ['footnote'], '🆕', [{ t: 'upgradeRetain' }, { t: 'fnAll', v: 1 }], { cost: 0 }, { exhaust: true, quote: '2판에선 고쳐 뒀어.' });
+  C('lo_library', '서고의 주인', 'lore', 'power', 'rare', 2, 'odette', ['footnote', 'archive'], '🏛️', [self('annotate', 1)], { cost: 1 }, { quote: '이 서고의 책은 전부 내가 읽었어.' });
+  C('mx_clause', '제17조', 'lore', 'attack', 'common', 1, 'odette', ['footnote'], '§', [dmg(5, { fn: 3 }), app('vuln', 1)], { effects: [dmg(7, { fn: 3 }), app('vuln', 1)] }, { retain: true, mastery: 'odette', quote: '계약서 제17조, 읽어 봤어?' });
+  C('mx_weight', '기록의 무게', 'lore', 'skill', 'uncommon', 1, 'odette', ['archive'], '⚖️', [{ t: 'blockFn', m: 2, base: 4 }], { effects: [{ t: 'blockFn', m: 3, base: 6 }] }, { mastery: 'odette', quote: '쌓인 기록은 방패가 돼.' });
+  C('mx_annul', '계약 해지', 'lore', 'attack', 'rare', 2, 'odette', ['footnote'], '📜', [{ t: 'dmgAll', v: 6, fn: 3 }], { effects: [{ t: 'dmgAll', v: 8, fn: 4 }] }, { retain: true, exhaust: true, mastery: 'odette', quote: '이 계약은, 오늘부로 무효야.' });
+
   // ── 토큰 / 상태 카드 (보상에 안 나옴)
   C('shiv', '표창', 'token', 'attack', 'special', 0, 'yuki', ['shiv'], '✴️', [dmg(4)], { effects: [dmg(6)] }, { exhaust: true, quote: '휙.' });
   C('burn', '화상', 'status', 'status', 'special', 0, null, [], '🔥', [], null, { unplayable: true, endTurnInHand: 2, text: '사용 불가. 턴 종료 시 손에 있으면 체력 2를 잃어.', quote: '앗 뜨거…' });
@@ -252,7 +319,16 @@
     aria: { hero: 'aria', title: '빛의 방패 아리아', cls: 'holy', hp: 72, gold: 99, relic: 'holy_sigil', locked: true,
             unlockText: '2막 보스 「밤의 여왕 벨리타」를 한 번 쓰러뜨리면 합류해.',
             deck: ['h_strike', 'h_strike', 'h_strike', 'h_strike', 'h_guard', 'h_guard', 'h_guard', 'h_guard', 'h_guard', 'h_smite'],
-            pitch: '방어도를 쌓고 그대로 되돌려 주는 수호 기사. 회복과 반격도 특기.', line: '뒤는 내가 지킬게. 앞만 봐.' }
+            pitch: '방어도를 쌓고 그대로 되돌려 주는 수호 기사. 회복과 반격도 특기.', line: '뒤는 내가 지킬게. 앞만 봐.' },
+    mariel: { hero: 'mariel', title: '실을 잇는 마리엘', cls: 'puppet', hp: 68, gold: 99, relic: 'silver_thimble',
+            deck: ['pm_strike', 'pm_strike', 'pm_strike', 'pm_strike', 'pm_guard', 'pm_guard', 'pm_guard', 'pm_guard', 'pm_doll', 'pm_doll'],
+            pitch: '인형을 세워 앞줄을 맡기고, 턴이 끝날 때 인형이 공격해. 인형은 들어오는 공격을 (방어도 다음으로) 대신 맞아.', line: '앞줄은 도도가 설게. 넌 내 뒤에서 숨 쉬어.' },
+    serena: { hero: 'serena', title: '달을 추는 세레나', cls: 'moon', hp: 66, gold: 99, relic: 'crescent_pin',
+            deck: ['sm_slash', 'sm_slash', 'sm_slash', 'sm_slash', 'sm_step', 'sm_step', 'sm_step', 'sm_step', 'sm_full', 'sm_wane'],
+            pitch: '카드를 낼 때마다 달이 🌒→🌓→🌕→🌑로 바뀌어. 위상이 맞는 카드를 맞는 순서로 내면 추가 효과.', line: '박자 놓치지 마. 다음이 보름이야.' },
+    odette: { hero: 'odette', title: '기록하는 오데트', cls: 'lore', hp: 70, gold: 99, relic: 'brass_key',
+            deck: ['lo_strike', 'lo_strike', 'lo_strike', 'lo_strike', 'lo_guard', 'lo_guard', 'lo_guard', 'lo_guard', 'lo_read', 'lo_read'],
+            pitch: '「보존」 카드는 턴이 끝나도 손에 남고 각주가 쌓여 점점 세져. 아껴 두었다가 크게 쓰는 덱.', line: '이 카드는 다음 턴을 위해 아껴 둘게.' },
   };
 
   // ───────── 막(Act) ─────────
@@ -397,6 +473,12 @@
     star_chart:   { name: '별자리 지도', icon: '🗺️', starter: true, mastery: 'luna', desc: '짝수 턴마다 카드를 1장 더 뽑아.' },
     viper_ring:   { name: '독사의 반지', icon: '💍', starter: true, mastery: 'yuki', desc: '전투 시작 시 모든 적에게 중독 2.' },
     dawn_lamp:    { name: '새벽 등불', icon: '🪔', starter: true, mastery: 'aria', desc: '턴 시작 시 방어도 1 (성역 1). 휴식 시 회복량 +6.' },
+    silver_thimble:{ name: '은빛 골무', icon: '🪡', starter: true, desc: '전투 시작 시 인형(체력 5·공격 2) 1체를 세워.' },
+    crescent_pin: { name: '초승달 비녀', icon: '🌙', starter: true, desc: '달이 한 바퀴 돌 때마다(그믐→초승) 방어도 3.' },
+    brass_key:    { name: '놋쇠 열쇠', icon: '🗝️', starter: true, desc: '전투 시작 시 「책갈피」 1장을 손에 넣어.' },
+    sewing_box:   { name: '낡은 재봉 상자', icon: '🧰', starter: true, mastery: 'mariel', desc: '전투 시작 시 인형(체력 4·공격 2) 2체를 세워.' },
+    silver_ring:  { name: '깨진 은반지', icon: '💍', starter: true, mastery: 'serena', desc: '전투를 🌕보름 위상에서 시작해. 첫 턴 에너지 +1.' },
+    archive_lamp: { name: '서고 등불', icon: '🏮', starter: true, mastery: 'odette', desc: '각주가 3 이상인 카드를 내면 에너지 1.' },
     guard_charm:  { name: '수호의 부적', icon: '🧿', desc: '전투 시작 시 방어도를 10 얻어.' },
     dragon_heart: { name: '용의 심장', icon: '❤️‍🔥', desc: '전투 시작 시 힘을 1 얻어.' },
     viper_fang:   { name: '독사의 송곳니', icon: '🐍', desc: '전투 시작 시 모든 적에게 취약 1.' },
@@ -557,6 +639,9 @@
     win_luna:   { name: '별을 읽는 자', icon: '🌙', desc: '루나로 클리어.' },
     win_yuki:   { name: '그림자의 끝', icon: '🌑', desc: '유키로 클리어.' },
     win_aria:   { name: '빛의 방패', icon: '🛡️', desc: '아리아로 클리어.' },
+    win_mariel: { name: '막을 내린 인형극', icon: '🪆', desc: '마리엘로 클리어.' },
+    win_serena: { name: '아침까지 춘 춤', icon: '🌕', desc: '세레나로 클리어.' },
+    win_odette: { name: '마지막 페이지', icon: '📜', desc: '오데트로 클리어.' },
     boss_morgana:{ name: '숲을 지나서', icon: '🌲', desc: '숲의 마녀 모르가나 처치.' },
     boss_belita:{ name: '밤의 끝', icon: '🦇', desc: '밤의 여왕 벨리타 처치. → 아리아 합류' },
     boss_celes: { name: '별을 되찾다', icon: '⭐', desc: '별을 삼킨 마녀 셀레스 처치.' },
@@ -636,6 +721,19 @@
         passive: { name: '응보의 맹세', desc: '전투 시작 시 응보 2 (공격을 방어도로 전부 막으면 그 적에게 피해 2).' },
         deck: { name: '치유·응보형', desc: '천벌 대신 응징으로 시작. 막고 맞받아치는 덱.', cards: ['h_strike', 'h_strike', 'h_strike', 'h_strike', 'h_guard', 'h_guard', 'h_guard', 'h_guard', 'h_guard', 'h_retort'] },
         titles: ['다시 든 방패', '여명의 성기사'] }
+,
+      mariel: { cards: ['mx_net', 'mx_curtain', 'mx_finale'], relic: 'sewing_box',
+        passive: { name: '공방의 손', desc: '보스 전투 시작 시 도도(체력 6·공격 2)를 세워.' },
+        deck: { name: '희생형', desc: '천 덧대기 1장 대신 불꽃 심장으로 시작. 인형을 터뜨려 광역 피해.', cards: ['pm_strike', 'pm_strike', 'pm_strike', 'pm_strike', 'pm_guard', 'pm_guard', 'pm_guard', 'pm_doll', 'pm_doll', 'pm_heart'] },
+        titles: ['실을 잇는 사람', '막을 내리는 인형사'] },
+      serena: { cards: ['mx_zanwol', 'mx_galaxy', 'mx_lastsong'], relic: 'silver_ring',
+        passive: { name: '밤하늘의 박자', desc: '매 턴 처음 위상이 바뀔 때 방어도 3.' },
+        deck: { name: '그믐 순환형', desc: '달그림자 스텝 1장 대신 그믐 숨결로 시작. 0코스트로 위상을 빨리 돌리는 덱.', cards: ['sm_slash', 'sm_slash', 'sm_slash', 'sm_slash', 'sm_step', 'sm_step', 'sm_step', 'sm_full', 'sm_wane', 'sm_wane'] },
+        titles: ['박자를 아는 사람', '여명의 무희'] },
+      odette: { cards: ['mx_clause', 'mx_weight', 'mx_annul'], relic: 'archive_lamp',
+        passive: { name: '서고의 눈', desc: '엘리트·보스 전투 시작 시 각주 2가 달린 「낭독」 1장을 손에 넣어. (그 전투에서만)' },
+        deck: { name: '사전형', desc: '낭독 1장 대신 두꺼운 사전으로 시작. 한 장을 오래 키워 크게 치는 덱.', cards: ['lo_strike', 'lo_strike', 'lo_strike', 'lo_strike', 'lo_guard', 'lo_guard', 'lo_guard', 'lo_guard', 'lo_read', 'lo_tome'] },
+        titles: ['각주를 읽는 사람', '계약서를 덮은 기록관'] }
     }
   };
   // 레벨 보상 순서 (모든 히로인 공통 틀)
@@ -695,11 +793,41 @@
       rest: ['모두 쉬어. 불침번은 내가 설게.', '기도 한 번 하고 쉴게.'],
       win: ['지켜 냈어. 이번에는, 정말로.', '여명이야. 모두 수고했어.'],
       loss: ['다음엔 더 단단해질게.', '쓰러져도 다시 일어나는 게 기사야.', '…미안. 다시 지킬게.']
+    },
+    mariel: {
+      elite: ['도도, 앞줄. 오늘은 상대가 크다.', '실 하나 더 감을게. 단단히.', '저 관절, 고쳐 주고 싶을 만큼 멋지네. 그래도 부숴야지.'],
+      boss: ['막을 올릴게요. 끝은 우리가 정해요.', '앞줄은 도도, 뒷줄은 나. 시작!', '이 무대, 퇴장 없는 공연은 사양이에요.'],
+      bossWin: ['박수는 도도한테 주세요.', '…실 안 끊어졌다. 다행이야.'],
+      event: ['수상한 물건은 일단 뜯어 보는 게 장인 습관이야.', '부품이 될지도 몰라. 가져가자.'],
+      shop: ['은실 한 타래 주세요. 제일 질긴 걸로.', '나무는 결이 중요해요. 이건 좋네요.'],
+      rest: ['인형 관절에 기름 좀 칠할게요.', '도도 방패, 금 간 데 꿰매 둘게요.'],
+      win: ['막이 내렸어요. 그리고 다음 막이 오르겠죠.', '다들 끝까지 무대에 있어 줘서 고마워요.'],
+      loss: ['부서지면 다시 꿰매면 돼요.', '…도도, 미안. 다음엔 내가 더 잘 당길게.', '설계부터 다시 할게요.']
+    },
+    serena: {
+      elite: ['박자가 빠른 상대네. 맞춰 줄게.', '초승부터 천천히. 서두르면 진다.', '달이 차오르기 전엔 쓰러지지 마.'],
+      boss: ['다음이 보름이야. 박자 놓치지 마.', '이 곡은 길어요. 끝까지 들어 주세요.', '달아, 이번엔 멈추지 마.'],
+      bossWin: ['…한 바퀴 돌았네.', '곡 하나가 끝났어. 다음 곡으로.'],
+      event: ['낯선 박자가 들려.', '이 길, 그믐처럼 어둡네. 조심하자.'],
+      shop: ['비녀 손질할 은 연마제 있어요?', '외투 자락, 좀 짧게 줄일 수 있을까요?'],
+      rest: ['춤은 잠깐 쉬어도 박자는 계속 세는 거야.', '달 보면서 잠깐 쉴게.'],
+      win: ['아침까지 춤췄어. 정말로.', '여명이야. 다 같이 만든 거야.'],
+      loss: ['박자를 놓쳤어. 다시 처음부터.', '그믐 다음엔 꼭 초승이 와.', '…다음 위상에서 다시 만나.']
+    },
+    odette: {
+      elite: ['기록에 없는 적이네. 적어 둘게.', '이 카드는 아껴 둘게. 지금이 아니야.', '각주가 쌓일 때까지 버텨 줘.'],
+      boss: ['마지막 장을 넘기러 왔어.', '계약서는 다 읽었어. 이제 내 차례야.', '이 이야기, 끝까지 적어 줄게.'],
+      bossWin: ['오늘 기록, 두 줄 추가.', '…펜이 안 부러졌네. 다행이야.'],
+      event: ['처음 보는 현상이야. 메모부터 할게.', '이 길은 지도에 없어. 그러니까 가 볼 가치가 있지.'],
+      shop: ['잉크 한 병이랑, 제일 두꺼운 공책.', '이 책, 초판이에요? 사야겠네.'],
+      rest: ['오늘 기록 정리하고 잘게.', '책갈피 하나 끼워 두고, 잠깐 쉬자.'],
+      win: ['원정 기록 완료. 그리고 이야기는 계속돼.', '마지막 장엔 끝이라고 안 쓸 거야.'],
+      loss: ['실패도 기록이야. 잘 적어 둘게.', '다음 판은 2판이야. 고쳐서 다시.', '…각주가 부족했어.']
     }
   };
 
   const DATA = { MASTERY, LINES, HEROINES, STATUS, ARCH, CLASS_ARCH, CARDS, STARTERS, ACTS, ENEMIES, ENCOUNTERS, RELICS, POTIONS, EVENTS, ACHIEVEMENTS, GALLERY, ASCENSION, ART,
-    TITLE: '미녀 덱: 밤의 여왕', VERSION: '1.2.1' };
+    TITLE: '미녀 덱: 밤의 여왕', VERSION: '1.3.0' };
   root.BD_DATA = DATA;
   if (typeof module !== 'undefined' && module.exports) module.exports = DATA;
 })(typeof window !== 'undefined' ? window : globalThis);
