@@ -182,10 +182,14 @@
   // 그림 박스: data-art 를 달아 두면 터치 시 크게 보기
   function artBox(key, info, cls, o) {
     o = o || {};
-    const view = o.noView ? '' : `data-act="viewArt" data-key="${esc(key)}" data-info="${esc(JSON.stringify(info))}" data-cap="${esc(o.cap || '')}"`;
+    const view = o.act ? `data-act="${esc(o.act)}"` : o.noView ? '' : `data-act="viewArt" data-key="${esc(key)}" data-info="${esc(JSON.stringify(info))}" data-cap="${esc(o.cap || '')}"`;
     return `<div class="artbox ${cls || ''}" ${view}>${A.html(key, info, { eager: o.eager })}</div>`;
   }
-  function heroArt(hid, cls, o) { return artBox('hero:' + hid, heroInfo(hid, 'hero'), cls, Object.assign({ cap: D.HEROINES[hid] ? D.HEROINES[hid].name : '' }, o)); }
+  function heroArt(hid, cls, o) {
+    const skin = E.skinFor(meta, hid);
+    const box = artBox('hero:' + hid, heroInfo(hid, 'hero'), (cls || '') + (skin ? ' ' + skin.cls : ''), Object.assign({ cap: D.HEROINES[hid] ? D.HEROINES[hid].name : '' }, o));
+    return skin ? box.replace(/<\/div>$/, `<span class="skinmark">${esc(skin.name)}</span></div>`) : box;
+  }
   function enemyArt(eid, cls, o) { return artBox('enemy:' + eid, enemyInfo(eid), cls, Object.assign({ cap: D.ENEMIES[eid].name }, o)); }
 
   const TYPE_KO = { attack: '공격', skill: '스킬', power: '파워', status: '상태', curse: '저주' };
@@ -243,7 +247,7 @@
   // ───────── 렌더 ─────────
   function render() {
     let html, scr;
-    if (!run) { scr = ui.view; html = ({ pick: renderPick, title: renderTitle })[ui.view] ? ({ pick: renderPick, title: renderTitle })[ui.view]() : renderTitle(); }
+    if (!run) { scr = ui.view; const pages = { pick: renderPick, title: renderTitle, store: renderStore }; html = (pages[scr] || renderTitle)(); }
     else {
       scr = (ui.hold && run.combat) ? 'combat' : run.screen;
       html = ({ map: renderMap, combat: renderCombat, reward: renderReward, rest: renderRest, shop: renderShop, event: renderEvent,
@@ -262,16 +266,22 @@
     const ok = saved && !saved.over && saved.v === 2 && D.STARTERS[saved.starter];
     const achN = Object.keys(meta.ach).length, achT = Object.keys(D.ACHIEVEMENTS).length;
     const newG = meta.newGallery && meta.newGallery.length;
+    const freeLeft = E.offerOpen() && Object.keys(D.SHOP.packs).some(id => !E.ownsPack(meta, id));
     return `<div class="scroll"><div class="title-screen">
       <div class="logo">미녀 덱<small>밤의 여왕</small></div>
-      <div class="title-heroes">${Object.keys(D.STARTERS).map(id => E.heroUnlocked(meta, id)
-        ? heroArt(id, 'th', { eager: true })
-        : `<div class="artbox th locked" data-act="lockedHero">${A.html('hero:' + id, heroInfo(id, 'hero', { silhouette: true }))}<span class="lockq">?</span></div>`).join('')}</div>
+      <div class="title-heroes">${Object.keys(D.STARTERS).map(id => {
+        const s = D.STARTERS[id];
+        if (s.pack && !E.ownsPack(meta, s.pack)) return artBox('hero:' + id, heroInfo(id, 'hero'), 'th shopwait', { eager: true, act: 'store' });
+        return E.heroUnlocked(meta, id)
+          ? heroArt(id, 'th', { eager: true })
+          : `<div class="artbox th locked" data-act="lockedHero">${A.html('hero:' + id, heroInfo(id, 'hero', { silhouette: true }))}<span class="lockq">?</span></div>`;
+      }).join('')}</div>
       <div class="dim small">덱빌딩 로그라이트 · 숲과 밤의 성, 별의 첨탑을 지나 황혼의 여신에게</div>
       <div class="col" style="width:100%;max-width:320px">
         ${ok ? `<button class="btn primary block" data-act="continue">▶ 이어하기 <span class="small">(${esc(D.STARTERS[saved.starter].title)} · ${saved.act < 4 ? saved.act + '막' : '종막'})</span></button>` : ''}
         <button class="btn ${ok ? '' : 'primary'} block" data-act="newGame">⚔️ 새 원정 시작</button>
         <div class="row"><button class="btn block" data-act="codex">📖 도감${newG ? ' <span class="dot"></span>' : ''}</button><button class="btn block" data-act="achv">🏆 업적 ${achN}/${achT}</button></div>
+        <button class="btn block" data-act="store">🛍️ 상점${freeLeft ? ' · 무료 공개' : ''}</button>
         <button class="btn block" data-act="heroes">💞 히로인 · 레벨 · 스토리${storyNewCount() ? ` <span class="dot"></span>` : ''}</button>
         <div class="row"><button class="btn block" data-act="help">❔ 도움말</button><button class="btn block" data-act="settings">⚙️ 설정</button></div>
       </div>
@@ -295,9 +305,20 @@
       ${ascRow}
       ${Object.entries(D.STARTERS).map(([id, s]) => {
         const h = D.HEROINES[s.hero], r = D.RELICS[s.relic], wins = meta.heroWins[id] || 0;
-        if (!E.heroUnlocked(meta, id)) return `<div class="panel col lockedpanel"><div class="hero-pick">
+        const storyLocked = s.locked && !(meta.ach && meta.ach.boss_belita);
+        if (storyLocked) return `<div class="panel col lockedpanel"><div class="hero-pick">
             <div class="artbox hp locked">${A.html('hero:' + id, heroInfo(id, 'hero', { silhouette: true }))}<span class="lockq">🔒</span></div>
             <div class="col" style="gap:6px"><h3>??? · ${esc(h.job)}</h3><div class="small">${esc(s.unlockText || '조건을 달성하면 합류해.')}</div></div></div></div>`;
+        if (s.pack && !E.ownsPack(meta, s.pack)) return `<div class="panel col">
+          <div class="hero-pick">${heroArt(s.hero, 'hp')}
+            <div class="col" style="gap:4px">
+              <h3>${esc(s.title)}</h3>
+              <div><span class="tag">${esc(h.job)}</span><span class="tag">${h.age}세</span></div>
+              <div class="small">${esc(s.pitch)}</div>
+              <div class="small dim">추가 히로인. 성능은 받고 난 뒤의 원정에서만 써.</div>
+            </div></div>
+          <button class="btn gold block" data-act="store">🛍️ 상점에서 무료로 받기</button>
+        </div>`;
         const arch = D.CLASS_ARCH[s.cls].map(t => `<span class="tag">${D.ARCH[t].icon} ${esc(D.ARCH[t].name)}</span>`).join('');
         return `<div class="panel col">
           <div class="hero-pick">${heroArt(s.hero, 'hp')}
@@ -317,6 +338,34 @@
         </div>`;
       }).join('')}
     </div></div>`;
+  }
+  function renderStore() {
+    const open = E.offerOpen();
+    const cards = Object.entries(D.SHOP.packs).map(([id, p]) => {
+      const owned = E.ownsPack(meta, id);
+      const faces = (p.heroes || Object.keys(p.skins || {})).map(h => {
+        const sk = p.skins && p.skins[h];
+        return artBox('hero:' + h, heroInfo(h, 'hero'), 'hl' + (sk ? ' ' + sk.cls : ''), { act: 'noop' });
+      }).join('');
+      const split = (title, arr) => arr && arr.length ? `<div class="small"><b>${title}</b></div><ul class="store-split">${arr.map(t => `<li>${esc(t)}</li>`).join('')}</ul>` : '';
+      let btn = '<div class="small dim">보유 중. 플레이 보상은 이 버튼과 별개야.</div>';
+      if (!owned && open) btn = `<button class="btn gold block" data-act="claimPack" data-id="${esc(id)}">무료로 받기</button>`;
+      else if (!owned) btn = '<div class="small">이 공개 버전에서는 받을 수 없어. 이미 받은 것은 그대로야.</div>';
+      return `<div class="panel col store-card">
+        <div class="row" style="justify-content:space-between"><b>${esc(p.name)}</b><span class="tag">${p.kind === 'character' ? '캐릭터 추가' : '외형'}</span></div>
+        <div class="store-faces">${faces}</div>
+        <div class="small">${esc(p.blurb)}</div>
+        ${split('받으면', p.own)}
+        ${split('플레이해야', p.play)}
+        <div class="free-badge">공개 버전 · 무료</div>
+        ${btn}
+      </div>`;
+    }).join('');
+    return `<div class="topbar"><button class="tb" data-act="toTitle" aria-label="뒤로">←</button><span>상점</span></div>
+      <div class="scroll"><div class="col pad">
+        <div class="small dim">${esc(D.SHOP.note)}</div>
+        ${cards}
+      </div></div>`;
   }
 
   const NODE_ICON = { monster: '⚔️', elite: '😈', rest: '🔥', shop: '🛍️', event: '❓', treasure: '🎁', boss: '👑' };
@@ -390,7 +439,7 @@
         ${chipsHTML(e.st)}
       </div>`;
     }).join('');
-    const sid = D.STARTERS[run.starter].hero, h = D.HEROINES[sid];
+    const sid = D.STARTERS[run.starter].hero, h = D.HEROINES[sid], pskin = E.skinFor(meta, sid);
     let hint = '';
     if (sel) hint = targeting ? '공격할 적을 터치해!' : '한 번 더 터치하면 사용';
     else if (ui.potionSel != null) hint = '물약을 쓸 적을 터치해!';
@@ -403,8 +452,8 @@
     <div class="battle" data-act="bg" style="--actbg:${D.ACTS[run.act].bg[0]}">
       <div class="enemies n${c.enemies.length}">${enemies}</div>
       <div class="player" data-who="p">
-        <div class="pportrait" data-act="viewArt" data-key="hero:${sid}" data-info="${esc(JSON.stringify(heroInfo(sid, 'hero')))}" data-cap="${esc(h.name)}">${A.html('hero:' + sid, heroInfo(sid, 'hero'))}</div>
-        <div class="pinfo"><div class="row" style="justify-content:space-between"><b>${esc(h.name)}</b>${incoming ? `<span class="small incoming ${net ? '' : 'safe'}">🗡️${incoming}${P.block ? ` − 🛡️${P.block}` : ''}${c.allies.length ? ` − 🪆` : ''} → <b>${net ? '−' + net : '안전'}</b></span>` : '<span class="small dim">공격 예고 없음</span>'}</div>
+        <div class="pportrait ${pskin ? pskin.cls : ''}" data-act="viewArt" data-key="hero:${sid}" data-info="${esc(JSON.stringify(heroInfo(sid, 'hero')))}" data-cap="${esc(h.name)}">${A.html('hero:' + sid, heroInfo(sid, 'hero'))}</div>
+        <div class="pinfo"><div class="row" style="justify-content:space-between"><b>${esc(h.name)}</b>${pskin ? `<span class="skinmark-inline">${esc(pskin.name)}</span>` : ''}${incoming ? `<span class="small incoming ${net ? '' : 'safe'}">🗡️${incoming}${P.block ? ` − 🛡️${P.block}` : ''}${c.allies.length ? ` − 🪆` : ''} → <b>${net ? '−' + net : '안전'}</b></span>` : '<span class="small dim">공격 예고 없음</span>'}</div>
         ${hpBarHTML(run.hp, run.maxHp, P.block)}${chipsHTML(P.st, true)}${mechHTML(c)}</div>
       </div>
       <div class="controls">
@@ -594,8 +643,9 @@
   function heroListHTML() {
     return `<h2>💞 히로인</h2><div class="small dim">원정을 마칠 때마다(실패해도) 그 히로인이 경험치를 얻어. 레벨이 오르면 새 카드·시작 유물·덱 변형·패시브·개인 스토리가 열려.</div>
       ${Object.keys(D.MASTERY.heroes).map(h => {
-        const ok = E.heroUnlocked(meta, h), n = storyNewCount(h);
-        if (!ok) return `<div class="list-btn" data-act="lockedHero"><div class="artbox hl locked">${A.html('hero:' + h, heroInfo(h, 'hero', { silhouette: true }))}</div><span style="flex:1">??? · ${esc(D.HEROINES[h].job)}<br><span class="small dim">${esc(D.STARTERS[h].unlockText)}</span></span></div>`;
+        const s = D.STARTERS[h], n = storyNewCount(h);
+        if (s.pack && !E.ownsPack(meta, s.pack)) return `<button class="list-btn" data-act="store">${heroArt(h, 'hl')}<span style="flex:1;text-align:left">${esc(s.title)}<br><span class="small dim">상점에서 받으면 고를 수 있어. 스토리·추가 카드는 받아도 플레이해야 열려.</span></span></button>`;
+        if (!E.heroUnlocked(meta, h)) return `<div class="list-btn" data-act="lockedHero"><div class="artbox hl locked">${A.html('hero:' + h, heroInfo(h, 'hero', { silhouette: true }))}</div><span style="flex:1">??? · ${esc(D.HEROINES[h].job)}<br><span class="small dim">${esc(s.unlockText)}</span></span></div>`;
         return `<button class="list-btn heroline" data-act="profile" data-id="${h}">${heroArt(h, 'hl')}<span style="flex:1;text-align:left">${esc(D.STARTERS[h].title)}${n ? ' <span class="dot"></span>' : ''}<br>${lvMini(h)}</span></button>`;
       }).join('')}
       <button class="btn block primary" data-act="closeModal">닫기</button>`;
@@ -619,6 +669,11 @@
         : `<div class="list-btn locked" data-act="lockedTrack" data-h="${h}" data-lv="${lvReq}"><span style="flex:1">🔒 ${i + 1}장 · ???</span><span class="small dim">Lv ${lvReq}</span></div>`;
     }).join('') : '';
     const runs = meta.heroRuns[h] || 0, wins = meta.heroWins[h] || 0;
+    const look = E.skinOffer(h);
+    const lookOn = !!(look && E.skinFor(meta, h));
+    const lookBtn = !look ? '' : E.ownsPack(meta, look.pid)
+      ? `<button class="btn block" data-act="toggleSkin" data-id="${h}">${lookOn ? '초상 장식 끄기' : '초상 장식 켜기'} · ${esc(look.skin.name)}</button>`
+      : `<button class="btn block" data-act="store">초상 장식은 상점에서 받을 수 있어</button>`;
     return `<div class="profile">
       <div class="prof-top ${frame ? 'goldframe' : ''}">${heroArt(h, 'prof')}
         <div class="col" style="gap:4px;flex:1">
@@ -627,6 +682,7 @@
           <div><b class="lvbig">Lv ${lv}</b> <span class="small dim">${L.max ? '최대 레벨' : `다음 레벨까지 ${L.next - L.xp} XP`}</span></div>
           ${lvBar(L, 'big')}
           <div class="small dim">원정 ${runs}회 · 클리어 ${wins}회</div>
+          ${lookBtn}
           <div class="small">${esc(Hn.bio)}</div>
         </div></div>
       ${nextBox}
@@ -1006,6 +1062,7 @@
     doAct(() => res);
   }
   function startRun(id) {
+    if (!E.heroUnlocked(meta, id)) { toast('이 히로인은 상점에서 받은 뒤에 고를 수 있어.'); ui.view = 'store'; render(); return; }
     const asc = Math.min(settings.asc, meta.ascMax);
     run = E.newRun(id, null, Object.assign(E.runOptions(meta, id, settings.loadout[id]), { asc }));
     ui.sel = null; ui.modal = null; ui.modalStack = []; ui.deadShown = new Set(); ui.runAch = []; ui.tut = 0;
@@ -1018,6 +1075,20 @@
     noop() {},
     closeModal() { closeModal(); },
     newGame() { ui.view = 'pick'; render(); },
+    store() { if (run) return; ui.view = 'store'; ui.modal = null; render(); },
+    claimPack(d) {
+      const r = E.claimPack(meta, d.id);
+      if (!r.ok) toast(esc(r.reason));
+      else { saveMeta(); toast(D.SHOP.packs[d.id] && D.SHOP.packs[d.id].kind === 'character' ? '받았어. 이제 고를 수 있고, 스토리·추가 카드는 플레이해야 열려.' : '장식을 켰어. 레벨 보상은 그대로야.'); sfx('coin'); }
+      ui.view = 'store'; render();
+    },
+    toggleSkin(d) {
+      const r = E.toggleSkin(meta, d.id);
+      if (!r.ok) { toast(esc(r.reason)); return; }
+      saveMeta();
+      if (ui.modal) ui.modal = profileHTML(d.id);
+      render();
+    },
     toTitle() { fxLayer.innerHTML = ''; run = null; ui.view = 'title'; ui.modal = null; ui.modalStack = []; render(); },
     help() { openModal(helpHTML()); },
     settings() { openModal(settingsHTML()); },

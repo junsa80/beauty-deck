@@ -1003,11 +1003,12 @@
   function newMeta() {
     return { v: 2, runs: 0, wins: 0, bestFloor: 0, bestAct: 0, kills: 0, elites: 0, bosses: {}, heroWins: {}, heroRuns: {}, heroBestAsc: {},
              cardsSeen: [], relicsSeen: [], enemiesSeen: [], ach: {}, ascMax: 0, maxHit: 0, cardsPlayed: 0, dmgDealt: 0, potionsUsed: 0,
-             goldEarned: 0, playMs: 0, tutorialDone: false, newGallery: [], heroXp: {}, storyRead: {} };
+             goldEarned: 0, playMs: 0, tutorialDone: false, newGallery: [], heroXp: {}, storyRead: {}, ownedPacks: [], skins: {} };
   }
   function migrateMeta(m) {
     const n = newMeta();
     if (!m || typeof m !== 'object') return n;
+    const hadPackField = Array.isArray(m.ownedPacks);
     for (const k of Object.keys(n)) if (m[k] !== undefined) n[k] = m[k];
     if (!Array.isArray(n.cardsSeen)) n.cardsSeen = [];
     if (m.updatedAt) n.updatedAt = m.updatedAt;
@@ -1023,6 +1024,10 @@
       n.xpMigratedFrom = 'v1.1';
     }
     n.v = 3;
+    if (!hadPackField) n.ownedPacks = ['dlc-night-trio'];
+    else n.ownedPacks = n.ownedPacks.filter(id => D.SHOP.packs[id]);
+    if (!n.skins || typeof n.skins !== 'object' || Array.isArray(n.skins)) n.skins = {};
+    for (const h of Object.keys(n.skins)) if (!skinFor(n, h)) delete n.skins[h];
     return n;
   }
   const GALLERY_REQ = { g_sera: 'win_sera', g_luna: 'win_luna', g_yuki: 'win_yuki', g_aria: 'win_aria', g_morgana: 'boss_morgana', g_belita: 'boss_belita',
@@ -1031,7 +1036,56 @@
     if (gid === 'g_party') return ['win_sera', 'win_luna', 'win_yuki', 'win_aria'].every(a => meta.ach[a]);
     return !!meta.ach[GALLERY_REQ[gid]];
   }
-  function heroUnlocked(meta, id) { const s = D.STARTERS[id]; return !s.locked || !!meta.ach.boss_belita; }
+  function heroUnlocked(meta, id) {
+    const s = D.STARTERS[id];
+    if (!s) return false;
+    if (s.locked && !(meta.ach && meta.ach.boss_belita)) return false;
+    if (s.pack && !ownsPack(meta, s.pack)) return false;
+    return true;
+  }
+  function offerOpen(now) {
+    if (!D.SHOP.offerUntil) return true;
+    const end = Date.parse(D.SHOP.offerUntil);
+    const t = now == null ? Date.now() : +now;
+    return !isNaN(end) && t <= end;
+  }
+  function ownsPack(meta, id) { return !!(meta && Array.isArray(meta.ownedPacks) && meta.ownedPacks.includes(id)); }
+  function skinOffer(hero) {
+    for (const pid of Object.keys(D.SHOP.packs)) {
+      const p = D.SHOP.packs[pid];
+      if (p.kind === 'skin' && p.skins && p.skins[hero]) return { pid, pack: p, skin: p.skins[hero] };
+    }
+    return null;
+  }
+  function skinFor(meta, hero) {
+    const o = skinOffer(hero);
+    if (!o || !ownsPack(meta, o.pid)) return null;
+    if (!meta.skins || meta.skins[hero] !== o.skin.id) return null;
+    return o.skin;
+  }
+  function claimPack(meta, id, now) {
+    const p = D.SHOP.packs[id];
+    if (!p) return { ok: false, reason: '없는 상품이야.' };
+    if (!Array.isArray(meta.ownedPacks)) meta.ownedPacks = [];
+    if (meta.ownedPacks.includes(id)) return { ok: false, reason: '이미 가지고 있어.' };
+    if (!offerOpen(now)) return { ok: false, reason: '무료 기간이 끝났어. 이미 받은 것은 그대로야.' };
+    // 보유만 기록한다. 경험치·스토리·업적·승수는 플레이로만 오른다.
+    meta.ownedPacks.push(id);
+    if (p.kind === 'skin') {
+      if (!meta.skins || typeof meta.skins !== 'object') meta.skins = {};
+      for (const h of Object.keys(p.skins)) meta.skins[h] = p.skins[h].id;
+    }
+    return { ok: true };
+  }
+  function toggleSkin(meta, hero) {
+    const o = skinOffer(hero);
+    if (!o) return { ok: false, reason: '장식이 없는 히로인이야.' };
+    if (!ownsPack(meta, o.pid)) return { ok: false, reason: '상점에서 외형을 받아야 해.' };
+    if (!meta.skins || typeof meta.skins !== 'object') meta.skins = {};
+    if (meta.skins[hero] === o.skin.id) delete meta.skins[hero];
+    else meta.skins[hero] = o.skin.id;
+    return { ok: true, on: meta.skins[hero] === o.skin.id };
+  }
   function unlockedCards(meta) { return Object.keys(D.ACHIEVEMENTS).filter(a => meta.ach[a] && D.ACHIEVEMENTS[a].card).map(a => D.ACHIEVEMENTS[a].card); }
   function liveCount(meta, run, k) { return (meta[k] || 0) + (run && !run.recorded ? run.stats[k] : 0); }
   function achDone(meta, run, id) {
@@ -1269,6 +1323,7 @@
     restHeal, restHealAmount, restSmith, selectableCards, selectCard, cancelSelect,
     buy, shopRemove, removePrice, leaveShop, openChest, leaveTreasure, chooseEvent, eventOptionOk, leaveEvent,
     newMeta, migrateMeta, recordRun, heroLevel, masteryHas, masteryCards, heroTitle, runOptions, runXp, awardXp, levelOf, checkAchievements, heroUnlocked, unlockedCards, galleryUnlocked,
+    offerOpen, ownsPack, claimPack, skinFor, skinOffer, toggleSkin,
     describe, upgradeDiff, josa, hasRelic, startCombat, summonDoll, moonAdvance, MOON, MOON_ICON, DOLL_MAX
   };
   root.BD_ENGINE = E;

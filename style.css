@@ -377,6 +377,17 @@ h2.upname { color: var(--green); }
 .herosay.static { width: 100%; max-width: 340px; }
 .xppanel .trackrow, .xppanel .statgrid { text-align: left; }
 .story-head .tb { background: #ffffff1f; color: #fff; border: 1px solid #ffffff33; border-radius: 12px; font-size: 18px; }
+.store-faces { display: flex; gap: 8px; }
+.store-split { margin: 2px 0 6px; padding-left: 18px; }
+.price-was { text-decoration: line-through; color: #a898b8; margin-right: 6px; }
+.free-badge { color: #ffd36e; font-weight: 900; }
+.skinmark { position: absolute; left: 0; right: 0; bottom: 0; font-size: 10px; font-weight: 800; text-align: center; background: #000b; color: #fff; padding: 2px 0; pointer-events: none; }
+.skinmark-inline { font-size: 10px; font-weight: 800; color: #ffd36e; margin-left: 4px; }
+.artbox.shopwait { outline: 2px dashed #ffd36e; outline-offset: -2px; }
+.artbox.skin-sera, .pportrait.skin-sera { outline: 3px solid #ff4d6d; outline-offset: -3px; box-shadow: 0 0 12px #ff4d6d99; }
+.artbox.skin-luna, .pportrait.skin-luna { outline: 3px solid #7aa2ff; outline-offset: -3px; box-shadow: 0 0 12px #7aa2ff99; }
+.artbox.skin-yuki, .pportrait.skin-yuki { outline: 3px solid #c9d0e8; outline-offset: -3px; box-shadow: 0 0 12px #c9d0e899; }
+.artbox.skin-aria, .pportrait.skin-aria { outline: 3px solid #ffd36e; outline-offset: -3px; box-shadow: 0 0 12px #ffd36e99; }
 
 /* v1.3 새 히로인 메커니즘 */
 .mech { display: flex; gap: 4px; align-items: center; justify-content: center; flex-wrap: wrap; margin-top: 2px; }

@@ -3,7 +3,7 @@
 다른 AI(다른 Grok 계정, 저가 Grok, ChatGPT/Codex)가 이어받을 때 가장 먼저 읽는 문서. Read this first.
 
 - 라이브 / Live: https://junsa80.github.io/beauty-deck/ · 저장소: https://github.com/junsa80/beauty-deck (public, Pages = main /)
-- 담당 / Owner: Grok 계열. 현재 v1.3.2 (SW 캐시 `beautydeck-v1.3.2`). 덱빌딩 로그라이트, 히로인 7명, 레벨 1~10, 스토리 35장.
+- 담당 / Owner: Grok 계열. 현재 v1.3.4 (SW 캐시 `beautydeck-v1.3.4`). 덱빌딩 로그라이트, 히로인 7명, 레벨 1~10, 스토리 35장. 상점은 공개 버전이라 무료로 보유만 연다. 가격·결제·기한 없음. 레벨·스토리·추가 카드·칭호·금테·아리아 합류는 플레이 조건 그대로.
 
 ## 읽는 순서 / Read order
 1. 이 파일 → 2. `HANDOFF.md`(버전별 변경·남은 일) → 3. `README.md`(구조·테스트·그림 파이프라인) → 4. `STORY.md`(세계관·인물) → 5. `docs/next-heroines-design.md`(마리엘·세레나·오데트 기획서, v1.3.0에 구현됨) → 6. 코드: `data.js` → `engine.js` → `ui.js` → `story.js` → `art.js`/`artmap.js`.

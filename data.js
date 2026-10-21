@@ -324,15 +324,15 @@
             deck: ['h_strike', 'h_strike', 'h_strike', 'h_strike', 'h_guard', 'h_guard', 'h_guard', 'h_guard', 'h_guard', 'h_smite'],
             pitch: '방어도를 쌓고 그대로 되돌려 주는 수호 기사. 회복과 반격도 특기.', line: '뒤는 내가 지킬게. 앞만 봐.',
             mech: ["🛡️ 방어도를 쌓고 🌹가시·⚖️응보로 맞받아쳐. 회복 카드도 많아."] },
-    mariel: { hero: 'mariel', title: '실을 잇는 마리엘', cls: 'puppet', hp: 68, gold: 99, relic: 'silver_thimble',
+    mariel: { hero: 'mariel', title: '실을 잇는 마리엘', cls: 'puppet', hp: 68, gold: 99, relic: 'silver_thimble', pack: 'dlc-night-trio',
             deck: ['pm_strike', 'pm_strike', 'pm_strike', 'pm_strike', 'pm_guard', 'pm_guard', 'pm_guard', 'pm_guard', 'pm_doll', 'pm_doll'],
             pitch: '인형을 세워 앞줄을 맡기고, 턴이 끝날 때 인형이 공격해. 인형은 들어오는 공격을 (방어도 다음으로) 대신 맞아.', line: '앞줄은 도도가 설게. 넌 내 뒤에서 숨 쉬어.',
             mech: ["🪆 <b>인형</b>(최대 3체): 적 공격은 방어도 → 맨 앞 인형 → 내 체력 순으로 맞아.", "턴이 끝나면 인형마다 무작위 적을 공격. 4체째는 맨 앞 인형 체력에 더해져."] },
-    serena: { hero: 'serena', title: '달을 추는 세레나', cls: 'moon', hp: 66, gold: 99, relic: 'crescent_pin',
+    serena: { hero: 'serena', title: '달을 추는 세레나', cls: 'moon', hp: 66, gold: 99, relic: 'crescent_pin', pack: 'dlc-night-trio',
             deck: ['sm_slash', 'sm_slash', 'sm_slash', 'sm_slash', 'sm_step', 'sm_step', 'sm_step', 'sm_step', 'sm_full', 'sm_wane'],
             pitch: '카드를 낼 때마다 달이 🌒→🌓→🌕→🌑로 바뀌어. 위상이 맞는 카드를 맞는 순서로 내면 추가 효과.', line: '박자 놓치지 마. 다음이 보름이야.',
             mech: ["🌙 <b>달 위상</b>: 카드를 낼 때마다 🌒초승→🌓반달→🌕보름→🌑그믐 순으로 1칸.", "카드의 달 배지가 <b>낼 때의 위상</b>과 같으면 추가 효과.", "🌑그믐→🌒초승으로 넘어가면 한 바퀴."] },
-    odette: { hero: 'odette', title: '기록하는 오데트', cls: 'lore', hp: 70, gold: 99, relic: 'brass_key',
+    odette: { hero: 'odette', title: '기록하는 오데트', cls: 'lore', hp: 70, gold: 99, relic: 'brass_key', pack: 'dlc-night-trio',
             deck: ['lo_strike', 'lo_strike', 'lo_strike', 'lo_strike', 'lo_guard', 'lo_guard', 'lo_guard', 'lo_guard', 'lo_read', 'lo_read'],
             pitch: '「보존」 카드는 턴이 끝나도 손에 남고 각주가 쌓여 점점 세져. 아껴 두었다가 크게 쓰는 덱.', line: '이 카드는 다음 턴을 위해 아껴 둘게.',
             mech: ["📑 <b>보존</b> 카드는 턴이 끝나도 손에 남고 <b>각주</b>가 1 쌓여.", "각주 1당 카드 수치가 커져(카드에 「각주당 +N」 표시). 내면 각주는 0으로."] },
@@ -880,8 +880,34 @@
     }
   };
 
-  const DATA = { MASTERY, LINES, HEROINES, STATUS, ARCH, CLASS_ARCH, CARDS, STARTERS, ACTS, ENEMIES, ENCOUNTERS, RELICS, POTIONS, EVENTS, ACHIEVEMENTS, GALLERY, ASCENSION, ART,
-    TITLE: '미녀 덱: 밤의 여왕', VERSION: '1.3.3' };
+  const SHOP = {
+    offerUntil: null,
+    note: '팔 수 있게 나눈 구성이다. 이 공개 버전은 돈을 받지 않는다. 받기는 보유만 연다.',
+    packs: {
+      'dlc-night-trio': {
+        kind: 'character', name: '밤의 세 사람',
+        blurb: '마리엘·세레나·오데트. 인형, 달의 위상, 각주.',
+        heroes: ['mariel', 'serena', 'odette'],
+        own: ['이 세 명을 히로인으로 고를 수 있다', '각자 지금과 같은 기본 덱·기본 유물'],
+        play: ['경험치·스토리·추가 카드·다른 시작 덱·칭호·금색 테두리는 그 히로인으로 플레이해야 열린다', '캐릭터가 없어서 못 하던 그 보상은, 받아도 미리 열리지 않는다']
+      },
+      'look-portrait-trim': {
+        kind: 'skin', name: '초상 장식',
+        blurb: '세라·루나·유키·아리아의 색 테두리와 이름표.',
+        skins: {
+          sera: { id: 'trim-sera', name: '진홍 테두리', cls: 'skin-sera' },
+          luna: { id: 'trim-luna', name: '별빛 테두리', cls: 'skin-luna' },
+          yuki: { id: 'trim-yuki', name: '안개 테두리', cls: 'skin-yuki' },
+          aria: { id: 'trim-aria', name: '여명 테두리', cls: 'skin-aria' }
+        },
+        own: ['이 장식을 바로 켜고 끌 수 있다'],
+        play: ['레벨 보상과 금색 테두리는 열리지 않는다', '아리아 합류는 그대로 2막 보스를 이겨야 한다']
+      }
+    }
+  };
+
+  const DATA = { MASTERY, LINES, HEROINES, STATUS, ARCH, CLASS_ARCH, CARDS, STARTERS, ACTS, ENEMIES, ENCOUNTERS, RELICS, POTIONS, EVENTS, ACHIEVEMENTS, GALLERY, ASCENSION, ART, SHOP,
+    TITLE: '미녀 덱: 밤의 여왕', VERSION: '1.3.4' };
   root.BD_DATA = DATA;
   if (typeof module !== 'undefined' && module.exports) module.exports = DATA;
 })(typeof window !== 'undefined' ? window : globalThis);
