@@ -658,9 +658,11 @@
     if (!ui.endLine || ui.endLine.run !== run.seed) ui.endLine = { run: run.seed, text: pickLine(run.starter, run.won ? 'win' : 'loss') || '' };
     return ui.endLine.text;
   }
-  function heroSay(kind, delay) {
+  function heroSay(kind, delay, sub) {
     if (!settings.talk || !run) return;
-    const h = run.starter, text = pickLine(h, kind);
+    const h = run.starter;
+    const keyed = sub && D.LINES[h] && D.LINES[h][kind + 'To'] && D.LINES[h][kind + 'To'][sub];
+    const text = keyed || pickLine(h, kind);
     if (!text) return;
     setTimeout(() => {
       document.querySelectorAll('.herosay.live').forEach(x => x.remove());
@@ -895,7 +897,10 @@
     if (!run.over && run.screen !== 'combat') grantAch();
     render();
     const dur = playFx(fxs);
-    if (before !== run.screen && run.screen === 'combat' && run.combat && run.combat.kind !== 'monster') heroSay(run.combat.kind === 'boss' ? 'boss' : 'elite', 600);
+    if (before !== run.screen && run.screen === 'combat' && run.combat && run.combat.kind !== 'monster') {
+      const bossId = run.combat.kind === 'boss' && run.combat.enemies[0] ? run.combat.enemies[0].id : null;
+      heroSay(run.combat.kind === 'boss' ? 'boss' : 'elite', bossId ? 1100 : 600, bossId);
+    }
     if (fxs.some(f => f.k === 'bosswin')) heroSay('bossWin', 1600);
     if (before !== run.screen && ['event', 'shop', 'rest'].includes(run.screen)) heroSay(run.screen, 350);
     if (leftCombat) {

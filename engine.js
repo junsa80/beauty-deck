@@ -276,7 +276,7 @@
     c.draw = rest.concat(innate);
     run.screen = 'combat';
     run.rewards = null;
-    for (const e of c.enemies) { const d = D.ENEMIES[e.id]; if (d.intro) fx(run, { k: 'say', who: e.uid, text: d.intro }); }
+    for (const e of c.enemies) { const d = D.ENEMIES[e.id]; const text = (d.greet && d.greet[run.starter]) || d.intro; if (text) fx(run, { k: 'say', who: e.uid, text }); }
     const P = c.p;
     if (hasRelic(run, 'shadow_hood')) for (let i = 0; i < 3; i++) c.hand.push(newCard(run, 'shiv'));
     if (hasRelic(run, 'b_mask')) for (let i = 0; i < 2; i++) c.hand.push(newCard(run, 'daze'));

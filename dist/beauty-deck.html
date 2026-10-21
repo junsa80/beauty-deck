@@ -1164,7 +1164,17 @@ window.BD_ARTMAP = {
              ai: { type: 'cycle', order: ['charge', 'slam', 'spores'] } },
     morgana: { name: '숲의 마녀 모르가나', kind: 'boss', boss: true, act: 1, hp: [108, 108], colors: ['#59d38c', '#0d2a1a'], glyph: '모', age: 28,
              desc: '어스름 숲의 주인. 덩굴과 독초로 숲에 들어온 자를 길 잃게 만든다.',
-             intro: '길을 잃었니? 걱정 마. 영원히 여기 있게 해 줄 테니까.', death: '…숲이, 너희에게 길을 열어 주는구나.',
+             intro: '길을 잃었니? 걱정 마. 영원히 여기 있게 해 줄 테니까.',
+             greet: {
+               sera: '칼 든 손님이네. 이 숲은 철을 싫어해.',
+               luna: '별 세는 아이. 여기선 잎이 하늘을 가려.',
+               yuki: '그림자 일족의 막내. 결국 칼을 들었구나.',
+               aria: '방패로 덩굴은 못 막아. 그래도 해 봐.',
+               mariel: '인형을 데리고 숲에? 실보다 덩굴이 질겨.',
+               serena: '달이 안 비치는 숲이야. 박자를 잃을걸.',
+               odette: '그 공책, 이끼가 먼저 읽어 버릴 거야.'
+             },
+             death: '…숲이, 너희에게 길을 열어 주는구나.',
              moves: { vines: { name: '휘감는 덩굴', dmg: 8, playerSt: { weak: 1 } }, brew: { name: '독초 달이기', playerSt: { poison: 3 }, block: 8 }, call: { name: '숲의 부름', summon: ['slime', 'slime'], say: '얘들아, 놀아 줘.' },
                       thorn: { name: '가시 폭풍', dmg: 4, hits: 4 }, bloom: { name: '만개', selfSt: { str: 2, regen: 4 }, block: 12, say: '꽃은 지는 게 아니라, 다시 피는 거야.' }, crush: { name: '고목 짓누르기', dmg: 16 } },
              phases: [ { ai: { type: 'cycle', order: ['vines', 'brew', 'call', 'thorn'] } },
@@ -1194,7 +1204,17 @@ window.BD_ARTMAP = {
              ai: { type: 'cycle', first: 'pride', order: ['rose', 'drain', 'rose', 'pride'] } },
     belita: { name: '밤의 여왕 벨리타', kind: 'boss', boss: true, act: 2, hp: [195, 195], colors: ['#ff2e4d', '#14040c'], glyph: '벨', age: 29,
              desc: '달 없는 성의 주인. 우아하고 오만하며, 무엇보다 지루한 걸 못 참는다.',
-             intro: '어머, 이렇게 늦은 밤에 손님이라니. 날 지루하게 하지는 마.', death: '…재밌었어. 정말, 오랜만에.',
+             intro: '어머, 이렇게 늦은 밤에 손님이라니. 날 지루하게 하지는 마.',
+             greet: {
+               sera: '리본 반쪽, 아직 있구나. 언니는 벨 수밖에 없어.',
+               luna: '계산이 긴 밤이야. 지루하지만 않게 해.',
+               yuki: '숨어도 소용없어. 이 성의 밤은 내 거야.',
+               aria: '기사 놀이, 여기서 끝내 줄게.',
+               mariel: '인형극이라. 손님 치고는 귀엽네.',
+               serena: '달 없는 성이야. 네 박자는 여기서 끊겨.',
+               odette: '글 읽는 손님이네. 이 성의 규칙은 피로 적혀 있어.'
+             },
+             death: '…재밌었어. 정말, 오랜만에.',
              moves: { kiss: { name: '피의 입맞춤', dmg: 13, heal: 8 }, summon: { name: '박쥐 소환', summon: ['bat', 'bat'], block: 10, say: '얘들아, 손님 오셨다.' },
                       gaze: { name: '매혹의 시선', playerSt: { weak: 2 }, addCards: [{ id: 'daze', n: 2, to: 'discard' }], say: '내 눈 보지 마. …아니, 봐.' }, fang: { name: '붉은 송곳니', dmg: 8, hits: 2 },
                       storm: { name: '피의 폭풍', dmg: 5, hits: 4 }, veil: { name: '핏빛 장막', block: 18, selfSt: { str: 2 }, say: '버텨 봐. 다음 건 아플 거야.' }, night: { name: '영원한 밤', dmg: 22 } },
@@ -1222,7 +1242,17 @@ window.BD_ARTMAP = {
              ai: { type: 'cycle', order: ['roar', 'breath', 'tail', 'breath'] } },
     celes: { name: '별을 삼킨 마녀 셀레스', kind: 'boss', boss: true, act: 3, hp: [186, 186], colors: ['#a0b8ff', '#0a0f2a'], glyph: '셀', age: 27,
              desc: '하늘의 별을 하나씩 삼켜 힘을 얻은 대마녀. 별이 다 사라지면 세상도 끝난다고 믿는다.',
-             intro: '별은 아름답지. 그러니까 내가 갖는 거야.', death: '…아, 별이… 이렇게 따뜻했구나.',
+             intro: '별은 아름답지. 그러니까 내가 갖는 거야.',
+             greet: {
+               sera: '칼로는 별을 못 베. 그래도 와 줬구나.',
+               luna: '제자야. 별은 아직 내 안에 있어.',
+               yuki: '그림자로는 별빛이 안 가려져.',
+               aria: '기도보다 중력이 세. 각오해.',
+               mariel: '인형한테 별은 너무 뜨거워.',
+               serena: '네 달은 여기 없어. 별을 내가 삼켰으니까.',
+               odette: '별의 목록은 이미 내 속에 있어. 적지 마.'
+             },
+             death: '…아, 별이… 이렇게 따뜻했구나.',
              moves: { comet: { name: '혜성 낙하', dmg: 18 }, shards: { name: '별 부수기', summon: ['shard', 'shard'], block: 15, say: '반짝반짝, 예쁘지?' }, gravity: { name: '중력장', playerSt: { weak: 2, vuln: 2 }, addCards: [{ id: 'burn', n: 2, to: 'discard' }] },
                       rain: { name: '별의 비', dmg: 5, hits: 5 }, eclipse: { name: '일식', block: 25, selfSt: { str: 3 }, say: '빛이 사라지면 남는 건 나뿐이야.' }, supernova: { name: '초신성', dmg: 32 } },
              phases: [ { ai: { type: 'cycle', order: ['shards', 'comet', 'gravity', 'rain'] } },
@@ -1231,7 +1261,17 @@ window.BD_ARTMAP = {
     // ── 종막
     nyx:   { name: '황혼의 여신 닉스', kind: 'boss', boss: true, final: true, act: 4, hp: [340, 340], colors: ['#ffb36b', '#1a0a2a'], glyph: '닉', age: 29, ageText: '여신 (겉모습 20대 후반)',
              desc: '낮과 밤 사이를 다스리는 황혼의 여신. 이 모든 원정을 지켜보며 기다리고 있었다.',
-             intro: '드디어 왔구나. 숲도, 성도, 별도 넘어서. …그럼 마지막 시험이야.', death: '…훌륭해. 황혼은 끝났어. 이제 너희의 아침이야.',
+             intro: '드디어 왔구나. 숲도, 성도, 별도 넘어서. …그럼 마지막 시험이야.',
+             greet: {
+               sera: '벨리타의 동생. 언니의 밤을 끝내러 왔구나.',
+               luna: '새벽별을 돌려받으러? 황혼이 먼저야.',
+               yuki: '그림자도 여기선 내 밤의 일부야.',
+               aria: '루벨의 아이들을 지키려면, 나를 넘어.',
+               mariel: '막은 내가 내려. 인형은 관객석에 둬.',
+               serena: '긴 곡이었어. 마지막 박자는 내 거야.',
+               odette: '마지막 장이야. 각주 달 자리는 없어.'
+             },
+             death: '…훌륭해. 황혼은 끝났어. 이제 너희의 아침이야.',
              moves: { dusk: { name: '황혼의 칼날', dmg: 14, hits: 2 }, veil: { name: '노을 장막', block: 25, selfSt: { str: 2 } }, judge: { name: '시간의 심판', playerSt: { weak: 2, vuln: 2 }, addCards: [{ id: 'wound', n: 2, to: 'draw' }] },
                       eclipse: { name: '일몰', dmg: 26 }, star: { name: '저녁별', dmg: 7, hits: 5 }, rebirth: { name: '여명의 서약', heal: 40, block: 30, say: '아직이야. 황혼은 길거든.' }, end: { name: '세계의 끝', dmg: 40 } },
              phases: [ { ai: { type: 'cycle', order: ['dusk', 'judge', 'veil', 'eclipse'] } },
@@ -1546,6 +1586,7 @@ window.BD_ARTMAP = {
     sera: {
       elite: ['강해 보이네. 그래서 좋아.', '저 녀석, 제대로 베어 볼 만하겠어.', '뒤로 빠지지 마. 정면이야.'],
       boss: ['여기까지 왔으면 끝까지 가는 거야.', '리본 꽉 묶었어. 간다!', '네가 길을 막는 마지막 벽이야?'],
+      bossTo: { morgana: '숲이든 뭐든, 정면으로 벤다.', belita: '언니. 이번엔 내가 밤을 끝낼게.', celes: '별은 하늘에 둬. 칼은 내가 들 테니까.', nyx: '리본은 묶었어. 마지막이야.' },
       bossWin: ['…후. 아직 칼은 안 무뎌졌어.', '다음 문으로 가자. 쉬는 건 그다음.'],
       event: ['수상한데… 그래도 들여다보긴 할래.', '뭐든 칼로 안 되면 머리로 해 보지.'],
       shop: ['날 좀 갈아 줄 숫돌 있어?', '돈은 아끼는 거 아니야. 살아남는 데 쓰는 거지.'],
@@ -1556,6 +1597,7 @@ window.BD_ARTMAP = {
     luna: {
       elite: ['변수가 하나 늘었네. 재밌다.', '저건 계산식이 좀 길겠는걸.', '졸리지만… 집중할게.'],
       boss: ['별이 여기서 멈추라고 했어. 난 안 멈출 거지만.', '다 계산해 뒀어. 아마도.', '좋아, 큰 거 한 방 준비할게.'],
+      bossTo: { morgana: '잎 틈으로도 별은 보여. 계산할게.', belita: '지루한 밤은 식에서 빼 둘게.', celes: '스승님. 별은 돌려받을 거야.', nyx: '새벽별, 여기서 돌려줘.' },
       bossWin: ['예상보다 3초 빨랐어. 훌륭해.', '…휴, 오차 범위 안이었어.'],
       event: ['기록에 없는 현상이야. 메모해 둬야지.', '함정일 확률 40퍼센트. 그래도 궁금해.'],
       shop: ['마도서 할인은 안 해?', '이 돌, 마력 순도가 좋네.'],
@@ -1566,6 +1608,7 @@ window.BD_ARTMAP = {
     yuki: {
       elite: ['…강하다. 조용히 끝낸다.', '그림자 쪽으로 돌아갈게.', '저건 독이 잘 들 거야.'],
       boss: ['…여기서 숨지 않아.', '이번엔 정면이야. 이상하지?', '끝내자.'],
+      bossTo: { morgana: '…빚이든 아니든. 칼은 들었어.', belita: '숨지 않아. 이번엔 정면.', celes: '별빛 속에서도, 그림자는 남아.', nyx: '밤이 길어도. 끝내자.' },
       bossWin: ['…끝.', '숨, 다시 쉬어도 돼.'],
       event: ['…기척이 있어.', '조심해. 아니, 내가 먼저 볼게.'],
       shop: ['표창, 스무 개.', '…독은 어디 있어?'],
@@ -1576,6 +1619,7 @@ window.BD_ARTMAP = {
     aria: {
       elite: ['모두 내 뒤로! 첫 공격은 내가 받는다.', '강한 상대일수록 방패가 빛나지.', '물러서지 않아.'],
       boss: ['이번엔 지켜 낼 거야. 반드시.', '맹세를 걸고, 여기서 막는다.', '성기사단 부단장 아리아, 간다!'],
+      bossTo: { morgana: '덩굴 뒤의 사람은 내가 지킨다.', belita: '여왕의 성도, 지킬 사람은 있어.', celes: '별이 떨어져도 방패는 안 내려.', nyx: '루벨까지. 이번엔 지켜 낼게.' },
       bossWin: ['다친 사람 없지? 좋아.', '빛은 아직 꺼지지 않았어.'],
       event: ['누군가 도움이 필요한 걸지도 몰라.', '신중하게. 하지만 외면하진 말자.'],
       shop: ['방패 손질할 기름 있나요?', '필요한 만큼만 사자. 나머진 남을 위해.'],
@@ -1586,6 +1630,7 @@ window.BD_ARTMAP = {
     mariel: {
       elite: ['도도, 앞줄. 오늘은 상대가 크다.', '실 하나 더 감을게. 단단히.', '저 관절, 고쳐 주고 싶을 만큼 멋지네. 그래도 부숴야지.'],
       boss: ['막을 올릴게요. 끝은 우리가 정해요.', '앞줄은 도도, 뒷줄은 나. 시작!', '이 무대, 퇴장 없는 공연은 사양이에요.'],
+      bossTo: { morgana: '덩굴은 실로 묶어 볼게.', belita: '무대는 우리가 정리해요.', celes: '뜨거운 별도, 막은 천으로 받아요.', nyx: '마지막 막. 퇴장은 이쪽이에요.' },
       bossWin: ['박수는 도도한테 주세요.', '…실 안 끊어졌다. 다행이야.'],
       event: ['수상한 물건은 일단 뜯어 보는 게 장인 습관이야.', '부품이 될지도 몰라. 가져가자.'],
       shop: ['은실 한 타래 주세요. 제일 질긴 걸로.', '나무는 결이 중요해요. 이건 좋네요.'],
@@ -1596,6 +1641,7 @@ window.BD_ARTMAP = {
     serena: {
       elite: ['박자가 빠른 상대네. 맞춰 줄게.', '초승부터 천천히. 서두르면 진다.', '달이 차오르기 전엔 쓰러지지 마.'],
       boss: ['다음이 보름이야. 박자 놓치지 마.', '이 곡은 길어요. 끝까지 들어 주세요.', '달아, 이번엔 멈추지 마.'],
+      bossTo: { morgana: '달이 안 보여도 박자는 세.', belita: '달 없는 성이라도, 한 바퀴는 돌아.', celes: '삼킨 별 다음엔, 다시 달이 와.', nyx: '마지막 곡. 박자 놓치지 마.' },
       bossWin: ['…한 바퀴 돌았네.', '곡 하나가 끝났어. 다음 곡으로.'],
       event: ['낯선 박자가 들려.', '이 길, 그믐처럼 어둡네. 조심하자.'],
       shop: ['비녀 손질할 은 연마제 있어요?', '외투 자락, 좀 짧게 줄일 수 있을까요?'],
@@ -1606,6 +1652,7 @@ window.BD_ARTMAP = {
     odette: {
       elite: ['기록에 없는 적이네. 적어 둘게.', '이 카드는 아껴 둘게. 지금이 아니야.', '각주가 쌓일 때까지 버텨 줘.'],
       boss: ['마지막 장을 넘기러 왔어.', '계약서는 다 읽었어. 이제 내 차례야.', '이 이야기, 끝까지 적어 줄게.'],
+      bossTo: { morgana: '이끼가 먹어도, 한 줄은 남길게.', belita: '피의 규칙도 읽어 뒀어.', celes: '목록이 속에 있으면, 내가 옮겨 적을게.', nyx: '끝이라고 안 쓸 거야. 그래도 이 장은 닫아.' },
       bossWin: ['오늘 기록, 두 줄 추가.', '…펜이 안 부러졌네. 다행이야.'],
       event: ['처음 보는 현상이야. 메모부터 할게.', '이 길은 지도에 없어. 그러니까 가 볼 가치가 있지.'],
       shop: ['잉크 한 병이랑, 제일 두꺼운 공책.', '이 책, 초판이에요? 사야겠네.'],
@@ -1616,7 +1663,7 @@ window.BD_ARTMAP = {
   };
 
   const DATA = { MASTERY, LINES, HEROINES, STATUS, ARCH, CLASS_ARCH, CARDS, STARTERS, ACTS, ENEMIES, ENCOUNTERS, RELICS, POTIONS, EVENTS, ACHIEVEMENTS, GALLERY, ASCENSION, ART,
-    TITLE: '미녀 덱: 밤의 여왕', VERSION: '1.3.2' };
+    TITLE: '미녀 덱: 밤의 여왕', VERSION: '1.3.3' };
   root.BD_DATA = DATA;
   if (typeof module !== 'undefined' && module.exports) module.exports = DATA;
 })(typeof window !== 'undefined' ? window : globalThis);
@@ -4615,7 +4662,7 @@ window.BD_ARTMAP = {
     c.draw = rest.concat(innate);
     run.screen = 'combat';
     run.rewards = null;
-    for (const e of c.enemies) { const d = D.ENEMIES[e.id]; if (d.intro) fx(run, { k: 'say', who: e.uid, text: d.intro }); }
+    for (const e of c.enemies) { const d = D.ENEMIES[e.id]; const text = (d.greet && d.greet[run.starter]) || d.intro; if (text) fx(run, { k: 'say', who: e.uid, text }); }
     const P = c.p;
     if (hasRelic(run, 'shadow_hood')) for (let i = 0; i < 3; i++) c.hand.push(newCard(run, 'shiv'));
     if (hasRelic(run, 'b_mask')) for (let i = 0; i < 2; i++) c.hand.push(newCard(run, 'daze'));
@@ -6277,9 +6324,11 @@ window.BD_ARTMAP = {
     if (!ui.endLine || ui.endLine.run !== run.seed) ui.endLine = { run: run.seed, text: pickLine(run.starter, run.won ? 'win' : 'loss') || '' };
     return ui.endLine.text;
   }
-  function heroSay(kind, delay) {
+  function heroSay(kind, delay, sub) {
     if (!settings.talk || !run) return;
-    const h = run.starter, text = pickLine(h, kind);
+    const h = run.starter;
+    const keyed = sub && D.LINES[h] && D.LINES[h][kind + 'To'] && D.LINES[h][kind + 'To'][sub];
+    const text = keyed || pickLine(h, kind);
     if (!text) return;
     setTimeout(() => {
       document.querySelectorAll('.herosay.live').forEach(x => x.remove());
@@ -6514,7 +6563,10 @@ window.BD_ARTMAP = {
     if (!run.over && run.screen !== 'combat') grantAch();
     render();
     const dur = playFx(fxs);
-    if (before !== run.screen && run.screen === 'combat' && run.combat && run.combat.kind !== 'monster') heroSay(run.combat.kind === 'boss' ? 'boss' : 'elite', 600);
+    if (before !== run.screen && run.screen === 'combat' && run.combat && run.combat.kind !== 'monster') {
+      const bossId = run.combat.kind === 'boss' && run.combat.enemies[0] ? run.combat.enemies[0].id : null;
+      heroSay(run.combat.kind === 'boss' ? 'boss' : 'elite', bossId ? 1100 : 600, bossId);
+    }
     if (fxs.some(f => f.k === 'bosswin')) heroSay('bossWin', 1600);
     if (before !== run.screen && ['event', 'shop', 'rest'].includes(run.screen)) heroSay(run.screen, 350);
     if (leftCombat) {
