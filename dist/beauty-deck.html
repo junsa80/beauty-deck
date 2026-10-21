@@ -1700,7 +1700,7 @@ window.BD_ARTMAP = {
   };
 
   const DATA = { MASTERY, LINES, HEROINES, STATUS, ARCH, CLASS_ARCH, CARDS, STARTERS, ACTS, ENEMIES, ENCOUNTERS, RELICS, POTIONS, EVENTS, ACHIEVEMENTS, GALLERY, ASCENSION, ART, SHOP,
-    TITLE: '미녀 덱: 밤의 여왕', VERSION: '1.3.4' };
+    TITLE: '미녀 덱: 밤의 여왕', VERSION: '1.3.5' };
   root.BD_DATA = DATA;
   if (typeof module !== 'undefined' && module.exports) module.exports = DATA;
 })(typeof window !== 'undefined' ? window : globalThis);
@@ -5799,7 +5799,7 @@ window.BD_ARTMAP = {
   function saveStatusLine() {
     const t = meta.updatedAt ? new Date(meta.updatedAt) : null;
     const when = t && !isNaN(t) ? t.toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '아직 없음';
-    return `이 기기에만 저장 · 클라우드 동기화 없음 · 마지막 저장 ${when}`;
+    return `이 기기에서 자동 저장 · 다른 기기는 설정의 백업 · 마지막 저장 ${when}`;
   }
   function buildBackup() {
     const cur = run && !run.over ? JSON.parse(JSON.stringify(run, (k, v) => (k === 'fx' ? undefined : v))) : loadJSON(SAVE_KEY);
@@ -6582,7 +6582,7 @@ window.BD_ARTMAP = {
     • 보스를 이기면 <b>👑보스 유물</b> 3개 중 하나. 강하지만 대가가 있어.<br>
     • 2막 보스를 이기면 새 히로인 <b>아리아</b> 합류. 업적을 달성하면 <b>전설 카드</b>가 보상에 나오기 시작해.<br>
     • 클리어하면 <b>🔥승천</b>이 열려. 최대 10단계까지.<br>
-    • 진행은 <b>이 기기에만</b> 자동 저장돼. 클라우드 동기화는 없어. 설정에서 백업 파일로 내보내/가져오기를 할 수 있어.<br>
+    • 진행은 <b>이 기기에 자동 저장</b>돼. 한 기기만 쓰면 더 할 일 없어. 폰과 컴퓨터를 오가려면 설정에서 백업 파일을 내보내고, 다른 기기에서 가져와.<br>
     • 홈 화면에 추가하면 앱처럼 쓸 수 있어.</div>
     <button class="btn block" data-act="tutReplay">첫 전투 튜토리얼 다시 보기</button>
     <button class="btn block primary" data-act="closeModal">알겠어!</button>`;
@@ -6596,9 +6596,10 @@ window.BD_ARTMAP = {
       ${row('reduce', '🧘 움직임 줄이기', '화면 흔들림·카드 날아가기 같은 연출을 줄여')}
       ${row('fast', '⏩ 빠른 연출', '적 턴 연출 속도 2배')}
       ${row('talk', '💬 히로인 대사', '엘리트·보스·이벤트·상점·휴식에서 짧은 말풍선')}
-      <div class="section-title" style="padding-left:0;margin-top:8px">💾 백업</div>
-      <button class="btn block" data-act="exportBackup">⬇️ 백업 파일 내보내기</button>
-      <button class="btn block" data-act="importPick">⬆️ 백업 파일 가져오기</button>
+      <div class="section-title" style="padding-left:0;margin-top:8px">💾 다른 기기</div>
+      <div class="small dim" style="margin-bottom:6px">한 기기에서만 하면 그대로 두면 돼. 다른 기기에서 이으려면 파일을 내보내고, 거기서 가져와.</div>
+      <button class="btn block" data-act="exportBackup">⬇️ 이 기기 기록 내보내기</button>
+      <button class="btn block" data-act="importPick">⬆️ 다른 기기 기록 가져오기</button>
       <button class="btn block" data-act="resetConfirm" style="color:var(--red)">🗑️ 모든 기록 초기화</button>
       <button class="btn block primary" data-act="closeModal">닫기</button>`;
   }
