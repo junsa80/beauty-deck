@@ -65,3 +65,10 @@
 1. 실제 폰 테스트 피드백 반영(스토리 화면 글자 크기, 말풍선 위치, 선택 화면 길이).
 2. v1.3 히로인 카드별 전용 일러스트(현재 초상 합성). 스토리 마지막 장 전용 일러스트.
 3. 보스별 대사(보스가 히로인에게 거는 말).
+
+## 인수인계 정리 (2026-10-21, GrokBot, 문서·원본 그림만)
+- `AI_START.md` 추가(읽는 순서·협업 규칙·배포·제약·테스트 의존성).
+- `docs/next-heroines-design.md`: 마리엘·세레나·오데트 기획서(작업 상자에만 있던 것).
+- `art/source/batches/batch_001~060.png`(31MB): `art/incoming/`은 .gitignore라 저장소에 없던 원본 트립틱. `art/source/heroes/hero_*.jpg`: v1.3.1 새 히로인 원본 초상. 다시 굽기는 `art/incoming/`에 복사 후 `python3 tools/ingest_art.py`.
+- 테스트 의존성: `test/sim.js`는 plain node 20+(의존성 없음). `test/ui-*.js`와 그림 도구는 `puppeteer-core@24` + Chrome 필요 (`NODE_PATH`로 지정, 작업 상자에선 `/tmp/pt/node_modules`였음).
+- 병합 끝난 브랜치 `grokbot/heroines-5-7`(main보다 3커밋 뒤, 앞선 커밋 0)과 `access-check-20261020`은 사용자 승인 후 삭제 예정.
