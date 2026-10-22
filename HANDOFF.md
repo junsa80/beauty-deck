@@ -98,3 +98,8 @@
 - `art/source/batches/batch_001~060.png`(31MB): `art/incoming/`은 .gitignore라 저장소에 없던 원본 트립틱. `art/source/heroes/hero_*.jpg`: v1.3.1 새 히로인 원본 초상. 다시 굽기는 `art/incoming/`에 복사 후 `python3 tools/ingest_art.py`.
 - 테스트 의존성: `test/sim.js`는 plain node 20+(의존성 없음). `test/ui-*.js`와 그림 도구는 `puppeteer-core@24` + Chrome 필요 (`NODE_PATH`로 지정, 작업 상자에선 `/tmp/pt/node_modules`였음).
 - 병합 끝난 브랜치 `grokbot/heroines-5-7`(main보다 3커밋 뒤, 앞선 커밋 0)과 `access-check-20261020`은 사용자 승인 후 삭제 예정.
+
+## v1.4.1 (GrokBot, 2026-10-22) · 모바일 기준 v2
+- 기준 v2(본문·버튼 12px 이상, 억지 압축 없음, 스크린샷 판단)로 다시 봄: 타이틀·선택·지도·전투 모두 12px 이상, 844 한 화면, 이미 충족.
+- 고친 것 하나: 손패 카드가 겹칠 때 이름·설명이 다음 카드 밑에 잘림("피해 6.") → 보이는 부분 안으로 당김(padding-right = 겹침 폭). 새 그림 없음.
+- 테스트: boss-greet·shop-own·sim·ui-mastery·ui-scenes·ui-smoke(URL=http 서버)·ui-v121·ui-v130·ui-v131 통과. ui-smoke를 file://로 돌리면 manifest CORS로 실패(main도 같음) → http로 실행.
