@@ -207,7 +207,8 @@
     const syn = o.syn ? synBadge(d.id) : '';
     const fnb = card.fn ? `<div class="fnbadge">📝${card.fn}</div>` : (d.retain ? '<div class="fnbadge ret">보존</div>' : '');
     const moonb = d.moon ? `<div class="moonbadge ${run && run.combat && run.combat.moon === d.moon.p ? 'on' : ''}">${E.MOON_ICON[d.moon.p]}</div>` : '';
-    return `<div class="${cls}" ${attrs}>${cost}${art}${fnb}${moonb}<div class="cname">${esc(d.name)}</div><div class="chero">${h ? esc(h.name) : esc(RAR_KO[d.rarity] || '')}</div><div class="cdesc"><span>${desc}</span></div><div class="ctype">${TYPE_KO[d.type] || ''}</div>${syn}</div>`;
+    const vv = card.uid != null ? (card.uid * 7 + 3) % 4 : 0;
+    return `<div class="${cls}" data-v="${vv}" ${attrs}>${cost}${art}${fnb}${moonb}<div class="cname">${esc(d.name)}</div><div class="chero">${h ? esc(h.name) : esc(RAR_KO[d.rarity] || '')}</div><div class="cdesc"><span>${desc}</span></div><div class="ctype">${TYPE_KO[d.type] || ''}</div>${syn}</div>`;
   }
   function synBadge(id) {
     if (!run) return '';
@@ -256,7 +257,7 @@
     const changed = scr !== ui.lastScreen; ui.lastScreen = scr;
     if (ui.modal) html += `<div class="modal-bg" data-act="closeModal"><div class="modal" data-act="noop">${ui.modal}</div></div>`;
     if (ui.story) html += storyHTML();
-    app.innerHTML = `<div class="screen ${changed && !reduced() ? 'enter' : ''} scr-${scr}" ${run && run.screen !== 'combat' ? `style="--actbg:${D.ACTS[run.act].bg[0]}"` : ''}>${html}</div>`;
+    app.innerHTML = `<div class="screen ${changed && !reduced() ? 'enter' : ''} scr-${scr} ${run ? 'act' + run.act : ''}" ${run && run.screen !== 'combat' ? `style="--actbg:${D.ACTS[run.act].bg[0]}"` : ''}>${html}</div>`;
     if (run && run.screen === 'map' && !ui.hold) scrollMap();
     if (run && (run.screen === 'combat' || ui.hold)) layoutHand();
   }
@@ -280,14 +281,18 @@
       <div class="col" style="width:100%;max-width:320px">
         ${ok ? `<button class="btn primary block" data-act="continue">▶ 이어하기 <span class="small">(${esc(D.STARTERS[saved.starter].title)} · ${saved.act < 4 ? saved.act + '막' : '종막'})</span></button>` : ''}
         <button class="btn ${ok ? '' : 'primary'} block" data-act="newGame">⚔️ 새 원정 시작</button>
-        <div class="row"><button class="btn block" data-act="codex">📖 도감${newG ? ' <span class="dot"></span>' : ''}</button><button class="btn block" data-act="achv">🏆 업적 ${achN}/${achT}</button></div>
-        <button class="btn block" data-act="store">🛍️ 상점${freeLeft ? ' · 무료 공개' : ''}</button>
-        <button class="btn block" data-act="heroes">💞 히로인 · 레벨 · 스토리${storyNewCount() ? ` <span class="dot"></span>` : ''}</button>
-        <div class="row"><button class="btn block" data-act="help">❔ 도움말</button><button class="btn block" data-act="settings">⚙️ 설정</button></div>
+        <button class="btn block hero-btn" data-act="heroes">💞 히로인 · 레벨 · 스토리${storyNewCount() ? ` <span class="dot"></span>` : ''}</button>
+        <div class="more-row" role="group" aria-label="더 보기">
+          <button class="btn mini" data-act="codex"><i>📖</i>도감${newG ? '<span class="dot"></span>' : ''}</button>
+          <button class="btn mini" data-act="achv"><i>🏆</i>업적 ${achN}/${achT}</button>
+          <button class="btn mini" data-act="store"><i>🛍️</i>상점${freeLeft ? '<span class="dot"></span>' : ''}</button>
+          <button class="btn mini" data-act="help"><i>❔</i>도움말</button>
+          <button class="btn mini" data-act="settings"><i>⚙️</i>설정</button>
+        </div>
       </div>
       <div class="dim small">원정 ${meta.runs}회 · 클리어 ${meta.wins}회 · 최고 승천 ${Math.max(0, meta.ascMax - (meta.wins ? 1 : 0))}${meta.ascMax ? ` · 승천 ${meta.ascMax}까지 열림` : ''}</div>
-      <div class="dim" style="font-size:11px">${esc(saveStatusLine())}</div>
-      <div class="dim" style="font-size:11px">v${D.VERSION} · 모든 등장인물은 20대 이상의 성인입니다</div>
+      <div class="dim" style="font-size:12px">${esc(saveStatusLine())}</div>
+      <div class="dim" style="font-size:12px">v${D.VERSION} · 모든 등장인물은 20대 이상의 성인입니다</div>
     </div></div>`;
   }
 
