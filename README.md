@@ -112,3 +112,7 @@ MASTERY=1 node test/sim.js 300       # 레벨 10 (숙련 카드·패시브·시�
 - 카드: `data.js`의 `C(id, 이름, 클래스, 타입, 희귀도, 비용, 히로인, [계열], 아이콘, [효과], {강화}, {기타})`. 설명문과 강화 비교는 효과 정의에서 자동으로 만들어집니다(`describe`, `upgradeDiff`).
 - 적: `ENEMIES`에 `moves`와 `ai`(cycle/random)를 넣고, 보스라면 `phases`를 추가한 뒤 `ENCOUNTERS[막]`에 등록합니다.
 - 이벤트: `EVENTS`에 `options[].fx`(gold, hp, maxHp, heal, healPct, relic, card, potion, upgrade, remove, dup, transform, wound, fight 등)를 지정합니다. `acts`로 등장할 막을 정할 수 있습니다.
+
+
+## 그림 자산 기록 (v1.4.0, 2026-10-22, GrokBot)
+- img/bg_forest.webp (44KB), img/bg_castle.webp (35KB), img/bg_spire.webp (43KB): 전투 배경. Grok Bot 이미지 생성, 사람 없는 풍경, 노출 요소 없음.
