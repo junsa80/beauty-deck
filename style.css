@@ -441,3 +441,16 @@ h2.upname { color: var(--green); }
 .screen.scr-combat.act3, .screen.scr-combat.act4 { --cbg: url(img/bg_spire.webp); }
 /* v1.4.1 (GrokBot) mobile standard v2: overlapped hand cards keep name/description in the visible part */
 .hand .card:not(:last-child):not(.sel) .cname,.hand .card:not(:last-child):not(.sel) .cdesc{padding-right:max(0px,calc(-1 * var(--ov,0px)));box-sizing:border-box}
+/* v1.4.2 (GrokBot): hide card-frame hairline where hand cards overlap (keep v1.4.1 text inset) */
+.hand .card { overflow: hidden; }
+.hand .card:not(:first-child):not(.sel) { border-left-width: 0; box-shadow: none; }
+.hand .card:not(:first-child):not(.sel)::before { border-left: 0; left: 0; }
+/* Clip the covered right strip of each overlapped card so its border/::before cannot bleed under the next card */
+.hand .card:not(:last-child):not(.sel) {
+  border-right-width: 0;
+  clip-path: inset(0 calc(100% + var(--ov, 0px) - 1px) 0 0 round 12px);
+}
+.hand .card:not(:last-child):not(.sel)::before { border-right: 0; right: 0; }
+.hand .card.sel { overflow: visible; clip-path: none; }
+.hand .card.r-uncommon:not(:first-child):not(.sel),
+.hand .card.r-rare:not(:first-child):not(.sel) { box-shadow: none; }

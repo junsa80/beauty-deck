@@ -29,6 +29,6 @@ ok(n === 28, '시작 연출 28조합이 greet 문장 ' + n);
 const elite = E.newRun('sera', 3);
 E.startCombat(elite, ['isabel'], 'elite');
 ok(!elite.fx.some(f => f.k === 'say' && /리본|제자|새벽별/.test(f.text || '')), '엘리트는 보스 greet를 안 씀');
-ok(D.VERSION === '1.4.1', '버전 ' + D.VERSION);
+ok(D.VERSION === '1.4.2', '버전 ' + D.VERSION);
 if (fails.length) { console.error(fails.join('\n')); process.exit(1); }
 console.log('boss-greet OK');

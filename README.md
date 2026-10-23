@@ -118,3 +118,5 @@ MASTERY=1 node test/sim.js 300       # 레벨 10 (숙련 카드·패시브·시�
 - img/bg_forest.webp (44KB), img/bg_castle.webp (35KB), img/bg_spire.webp (43KB): 전투 배경. Grok Bot 이미지 생성, 사람 없는 풍경, 노출 요소 없음.
 
 - v1.4.1: 손패 겹침 글자 잘림 수정, 새 그림 자산 없음.
+
+- v1.4.2: 손패 겹침 프레임 잔선 제거(CSS). 새 그림 없음.
