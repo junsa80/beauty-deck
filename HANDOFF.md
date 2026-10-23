@@ -103,3 +103,8 @@
 - 기준 v2(본문·버튼 12px 이상, 억지 압축 없음, 스크린샷 판단)로 다시 봄: 타이틀·선택·지도·전투 모두 12px 이상, 844 한 화면, 이미 충족.
 - 고친 것 하나: 손패 카드가 겹칠 때 이름·설명이 다음 카드 밑에 잘림("피해 6.") → 보이는 부분 안으로 당김(padding-right = 겹침 폭). 새 그림 없음.
 - 테스트: boss-greet·shop-own·sim·ui-mastery·ui-scenes·ui-smoke(URL=http 서버)·ui-v121·ui-v130·ui-v131 통과. ui-smoke를 file://로 돌리면 manifest CORS로 실패(main도 같음) → http로 실행.
+
+
+## v1.4.2 (GrokBot, 2026-10-23) · 손패 겹침 테두리
+- 손패 카드가 겹칠 때 뒤 카드의 오른쪽 테두리·::before가 앞 카드 밑으로 비치던 가는 선 제거. `clip-path`로 가려진 오른쪽을 자르고, 앞 카드의 왼쪽 테두리를 없앰. v1.4.1의 글자 안쪽 당김은 유지.
+- 새 그림 없음. SW beautydeck-v1.4.2.
