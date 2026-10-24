@@ -1,6 +1,6 @@
 /* 미녀 덱 서비스 워커: 코드(html/js/css)는 네트워크 우선, 그림은 캐시 우선 */
-const CACHE = 'beautydeck-v1.4.2';
-const CORE = ['./', 'index.html', 'style.css?v=1.4.2', 'artmap.js?v=1.4.2', 'art.js?v=1.4.2', 'data.js?v=1.4.2', 'story.js?v=1.4.2', 'engine.js?v=1.4.2', 'ui.js?v=1.4.2', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png'];
+const CACHE = 'beautydeck-v1.4.3';
+const CORE = ['./', 'index.html', 'style.css?v=1.4.3', 'artmap.js?v=1.4.3', 'art.js?v=1.4.3', 'data.js?v=1.4.3', 'story.js?v=1.4.3', 'engine.js?v=1.4.3', 'ui.js?v=1.4.3', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'sfx/bgm.mp3'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
 self.addEventListener('fetch', e => {

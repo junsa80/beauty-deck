@@ -10,7 +10,7 @@
 
   let run = null;
   let meta = loadMeta();
-  const settings = Object.assign({ sound: false, vibe: true, reduce: false, fast: false, asc: 0, talk: true, loadout: {} }, loadJSON(SET_KEY) || {});
+  const settings = Object.assign({ sound: true, vibe: true, reduce: false, fast: false, asc: 0, talk: true, loadout: {} }, loadJSON(SET_KEY) || {});
   if (!settings.loadout || typeof settings.loadout !== 'object') settings.loadout = {};
   const ui = { story: null, view: 'title', sel: null, potionSel: null, busy: false, modal: null, hold: false, deadShown: new Set(), runAch: [], tut: 0, lastScreen: null, codexTab: 'cards', codexCls: 'all', modalStack: [], pendingBackup: null };
 
@@ -110,9 +110,18 @@
   }
 
   // ───────── 소리 / 진동 ─────────
-  let actx = null;
+  let actx = null, bgmEl = null;
+  function bgmPlay(on) {
+    try {
+      if (!bgmEl) { bgmEl = new Audio('sfx/bgm.mp3'); bgmEl.loop = true; bgmEl.volume = 0.3; }
+      if (!on) { bgmEl.pause(); return; }
+      if (!bgmEl.paused) return;
+      const p = bgmEl.play(); if (p && p.catch) p.catch(function () {});
+    } catch (e) {}
+  }
   function sfx(kind) {
     if (!settings.sound) return;
+    bgmPlay(true);
     try {
       actx = actx || new (window.AudioContext || window.webkitAudioContext)();
       if (actx.state === 'suspended') actx.resume();
@@ -1098,7 +1107,7 @@
     toTitle() { fxLayer.innerHTML = ''; run = null; ui.view = 'title'; ui.modal = null; ui.modalStack = []; render(); },
     help() { openModal(helpHTML()); },
     settings() { openModal(settingsHTML()); },
-    toggle(d) { settings[d.k] = !settings[d.k]; saveSettings(); if (d.k === 'sound' && settings.sound) sfx('ach'); if (d.k === 'vibe' && settings.vibe) buzz(40); ui.modal = settingsHTML(); render(); },
+    toggle(d) { settings[d.k] = !settings[d.k]; saveSettings(); if (d.k === 'sound') { if (settings.sound) sfx('ach'); else bgmPlay(false); } if (d.k === 'vibe' && settings.vibe) buzz(40); ui.modal = settingsHTML(); render(); },
     resetConfirm() { openModal(`<h2>정말 초기화할까?</h2><div class="small dim">업적·도감·갤러리·승천·진행 중인 원정이 모두 지워져.</div><div class="row"><button class="btn block" data-act="closeModal">아니</button><button class="btn block primary" data-act="resetYes">초기화</button></div>`, true); },
     resetYes() { meta = E.newMeta(); saveMeta(); try { localStorage.removeItem(SAVE_KEY); } catch (e) { /* 무시 */ } run = null; ui.view = 'title'; ui.modal = null; ui.modalStack = []; render(); toast('기록을 초기화했어.'); },
     exportBackup() {
