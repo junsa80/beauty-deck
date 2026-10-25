@@ -139,7 +139,7 @@
   // ── 루나(마법사)
   C('m_bolt', '마력탄', 'magic', 'attack', 'starter', 1, 'luna', [], '✨', [dmg(6)], { effects: [dmg(9)] }, { quote: '조준 완료. 발사~' });
   C('m_ward', '마력 방벽', 'magic', 'skill', 'starter', 1, 'luna', [], '🔷', [blk(5)], { effects: [blk(8)] }, { quote: '얇아 보여도 튼튼해.' });
-  C('m_meteor', '별똥별', 'magic', 'attack', 'starter', 2, 'luna', ['aoe'], '🌠', [{ t: 'dmgAll', v: 10 }], { effects: [{ t: 'dmgAll', v: 14 }] }, { quote: '소원 빌 시간은 없을 거야.' });
+  C('m_meteor', '별똥별', 'magic', 'attack', 'starter', 2, 'luna', ['aoe'], '🌠', [{ t: 'dmgAll', v: 11 }], { effects: [{ t: 'dmgAll', v: 15 }] }, { quote: '소원 빌 시간은 없을 거야.' });
   C('m_focus', '마나 집중', 'magic', 'skill', 'starter', 0, 'luna', ['spell'], '💠', [draw(2)], { effects: [draw(3)] }, { exhaust: true, quote: '흐읍… 좋아, 머리 맑아졌어.' });
   C('m_fire', '화염구', 'magic', 'attack', 'common', 1, 'luna', ['burn'], '🔥', [dmg(9)], { effects: [dmg(12)] }, { quote: '앗 뜨거. 아, 너 말고 나.' });
   C('m_frost', '서리 화살', 'magic', 'attack', 'common', 1, 'sion', ['frost'], '🧊', [dmg(6), app('weak', 1)], { effects: [dmg(8), app('weak', 2)] }, { quote: '좀 식혀. 열 받은 거 다 보여.' });
@@ -167,7 +167,7 @@
   // ── 유키(닌자)
   C('n_slash', '쿠나이 베기', 'ninja', 'attack', 'starter', 1, 'yuki', [], '🔪', [dmg(6)], { effects: [dmg(9)] }, { quote: '…끝.' });
   C('n_dodge', '그림자 회피', 'ninja', 'skill', 'starter', 1, 'yuki', [], '💨', [blk(5)], { effects: [blk(8)] }, { quote: '거기 없어.' });
-  C('n_venom', '독침', 'ninja', 'skill', 'starter', 1, 'yuki', ['poison'], '💉', [app('poison', 5)], { effects: [app('poison', 7)] }, { quote: '따끔했지? 이제부터야.' });
+  C('n_venom', '독침', 'ninja', 'skill', 'starter', 1, 'yuki', ['poison'], '💉', [app('poison', 6)], { effects: [app('poison', 8)] }, { quote: '따끔했지? 이제부터야.' });
   C('n_blades', '표창 난무', 'ninja', 'skill', 'common', 1, 'yuki', ['shiv'], '✴️', [{ t: 'add', id: 'shiv', n: 3, to: 'hand' }], { effects: [{ t: 'add', id: 'shiv', n: 4, to: 'hand' }] }, { quote: '셋. 아니, 넷까지 갈까.' });
   C('n_aim', '조준 사격', 'ninja', 'attack', 'common', 1, 'mir', ['combo'], '🏹', [dmg(7), draw(1)], { effects: [dmg(10), draw(1)] }, { quote: '바람 계산 끝. 쏜다.' });
   C('n_rain', '화살비', 'ninja', 'attack', 'common', 1, 'mir', ['combo'], '🌧️', [{ t: 'dmgAll', v: 4, hits: 2 }], { effects: [{ t: 'dmgAll', v: 6, hits: 2 }] }, { quote: '우산 챙겼어? 없으면 아플 거야.' });
@@ -193,14 +193,14 @@
   // ── 아리아(성기사) — 해금 히로인
   C('h_strike', '성검 베기', 'holy', 'attack', 'starter', 1, 'aria', [], '⚔️', [dmg(6)], { effects: [dmg(9)] }, { quote: '정의는 늦지 않아.' });
   C('h_guard', '수호 방패', 'holy', 'skill', 'starter', 1, 'aria', [], '🛡️', [blk(5)], { effects: [blk(8)] }, { quote: '여기서부턴 못 지나가.' });
-  C('h_smite', '천벌', 'holy', 'attack', 'starter', 2, 'aria', ['smite'], '✝️', [dmg(7), blk(7)], { effects: [dmg(10), blk(10)] }, { quote: '빛이 너를 심판한다.' });
+  C('h_smite', '천벌', 'holy', 'attack', 'starter', 2, 'aria', ['smite'], '✝️', [dmg(7), blk(5)], { effects: [dmg(10), blk(8)] }, { quote: '빛이 너를 심판한다.' });
   C('h_bulwark', '성벽', 'holy', 'skill', 'common', 2, 'aria', ['aegis'], '🧱', [blk(14)], { effects: [blk(18)] }, { quote: '무너질 생각이 없어.' });
   C('h_prayer', '기도', 'holy', 'skill', 'common', 1, 'elena', ['heal'], '🙏', [{ t: 'heal', v: 4 }, self('regen', 2)], { effects: [{ t: 'heal', v: 6 }, self('regen', 3)] }, { exhaust: true, quote: '잠깐만 눈 감아요.' });
   C('h_cleanse', '정화', 'holy', 'skill', 'common', 0, 'elena', ['heal'], '💧', [{ t: 'cleanse' }, blk(3)], { effects: [{ t: 'cleanse' }, blk(6)] }, { quote: '나쁜 기운, 저리 가.' });
   C('h_retort', '응징', 'holy', 'attack', 'common', 1, 'aria', ['judge'], '🌹', [dmg(6), self('thorns', 1)], { effects: [dmg(8), self('thorns', 2)] }, { quote: '받은 만큼은 돌려줘야지.' });
   C('h_light', '빛의 창', 'holy', 'attack', 'common', 1, 'elena', ['smite'], '🔆', [dmg(7), blk(4)], { effects: [dmg(10), blk(5)] }, { quote: '빛은 창이 되기도 해요.' });
   C('h_vow', '맹세', 'holy', 'skill', 'common', 1, 'aria', ['aegis'], '🤞', [blk(6), app('weak', 1)], { effects: [blk(8), app('weak', 2)] }, { quote: '내 이름을 걸고.' });
-  C('h_sanctuary', '성역', 'holy', 'power', 'uncommon', 2, 'aria', ['aegis'], '⛪', [self('sanctuary', 3)], { effects: [self('sanctuary', 5)] }, { quote: '이곳은 신의 땅이야.' });
+  C('h_sanctuary', '성역', 'holy', 'power', 'uncommon', 2, 'aria', ['aegis'], '⛪', [self('sanctuary', 2)], { effects: [self('sanctuary', 4)] }, { quote: '이곳은 신의 땅이야.' });
   C('h_retribution', '응보의 맹세', 'holy', 'power', 'uncommon', 1, 'aria', ['judge', 'aegis'], '⚖️', [self('retribution', 5)], { effects: [self('retribution', 8)] }, { quote: '막아 낸 만큼 되갚는다.' });
   C('h_grace', '은총', 'holy', 'power', 'uncommon', 1, 'elena', ['heal'], '🕊️', [self('grace', 3)], { effects: [self('grace', 5)] }, { quote: '치유의 빛은 적에겐 따가워요.' });
   C('h_regen', '생명의 샘', 'holy', 'skill', 'uncommon', 1, 'elena', ['heal'], '⛲', [self('regen', 6)], { effects: [self('regen', 9)] }, { exhaust: true, quote: '천천히, 하지만 확실히.' });
@@ -232,8 +232,8 @@
   C('ex_encore', '앙코르', 'neutral', 'skill', 'legend', 0, 'lyra', ['spell'], '🎤', [draw(2), { t: 'energy', v: 2 }], { effects: [draw(3), { t: 'energy', v: 2 }] }, { exhaust: true, quote: '한 곡 더! 한 곡 더!', unlock: 'elite10' });
 
   // ── 히로인 숙련 카드 (v1.2: 히로인 레벨로 보상 풀에 추가됨, mastery 표시)
-  C('sx_flurry', '홍련 연참', 'sword', 'attack', 'uncommon', 1, 'sera', ['multi', 'str'], '🌺', [dmg(4, { hits: 2 }), self('str', 1)], { effects: [dmg(5, { hits: 2 }), self('str', 1)] }, { exhaust: true, mastery: 'sera', quote: '베고, 다시 벤다. 그때마다 더 무거워져.' });
-  C('sx_vow', '붉은 맹세', 'sword', 'skill', 'common', 1, 'sera', ['blood', 'guard'], '🎀', [{ t: 'loseHp', v: 2 }, blk(10)], { effects: [{ t: 'loseHp', v: 2 }, blk(13)] }, { mastery: 'sera', quote: '이 정도 피는 약속값이야.' });
+  C('sx_flurry', '홍련 연참', 'sword', 'attack', 'uncommon', 1, 'sera', ['multi', 'str'], '🌺', [dmg(3, { hits: 2 }), self('str', 1)], { effects: [dmg(4, { hits: 2 }), self('str', 1)] }, { exhaust: true, mastery: 'sera', quote: '베고, 다시 벤다. 그때마다 더 무거워져.' });
+  C('sx_vow', '붉은 맹세', 'sword', 'skill', 'common', 1, 'sera', ['blood', 'guard'], '🎀', [{ t: 'loseHp', v: 2 }, blk(8)], { effects: [{ t: 'loseHp', v: 2 }, blk(11)] }, { mastery: 'sera', quote: '이 정도 피는 약속값이야.' });
   C('sx_dawn', '새벽 검무', 'sword', 'power', 'rare', 2, 'sera', ['multi', 'str'], '🌅', [self('trance', 1), self('str', 1)], { cost: 1 }, { mastery: 'sera', quote: '밤이 끝나는 걸, 칼끝으로 보여 줄게.' });
   C('lx_comet', '꼬리별', 'magic', 'attack', 'common', 1, 'luna', ['aoe', 'spell'], '☄️', [{ t: 'dmgAll', v: 5 }, draw(1)], { effects: [{ t: 'dmgAll', v: 7 }, draw(1)] }, { mastery: 'luna', quote: '하나 떨어뜨리고, 다음 계산.' });
   C('lx_veil', '서리 장막', 'magic', 'skill', 'uncommon', 1, 'luna', ['frost'], '🌫️', [blk(7), appAll('weak', 1)], { effects: [blk(10), appAll('weak', 2)] }, { mastery: 'luna', quote: '추우면 다들 얌전해지거든.' });
@@ -242,8 +242,8 @@
   C('yx_needle', '독침 연사', 'ninja', 'attack', 'uncommon', 1, 'yuki', ['poison', 'combo'], '🪡', [dmg(3, { hits: 2 }), app('poison', 3)], { effects: [dmg(3, { hits: 2 }), app('poison', 5)] }, { mastery: 'yuki', quote: '따끔. 그다음은 천천히.' });
   C('yx_moon', '달그림자 난무', 'ninja', 'skill', 'rare', 1, 'yuki', ['shiv', 'combo'], '🌘', [{ t: 'add', id: 'shiv', n: 4, to: 'hand' }], { effects: [{ t: 'add', id: 'shiv', n: 5, to: 'hand' }] }, { exhaust: true, mastery: 'yuki', quote: '달이 숨은 동안만, 끝까지.' });
   C('ax_lantern', '순례자의 등불', 'holy', 'skill', 'common', 1, 'aria', ['heal', 'aegis'], '🏮', [blk(5), { t: 'heal', v: 2 }], { effects: [blk(7), { t: 'heal', v: 3 }] }, { mastery: 'aria', quote: '불은 꺼뜨리지 않아. 누구 앞에서도.' });
-  C('ax_oath', '수호 서약', 'holy', 'skill', 'uncommon', 1, 'aria', ['judge', 'aegis'], '📜', [blk(6), self('thorns', 1)], { effects: [blk(9), self('thorns', 2)] }, { mastery: 'aria', quote: '맹세는 방패에 새기는 거야.' });
-  C('ax_dawnshield', '여명의 방패', 'holy', 'skill', 'rare', 2, 'aria', ['aegis'], '🌄', [blk(14), self('metal', 2)], { effects: [blk(18), self('metal', 3)] }, { exhaust: true, mastery: 'aria', quote: '해가 뜰 때까지, 여기 서 있을게.' });
+  C('ax_oath', '수호 서약', 'holy', 'skill', 'uncommon', 1, 'aria', ['judge', 'aegis'], '📜', [blk(5), self('thorns', 1)], { effects: [blk(8), self('thorns', 2)] }, { mastery: 'aria', quote: '맹세는 방패에 새기는 거야.' });
+  C('ax_dawnshield', '여명의 방패', 'holy', 'skill', 'rare', 2, 'aria', ['aegis'], '🌄', [blk(11), self('metal', 2)], { effects: [blk(15), self('metal', 3)] }, { exhaust: true, mastery: 'aria', quote: '해가 뜰 때까지, 여기 서 있을게.' });
 
   // ── v1.3 마리엘(인형사): 인형(최대 3체)이 적의 공격을 대신 받고, 턴 종료 시 공격
   const doll = (hp, atk) => ({ t: 'doll', hp, atk });
@@ -319,7 +319,7 @@
             deck: ['n_slash', 'n_slash', 'n_slash', 'n_slash', 'n_slash', 'n_dodge', 'n_dodge', 'n_dodge', 'n_dodge', 'n_venom'],
             pitch: '표창과 독으로 천천히, 확실하게. 손이 바쁜 타입.', line: '…시끄러운 건 싫어. 조용히 끝낼게.',
             mech: ["☠️ <b>중독</b>: 적이 턴 시작마다 수치만큼 체력을 잃고, 수치가 1 줄어.", "✴️ <b>표창</b>: 0코스트 피해 4, 쓰면 소멸."] },
-    aria: { hero: 'aria', title: '빛의 방패 아리아', cls: 'holy', hp: 72, gold: 99, relic: 'holy_sigil', locked: true,
+    aria: { hero: 'aria', title: '빛의 방패 아리아', cls: 'holy', hp: 66, gold: 99, relic: 'holy_sigil', locked: true,
             unlockText: '2막 보스 「밤의 여왕 벨리타」를 한 번 쓰러뜨리면 합류해.',
             deck: ['h_strike', 'h_strike', 'h_strike', 'h_strike', 'h_guard', 'h_guard', 'h_guard', 'h_guard', 'h_guard', 'h_smite'],
             pitch: '방어도를 쌓고 그대로 되돌려 주는 수호 기사. 회복과 반격도 특기.', line: '뒤는 내가 지킬게. 앞만 봐.',
@@ -328,7 +328,7 @@
             deck: ['pm_strike', 'pm_strike', 'pm_strike', 'pm_strike', 'pm_guard', 'pm_guard', 'pm_guard', 'pm_guard', 'pm_doll', 'pm_doll'],
             pitch: '인형을 세워 앞줄을 맡기고, 턴이 끝날 때 인형이 공격해. 인형은 들어오는 공격을 (방어도 다음으로) 대신 맞아.', line: '앞줄은 도도가 설게. 넌 내 뒤에서 숨 쉬어.',
             mech: ["🪆 <b>인형</b>(최대 3체): 적 공격은 방어도 → 맨 앞 인형 → 내 체력 순으로 맞아.", "턴이 끝나면 인형마다 무작위 적을 공격. 4체째는 맨 앞 인형 체력에 더해져."] },
-    serena: { hero: 'serena', title: '달을 추는 세레나', cls: 'moon', hp: 66, gold: 99, relic: 'crescent_pin', pack: 'dlc-night-trio',
+    serena: { hero: 'serena', title: '달을 추는 세레나', cls: 'moon', hp: 70, gold: 99, relic: 'crescent_pin', pack: 'dlc-night-trio',
             deck: ['sm_slash', 'sm_slash', 'sm_slash', 'sm_slash', 'sm_step', 'sm_step', 'sm_step', 'sm_step', 'sm_full', 'sm_wane'],
             pitch: '카드를 낼 때마다 달이 🌒→🌓→🌕→🌑로 바뀌어. 위상이 맞는 카드를 맞는 순서로 내면 추가 효과.', line: '박자 놓치지 마. 다음이 보름이야.',
             mech: ["🌙 <b>달 위상</b>: 카드를 낼 때마다 🌒초승→🌓반달→🌕보름→🌑그믐 순으로 1칸.", "카드의 달 배지가 <b>낼 때의 위상</b>과 같으면 추가 효과.", "🌑그믐→🌒초승으로 넘어가면 한 바퀴."] },
@@ -515,7 +515,7 @@
     red_ribbon:   { name: '붉은 머리끈', icon: '🎀', starter: true, desc: '전투에서 이기면 체력을 8 회복해.' },
     moon_pendant: { name: '달의 펜던트', icon: '🌙', starter: true, desc: '매 전투 첫 턴에 에너지 1, 카드 1장을 더 얻어.' },
     shadow_hood:  { name: '그림자 두건', icon: '🥷', starter: true, desc: '전투 시작 시 표창 3장을 손에 넣어.' },
-    holy_sigil:   { name: '성기사의 인장', icon: '🔰', starter: true, desc: '전투 시작 시 방어도 4, 가시 1.' },
+    holy_sigil:   { name: '성기사의 인장', icon: '🔰', starter: true, desc: '전투 시작 시 방어도 3, 가시 1.' },
     crimson_sheath:{ name: '핏빛 칼집', icon: '🗡️', starter: true, mastery: 'sera', desc: '전투 시작 시 활력 6. 엘리트·보스 전투에서는 대신 활력 10.' },
     star_chart:   { name: '별자리 지도', icon: '🗺️', starter: true, mastery: 'luna', desc: '짝수 턴마다 카드를 1장 더 뽑아.' },
     viper_ring:   { name: '독사의 반지', icon: '💍', starter: true, mastery: 'yuki', desc: '전투 시작 시 모든 적에게 중독 2.' },
@@ -731,12 +731,12 @@
     '엘리트 체력 +15%',
     '일반 적 체력 +10%',
     '보스 체력 +10%',
-    '적 공격 피해 +10%',
+    '적 공격 피해 +5%',
     '막 사이 회복 감소 (잃은 체력의 75%만)',
     '시작 최대 체력 -6',
     '시작 덱에 「상처」 1장',
-    '상점 가격 +15%',
-    '전투 골드 보상 -25%',
+    '상점 가격 +15% · 적 공격 피해 +5% 더',
+    '전투 골드 보상 -25% · 일반 적 체력 +5% 더',
     '보스 시작 시 힘 +2'
   ];
 
@@ -907,7 +907,7 @@
   };
 
   const DATA = { MASTERY, LINES, HEROINES, STATUS, ARCH, CLASS_ARCH, CARDS, STARTERS, ACTS, ENEMIES, ENCOUNTERS, RELICS, POTIONS, EVENTS, ACHIEVEMENTS, GALLERY, ASCENSION, ART, SHOP,
-    TITLE: '미녀 덱: 밤의 여왕', VERSION: '1.4.2' };
+    TITLE: '미녀 덱: 밤의 여왕', VERSION: '1.5.0' };
   root.BD_DATA = DATA;
   if (typeof module !== 'undefined' && module.exports) module.exports = DATA;
 })(typeof window !== 'undefined' ? window : globalThis);

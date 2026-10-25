@@ -454,3 +454,8 @@ h2.upname { color: var(--green); }
 .hand .card.sel { overflow: visible; clip-path: none; }
 .hand .card.r-uncommon:not(:first-child):not(.sel),
 .hand .card.r-rare:not(:first-child):not(.sel) { box-shadow: none; }
+/* v1.5 오늘의 원정 · 승천 권장 */
+.daily-panel { border-color: rgba(255, 211, 110, .55); }
+.daily-panel .btn { min-height: 44px; }
+.asc-hint { color: #ffd36e; font-size: 12px; }
+.daily-res { border-color: rgba(255, 211, 110, .55); }

@@ -312,10 +312,12 @@
         <div class="row"><button class="btn" data-act="asc" data-d="-1" ${asc <= 0 ? 'disabled' : ''}>−</button>
         <input type="range" min="0" max="${meta.ascMax}" value="${asc}" data-act="noop" id="ascr" aria-label="승천 단계">
         <button class="btn" data-act="asc" data-d="1" ${asc >= meta.ascMax ? 'disabled' : ''}>+</button></div>
+        <div class="small asc-hint" id="asc-hint">${esc(ascHint(asc))}</div>
         <div class="small asc-desc">${D.ASCENSION.slice(1, asc + 1).map((t, i) => `<div>${i + 1}. ${esc(t)}</div>`).join('') || '기본 난이도'}</div></div>`
       : `<div class="small dim center">한 번 클리어하면 🔥승천(난이도 1~10)이 열려.</div>`;
     return `<div class="topbar"><button class="tb" data-act="toTitle" aria-label="뒤로">←</button><span>히로인 선택</span></div>
     <div class="scroll"><div class="col pad">
+      ${dailyHTML()}
       ${ascRow}
       ${Object.entries(D.STARTERS).map(([id, s]) => {
         const h = D.HEROINES[s.hero], r = D.RELICS[s.relic], wins = meta.heroWins[id] || 0;
@@ -352,6 +354,25 @@
         </div>`;
       }).join('')}
     </div></div>`;
+  }
+  // 승천 권장 레벨 (v1.5, test/sim.js 똑똑한 봇 · 히로인 7명 평균 승률 30% 안팎이 되는 레벨)
+  function ascHint(a) {
+    if (a <= 2) return '권장: 히로인 Lv 1부터 (기본 난이도와 거의 같아)';
+    if (a <= 4) return '권장: 히로인 Lv 5 이상';
+    if (a <= 7) return '권장: 히로인 Lv 10 · 숙련 유물·덱도 써 봐';
+    return '권장: Lv 10 + 히로인에 맞는 덱 — 손꼽히는 도전';
+  }
+  // 오늘의 원정 (v1.5): 날짜마다 같은 지도·히로인 · 승천 0 · 기본 덱 · 최고 기록
+  function dailyHTML() {
+    const d = E.dailyOf(meta), rec = meta.daily && meta.daily.key === d.key ? meta.daily : null, s = D.STARTERS[d.hero];
+    const best = rec && rec.best ? (rec.best.won ? `클리어 · ${rec.best.turns}턴` : `${rec.best.prog < 34 ? Math.ceil(rec.best.prog / 11) + '막 ' + ((rec.best.prog - 1) % 11 + 1) + '층' : '종막'}`) : '아직 없음';
+    return `<div class="panel col daily-panel" id="daily-panel">
+      <div class="row" style="justify-content:space-between"><b>📅 오늘의 원정</b><span class="small dim">${esc(d.key)}</span></div>
+      <div class="small">${esc(s.title)} · 모두 같은 지도 · 승천 0 · 기본 덱 (레벨 보너스 없음)</div>
+      <div class="small">오늘 최고: <b>${esc(best)}</b>${rec ? ` · 시도 ${rec.tries}` : ''} · 이긴 날 ${((meta.daily && meta.daily.wins) || []).length}</div>
+      <div class="small dim">보상: 하루 첫 완주 경험치 +${E.DAILY.finishXp} · 첫 클리어 +${E.DAILY.winXp}</div>
+      <button class="btn gold block" data-act="dailyGo" id="btn-daily">📅 오늘의 원정 출발</button>
+    </div>`;
   }
   function renderStore() {
     const open = E.offerOpen();
@@ -769,6 +790,7 @@
       <div class="bubble">${won ? esc(D.GALLERY['g_' + run.starter].cap) : esc('조금만… 더 갈 수 있었는데. 다음엔 꼭.')}</div>
       ${settings.talk ? `<div class="herosay static"><span class="hs-name">${esc(D.HEROINES[s.hero].name)}</span> ${esc(endLine())}</div>` : ''}
       ${xpPanelHTML()}
+      ${run.dailyResult ? `<div class="panel col daily-res" id="daily-res" style="width:100%;max-width:340px"><b>📅 오늘의 원정 ${esc(run.daily)}</b><div class="small">${run.dailyResult.best ? '오늘 최고 기록 갱신!' : '오늘 최고 기록은 그대로'}${run.dailyResult.xp ? ` · 보너스 경험치 +${run.dailyResult.xp}` : ''}</div></div>` : ''}
       <div class="panel statgrid" style="width:100%;max-width:340px">
         <span>도달</span><b>${won ? '황혼 너머' : `${run.act < 4 ? run.act + '막' : '종막'} ${run.floor}층`}</b>
         <span>승천</span><b>🔥${run.asc}</b>
@@ -1076,10 +1098,11 @@
     ui.sel = null;
     doAct(() => res);
   }
-  function startRun(id) {
+  function startRun(id, daily) {
     if (!E.heroUnlocked(meta, id)) { toast('이 히로인은 상점에서 받은 뒤에 고를 수 있어.'); ui.view = 'store'; render(); return; }
     const asc = Math.min(settings.asc, meta.ascMax);
-    run = E.newRun(id, null, Object.assign(E.runOptions(meta, id, settings.loadout[id]), { asc }));
+    if (daily) run = E.newRun(id, daily.seed, { asc: 0, daily: daily.key });
+    else run = E.newRun(id, null, Object.assign(E.runOptions(meta, id, settings.loadout[id]), { asc }));
     ui.sel = null; ui.modal = null; ui.modalStack = []; ui.deadShown = new Set(); ui.runAch = []; ui.tut = 0;
     saveRun(); render();
     if (!meta.runs) setTimeout(() => toast('지도에서 빛나는 칸을 골라 출발해!'), 300);
@@ -1184,7 +1207,8 @@
     storyClose() { const h = ui.story.h; ui.story = null; if (ui.modal) ui.modal = profileHTML(h); render(); },
     lockedTrack(d) { toast('🔒 ' + esc(D.HEROINES[d.h].name) + ' 레벨 ' + d.lv + '에서 열려.'); },
     pick(d) { startRun(d.id); },
-    again() { const id = run.starter; run = null; startRun(id); },
+    again() { const id = run.starter, dk = run.daily; run = null; if (dk && dk === E.dayKey()) { const d = E.dailyOf(meta); return startRun(d.hero, d); } startRun(id); },
+    dailyGo() { if (run && !run.over) { toast('진행 중인 원정이 있어. 이어하거나 포기한 뒤에 출발해.'); return; } const d = E.dailyOf(meta); startRun(d.hero, d); },
     viewDeckEnd() { openModal(deckModal(run.deck, '최종 덱')); },
     menu() {
       openModal(`<h2>메뉴</h2>

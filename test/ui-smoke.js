@@ -40,9 +40,12 @@ const tag = `${VW}x${VH}`;
       case 'combat': {
         const can = await page.evaluate(() => !!document.querySelector('.hand .card.playable'));
         if (can) {
-          await tap('.hand .card.playable:last-child') || await tap('.hand .card.playable');
-          if (await page.$('.enemy.targetable')) await tap('.enemy.targetable');
-          else await tap('.hand .card.sel');
+          // v1.5: 손패가 겹치면(v1.4.1~) 카드 가운데를 다른 카드가 덮어 터치 좌표로는 못 고르는 경우가 있다 → 요소에 직접 클릭(같은 data-act 위임 처리)
+          const clk = sel => page.evaluate(q => { const el = document.querySelector(q); if (!el) return false; el.click(); return true; }, sel);
+          await clk('.hand .card.playable:last-of-type') || await clk('.hand .card.playable');
+          await wait(40);
+          if (await page.$('.enemy.targetable')) await clk('.enemy.targetable');
+          else await clk('.hand .card.sel');
         } else await tap('[data-act="endTurn"]');
         await wait(60);
         break;

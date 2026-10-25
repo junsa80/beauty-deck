@@ -62,7 +62,7 @@
     const asc = Math.max(0, Math.min(10, opts.asc | 0));
     const run = {
       v: 2, seed, rng: seed, nextUid: 1, starter: starterId, cls: s.cls, asc,
-      unlocked: (opts.unlocked || []).slice(), passive: opts.passive ? starterId : null, loadout: { relic: opts.relic || s.relic, deck: opts.deck ? 'alt' : 'base' },
+      unlocked: (opts.unlocked || []).slice(), passive: opts.passive ? starterId : null, daily: opts.daily || null, loadout: { relic: opts.relic || s.relic, deck: opts.deck ? 'alt' : 'base' },
       hp: s.hp, maxHp: s.hp, gold: s.gold, deck: [], relics: [], potions: [null, null, null],
       act: 1, floor: 0, totalFloor: 0, pos: null, visited: [], map: null, screen: 'map', over: false, won: false,
       combat: null, rewards: null, shop: null, event: null, treasure: null, pending: null,
@@ -255,11 +255,11 @@
     let hp = ri(run, d.hp[0], d.hp[1]);
     const a = run.asc || 0;
     if (d.kind === 'elite' && a >= 1) hp = Math.round(hp * 1.15);
-    if ((d.kind === 'monster' || d.kind === 'rival') && a >= 2) hp = Math.round(hp * 1.1);
+    if ((d.kind === 'monster' || d.kind === 'rival') && a >= 2) hp = Math.round(hp * (a >= 9 ? 1.15 : 1.1));   // v1.5: 승천 9 일반 적 체력 +5% 더
     if (d.boss && a >= 3) hp = Math.round(hp * 1.1);
     const e = { uid: run.nextUid++, id, name: d.name, hp, maxHp: hp, block: 0, st: Object.assign({}, d.start || {}),
              phase: 0, firstDone: false, cyc: 0, hist: [], intent: null, dead: false, minion: !!minion,
-             dmgMul: (a >= 4 ? 1.1 : 1) * (d.boss && a >= 10 ? 1 : 1) };
+             dmgMul: (a >= 4 ? 1.05 : 1) * (a >= 8 ? 1.05 : 1) };   // v1.5: 승천 4 +5% · 8 +5% 더 (4에서 한 번에 +10%는 승률 −9%p 절벽)
     if (d.boss && a >= 10) addSt(e, 'str', 2);
     if (!run.enemiesSeen.includes(id)) run.enemiesSeen.push(id);
     return e;
@@ -281,7 +281,7 @@
     if (hasRelic(run, 'shadow_hood')) for (let i = 0; i < 3; i++) c.hand.push(newCard(run, 'shiv'));
     if (hasRelic(run, 'b_mask')) for (let i = 0; i < 2; i++) c.hand.push(newCard(run, 'daze'));
     if (hasRelic(run, 'guard_charm')) P.block += 10;
-    if (hasRelic(run, 'holy_sigil')) { P.block += 4; addSt(P, 'thorns', 1); }
+    if (hasRelic(run, 'holy_sigil')) { P.block += 3; addSt(P, 'thorns', 1); }
     if (hasRelic(run, 'crimson_sheath')) addSt(P, 'vigor', kind === 'monster' ? 6 : 10);
     if (hasRelic(run, 'viper_ring')) c.enemies.forEach(e => addSt(e, 'poison', 2));
     if (hasRelic(run, 'dawn_lamp')) addSt(P, 'sanctuary', 1);
@@ -1003,7 +1003,7 @@
   function newMeta() {
     return { v: 2, runs: 0, wins: 0, bestFloor: 0, bestAct: 0, kills: 0, elites: 0, bosses: {}, heroWins: {}, heroRuns: {}, heroBestAsc: {},
              cardsSeen: [], relicsSeen: [], enemiesSeen: [], ach: {}, ascMax: 0, maxHit: 0, cardsPlayed: 0, dmgDealt: 0, potionsUsed: 0,
-             goldEarned: 0, playMs: 0, tutorialDone: false, newGallery: [], heroXp: {}, storyRead: {}, ownedPacks: [], skins: {} };
+             goldEarned: 0, playMs: 0, tutorialDone: false, newGallery: [], heroXp: {}, storyRead: {}, ownedPacks: [], skins: {}, daily: null };
   }
   function migrateMeta(m) {
     const n = newMeta();
@@ -1185,8 +1185,38 @@
     return { hero: h, before, after, gain: after.xp - before.xp, parts: g.parts, unlocks };
   }
 
+  // ───────── 오늘의 원정 (v1.5) ─────────
+  // 날짜(현지) → 같은 시드 · 같은 히로인(고를 수 있는 히로인 중 날짜 순번) · 승천 0 · 기본 덱·유물 · 레벨 보너스 없음.
+  // 기록: 클리어 > 도달 층 > 적은 턴. 하루 처음 끝내면 경험치 +40, 처음 클리어하면 +80 더.
+  const DAILY = { finishXp: 40, winXp: 80 };
+  function dayKey(d) { d = d || new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+  function dailyOf(meta, key) {
+    key = key || dayKey();
+    let h = 2166136261; for (let i = 0; i < key.length; i++) { h ^= key.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; }
+    const p = key.split('-').map(Number), day = Math.floor(Date.UTC(p[0], p[1] - 1, p[2]) / 86400000);
+    const all = Object.keys(D.STARTERS), can = all.filter(id => !meta || heroUnlocked(meta, id));
+    const pref = all[day % all.length];
+    const hero = can.includes(pref) ? pref : (can[day % Math.max(1, can.length)] || all[0]);
+    return { key, seed: (h % 2000000000) + 1, hero };
+  }
+  function dailyScore(r) { return (r.won ? 1e6 : 0) + r.prog * 1000 - Math.min(999, r.turns | 0); }
+  function dailyRecord(meta, run) {
+    const key = run.daily, old = meta.daily && meta.daily.key === key ? meta.daily : null;
+    const d = old || { key, best: null, tries: 0, done: false, won: false, wins: (meta.daily && meta.daily.wins) || [] };
+    const r = { won: !!run.won, prog: (run.act - 1) * 11 + run.floor, turns: run.stats.turns, hero: run.starter };
+    const out = { best: false, xp: 0, rec: r };
+    d.tries++;
+    if (!d.best || dailyScore(r) > dailyScore(d.best)) { d.best = r; out.best = true; }
+    if (!d.done) { d.done = true; out.xp += DAILY.finishXp; }
+    if (r.won && !d.won) { d.won = true; out.xp += DAILY.winXp; if (!d.wins.includes(key)) d.wins = d.wins.concat([key]).slice(-30); }
+    if (out.xp) { const cap = D.MASTERY.curve[D.MASTERY.curve.length - 1]; meta.heroXp[run.starter] = Math.min(cap, (meta.heroXp[run.starter] || 0) + out.xp); }
+    meta.daily = d;
+    return out;
+  }
+
   function recordRun(meta, run) {
     run.xpResult = awardXp(meta, run);
+    if (run.daily) run.dailyResult = dailyRecord(meta, run);
     meta.runs++; meta.kills += run.stats.kills; meta.elites += run.stats.elites;
     meta.cardsPlayed += run.stats.cardsPlayed; meta.dmgDealt += run.stats.dmgDealt; meta.potionsUsed += run.stats.potionsUsed; meta.goldEarned += run.stats.goldEarned;
     meta.maxHit = Math.max(meta.maxHit, run.stats.maxHit);
@@ -1322,6 +1352,7 @@
     takeGold, takeCard, skipCard, takeRelic, takeBossRelic, takePotion, leaveReward, synergy, rewardCount,
     restHeal, restHealAmount, restSmith, selectableCards, selectCard, cancelSelect,
     buy, shopRemove, removePrice, leaveShop, openChest, leaveTreasure, chooseEvent, eventOptionOk, leaveEvent,
+    DAILY, dayKey, dailyOf, dailyScore, dailyRecord,
     newMeta, migrateMeta, recordRun, heroLevel, masteryHas, masteryCards, heroTitle, runOptions, runXp, awardXp, levelOf, checkAchievements, heroUnlocked, unlockedCards, galleryUnlocked,
     offerOpen, ownsPack, claimPack, skinFor, skinOffer, toggleSkin,
     describe, upgradeDiff, josa, hasRelic, startCombat, summonDoll, moonAdvance, MOON, MOON_ICON, DOLL_MAX

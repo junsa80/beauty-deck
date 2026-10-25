@@ -230,7 +230,7 @@ function playRun(starter, seed, stepFn) {
   // MASTERY=1: 히로인 레벨 10(카드 3장·패시브·물약) · MASTERY=relic|deck: 그 시작 옵션까지
   let opts = { asc: +(process.env.ASC || 0) };
   if (process.env.MASTERY) {
-    const m = E.newMeta(); m.heroXp[starter] = 99999;
+    const m = E.newMeta(); m.heroXp[starter] = +(process.env.MASTERY_XP || 99999);   // MASTERY_XP=700 → Lv5
     const ch = { relic: /relic|all/.test(process.env.MASTERY) ? 'alt' : 'base', deck: /deck|all/.test(process.env.MASTERY) ? 'alt' : 'base' };
     opts = Object.assign(E.runOptions(m, starter, ch), opts);
     if (process.env.NOPASSIVE) opts.passive = false;
