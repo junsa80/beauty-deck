@@ -11,6 +11,7 @@
 - 검증 보고는 자동 테스트와 실제 폰 터치 테스트를 나눠서 적고, 확인하지 않은 것은 확인했다고 쓰지 않는다.
 
 ## v1.5.1 변경 (2026-10-26, GrokBot) — QA (WORKLOG.md BD-QA-01)
+- dist 단일 파일 (WORKLOG BD-DIST-01): `tools/build.js` 가 `<base href="../">` 를 넣고 매니페스트 줄을 뺌 → dist 폴더에서 열어도 그림 240장·아이콘이 나옴 (`node test/dist-art.js`). 저장소 안에서 여는 용도 — dist 파일만 따로 옮기면 그림 없음.
 - 상단 줄: 360px·물약 5칸·승천이면 덱·물약이 화면 밖이던 것 → `ui.js fitTopbar()` (넘칠 때만 .tight → .wrap 둘째 줄). 물약·유물 누르는 범위 `::after` 로 넓힘, 튜토리얼 버튼 44px.
 - `migrateMeta` 칸 모양 검사(백업 가져오기 망가진 값). 정상 세이브·시뮬 결과 그대로.
 - 새 테스트: `test/saves.js`(node), `test/ui-v151.js`(상단 줄 3폭), `test/perf.js`. ui-smoke 는 화면별 터치 크기를 정보로 찍음. ui-v150·ui-scenes 는 `VPS=360x800,390x844,412x915`.
