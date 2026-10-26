@@ -14,3 +14,11 @@
 - **자산**: img·sfx·icons 248개 전부 코드/SW 에서 참조. `art/`(33MB)는 원본 보관이라 게임이 받지 않음. 지울 것 없음.
 - **남은 문제**: `dist/beauty-deck.html`(단일 파일 묶음)을 dist 폴더에서 열면 히로인 그림 7장·manifest·아이콘이 상대경로로 없어서 못 불러옴(main 도 같음, 라이브는 루트 index.html 이라 영향 없음). 실제 폰 미검증.
 - **다음**: dist 묶음 경로 정리 여부 결정, 실제 폰에서 상단 둘째 줄 체감.
+
+## 2026-10-26 · BD-DIST-01 (GrokBot) — dist 단일 파일 경로
+- **문제**: `dist/beauty-deck.html` 을 dist 폴더에서 열면 상대 경로 `img/…` · `icons/…` 가 `dist/img/…` 로 풀려 히로인 7장(첫 화면)뿐 아니라 카드·배경 그림 **240장 전부**와 아이콘이 없음. 매니페스트는 file:// 에서 CORS 로 막혀 콘솔 오류.
+- **수정**: `tools/build.js` 가 `<meta charset>` 바로 뒤에 `<base href="../">` (모든 상대 경로를 저장소 루트 기준으로) · 단일 파일에선 `<link rel="manifest">` 를 뺌. 루트 `index.html`(라이브) 은 그대로 → SW·버전 안 올림.
+- **파일**: tools/build.js, dist/beauty-deck.html, test/dist-art.js(새), CHANGELOG, HANDOFF
+- **테스트 (브라우저 에뮬레이션, dist 폴더에서 file:// 로 열기)**: `test/dist-art.js` 그림 240장 읽기 — 전 240/240 실패·콘솔 오류 250 → 후 0/240 실패·콘솔 오류 0. ui-v150(dist 기본) 28/30 → 30/30, ui-smoke(dist) JS 오류 없음·터치 ≥40px, ui-scenes JS 오류 없음.
+- **남은 문제**: dist 파일만 따로 다른 곳에 복사하면 그림은 여전히 없음(img/ 18MB 를 한 파일에 넣지 않음 — 저장소 안에서 여는 용도).
+
