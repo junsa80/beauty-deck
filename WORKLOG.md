@@ -22,3 +22,9 @@
 - **테스트 (브라우저 에뮬레이션, dist 폴더에서 file:// 로 열기)**: `test/dist-art.js` 그림 240장 읽기 — 전 240/240 실패·콘솔 오류 250 → 후 0/240 실패·콘솔 오류 0. ui-v150(dist 기본) 28/30 → 30/30, ui-smoke(dist) JS 오류 없음·터치 ≥40px, ui-scenes JS 오류 없음.
 - **남은 문제**: dist 파일만 따로 다른 곳에 복사하면 그림은 여전히 없음(img/ 18MB 를 한 파일에 넣지 않음 — 저장소 안에서 여는 용도).
 
+
+## 2026-10-26 — GPT 캐시 격리 수정 (beauty-deck, cache 1.5.2)
+- 수정 전 activate 이벤트가 현재 버전 외 모든 origin 캐시를 삭제함을 재현. 같은 junsa80.github.io의 다른 게임 오프라인 자산이 지워질 수 있음.
+- sw.js는 자기 게임 접두사의 구버전만 정리. index.html 자산 쿼리/캐시 버전 갱신. 게임 규칙·저장 키·영입·성장 변경 없음.
+- `node test/cache-isolation.cjs`: 수정 전 FAIL → 수정 후 PASS. 타 게임 캐시 내용·현재 캐시 보존, 자기 구버전 삭제, 반복 활성화 검증. Node VM 대역 검사이며 실제 폰 오프라인 검사는 미검증.
+- 공개본 확인은 game-hub/logs/WORKLOG.md의 통합 결과 참조.
