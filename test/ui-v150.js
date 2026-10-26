@@ -10,7 +10,7 @@ const ok = (n, c, i) => { res.push(!!c); console.log((c ? 'PASS ' : 'FAIL ') + n
 const wait = ms => new Promise(r => setTimeout(r, ms));
 (async () => {
   const browser = await puppeteer.launch({ executablePath: process.env.CHROME || '/usr/bin/google-chrome', headless: 'new', args: ['--no-sandbox'] });
-  for (const [W, H] of [[390, 844], [360, 780]]) {
+  for (const [W, H] of (process.env.VPS || '390x844,360x780').split(',').map(s => s.split('x').map(Number))) {
     const T = `${W}x${H}`;
     const page = await browser.newPage();
     await page.setViewport({ width: W, height: H, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
@@ -39,7 +39,7 @@ const wait = ms => new Promise(r => setTimeout(r, ms));
     };
     // 밸런스 수치 (v1.5)
     const v = await page.evaluate(() => { const D = window.BD_DATA || (window.BD_ENGINE && window.BD_ENGINE.D); return { ariaHp: D.STARTERS.aria.hp, serenaHp: D.STARTERS.serena.hp, asc4: D.ASCENSION[4], ver: D.VERSION }; });
-    ok(`${T} 밸런스 수치 · 버전`, v.ariaHp === 66 && v.serenaHp === 70 && /\+5%/.test(v.asc4) && v.ver === '1.5.0', JSON.stringify(v));
+    ok(`${T} 밸런스 수치 · 버전`, v.ariaHp === 66 && v.serenaHp === 70 && /\+5%/.test(v.asc4) && /^1\.5\.\d+$/.test(v.ver), JSON.stringify(v));
     await page.tap('[data-act="newGame"]'); await wait(250);
     ok(`${T} 오늘의 원정 칸`, !!(await page.$('#daily-panel')));
     const hint = await page.$eval('#asc-hint', e => e.textContent).catch(() => '');

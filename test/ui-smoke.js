@@ -23,6 +23,7 @@ const tag = `${VW}x${VH}`;
   await tap('[data-act="newGame"]');
   await tap(`[data-act="pick"][data-id="${process.env.HERO || 'sera'}"]`); await wait(300);
   const seen = new Set();
+  const touchSmall = [];
   let steps = 0, lastKey = '', same = 0;
   while (steps++ < (+process.env.STEPS || 4000)) {
     const st = await page.evaluate(() => { const U = window.BD_UI, r = U.run; return r ? { screen: r.screen, over: r.over, busy: U.ui.busy, hold: U.ui.hold, modal: !!U.ui.modal, act: r.act, floor: r.floor, hp: r.hp, tut: !!document.querySelector('.tutbox'), turn: r.combat && r.combat.turn, hand: r.combat && r.combat.hand.length, en: r.combat && r.combat.energy } : null; });
@@ -31,7 +32,10 @@ const tag = `${VW}x${VH}`;
     if (process.env.GOD && st.screen === 'combat') await page.evaluate(() => { const r = window.BD_UI.run; r.hp = r.maxHp; r.combat.p.st.str = 30; });
     const key = JSON.stringify(st);
     if (key === lastKey) { if (++same > 40) { errors.push('stuck at ' + key); break; } } else { same = 0; lastKey = key; }
-    if (!seen.has(st.screen)) { seen.add(st.screen); await wait(120); await shot('s-' + st.screen); }
+    if (!seen.has(st.screen)) { seen.add(st.screen); await wait(120); await shot('s-' + st.screen);
+      // v1.5.1 QA: 화면마다 처음 볼 때 터치 대상(data-act·button) 중 짧은 변 < 40px 목록 (정보용, 실패 아님)
+      const small = await page.evaluate(() => [...document.querySelectorAll('[data-act], button')].filter(e => { const r = e.getBoundingClientRect(); const cs = getComputedStyle(e); const af = getComputedStyle(e, '::after'); const ex = af.position === 'absolute' && af.content !== 'none' ? -Math.min(parseFloat(af.top) || 0, parseFloat(af.bottom) || 0, parseFloat(af.left) || 0, parseFloat(af.right) || 0) * 2 : 0; return r.width && r.height && cs.visibility !== 'hidden' && cs.display !== 'none' && Math.min(r.width, r.height) + ex < 40; }).map(e => { const r = e.getBoundingClientRect(); return (e.dataset.act || e.className.split(' ')[0]) + ':' + Math.round(r.width) + 'x' + Math.round(r.height); }));
+      if (small.length) touchSmall.push(st.screen + ' → ' + [...new Set(small)].slice(0, 8).join(' ')); }
     if (st.over) { await wait(500); await shot('end'); break; }
     if (st.modal) { (await tap('.modal .btn.primary:not(.disabled)')) || (await tap('.modal .btn.gold:not(.disabled)')) || (await tap('.modal [data-act="closeModal"]')); continue; }
     if (st.tut) { await tap('[data-act="tutNext"]'); continue; }
@@ -67,6 +71,7 @@ const tag = `${VW}x${VH}`;
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1);
   if (overflow) errors.push('horizontal overflow');
   console.log(tag, 'steps', steps, 'final', JSON.stringify(fin), 'screens', [...seen].join(','));
+  console.log(touchSmall.length ? 'touch<40px (info):\n  ' + touchSmall.join('\n  ') : 'touch ok (all ≥40px)');
   console.log(errors.length ? 'ERRORS:\n' + errors.join('\n') : 'no JS errors');
   await browser.close();
   process.exit(errors.length ? 1 : 0);
