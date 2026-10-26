@@ -459,3 +459,16 @@ h2.upname { color: var(--green); }
 .daily-panel .btn { min-height: 44px; }
 .asc-hint { color: #ffd36e; font-size: 12px; }
 .daily-res { border-color: rgba(255, 211, 110, .55); }
+/* v1.5.1 QA: 상단 물약·유물은 보이는 크기 그대로, 누르는 범위만 44px 안팎으로 넓힘 / 튜토리얼 버튼 44px */
+.potion-slot, .relic { position: relative; }
+.potion-slot::after { content: ""; position: absolute; inset: -6px -5px; }
+.relic::after { content: ""; position: absolute; inset: -6px -5px; }
+.tutbox .btn.sm { min-height: 44px; }
+/* v1.5.1 QA: 360px·물약 5칸·승천 표시면 상단 줄이 화면 밖으로 밀려 덱·물약이 잘리던 것.
+   ui.js fitTopbar(): 넘치면 .tight(간격 좁힘) → 그래도 넘치면 .wrap(물약·덱 묶음만 둘째 줄, 오른쪽 정렬). 안 넘치면 예전 그대로. */
+.topbar .tbr { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.topbar.tight { gap: 3px; padding-left: 4px; padding-right: 4px; }
+.topbar.tight .tbr { gap: 3px; }
+.topbar.tight .tb { padding: 0 2px; }
+.topbar.wrap { flex-wrap: wrap; row-gap: 2px; }
+.topbar.wrap .tbr { margin-left: auto; }
