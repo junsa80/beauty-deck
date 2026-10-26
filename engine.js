@@ -1007,9 +1007,22 @@
   }
   function migrateMeta(m) {
     const n = newMeta();
-    if (!m || typeof m !== 'object') return n;
+    if (!m || typeof m !== 'object' || Array.isArray(m)) { n.v = 3; return n; } // v1.5.1: 빈 기록도 v3 (두 번 이관해도 같게)
     const hadPackField = Array.isArray(m.ownedPacks);
-    for (const k of Object.keys(n)) if (m[k] !== undefined) n[k] = m[k];
+    // v1.5.1: 칸마다 기본값과 같은 모양일 때만 가져옴 (백업 손편집·망가진 값이면 그 칸만 기본값). 정상 기록은 그대로.
+    const isObj = x => !!x && typeof x === 'object' && !Array.isArray(x);
+    for (const k of Object.keys(n)) {
+      const v = m[k], d = n[k];
+      if (v === undefined) continue;
+      if (Array.isArray(d)) { if (Array.isArray(v)) n[k] = v; }
+      else if (typeof d === 'number') { const x = Number(v); if (v !== null && v !== '' && Number.isFinite(x)) n[k] = x; }
+      else if (typeof d === 'boolean') n[k] = !!v;
+      else if (k === 'daily') n[k] = isObj(v) && typeof v.key === 'string' ? Object.assign({}, v, { wins: Array.isArray(v.wins) ? v.wins : [], tries: Number(v.tries) || 0 }) : null;
+      else if (isObj(d)) { if (isObj(v)) n[k] = v; }
+      else n[k] = v;
+    }
+    n.ascMax = Math.max(0, Math.min(10, n.ascMax));
+    for (const h of Object.keys(n.heroXp)) { const x = Number(n.heroXp[h]); if (!Number.isFinite(x) || x < 0) delete n.heroXp[h]; else n.heroXp[h] = x; }
     if (!Array.isArray(n.cardsSeen)) n.cardsSeen = [];
     if (m.updatedAt) n.updatedAt = m.updatedAt;
     if (m.xpMigratedFrom) n.xpMigratedFrom = m.xpMigratedFrom;
