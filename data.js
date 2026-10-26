@@ -907,7 +907,7 @@
   };
 
   const DATA = { MASTERY, LINES, HEROINES, STATUS, ARCH, CLASS_ARCH, CARDS, STARTERS, ACTS, ENEMIES, ENCOUNTERS, RELICS, POTIONS, EVENTS, ACHIEVEMENTS, GALLERY, ASCENSION, ART, SHOP,
-    TITLE: '미녀 덱: 밤의 여왕', VERSION: '1.5.0' };
+    TITLE: '미녀 덱: 밤의 여왕', VERSION: '1.5.1' };
   root.BD_DATA = DATA;
   if (typeof module !== 'undefined' && module.exports) module.exports = DATA;
 })(typeof window !== 'undefined' ? window : globalThis);

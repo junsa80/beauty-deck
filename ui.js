@@ -248,13 +248,21 @@
       <span class="tb actt" title="${esc(act.name)}">${run.act < 4 ? run.act + '막' : '종막'}·${floorTxt}</span>
       ${run.asc ? `<span class="tb asct">🔥${run.asc}</span>` : ''}
       <span class="sp"></span>
-      ${run.potions.map((p, i) => `<button class="tb potion-slot ${p ? 'full' : ''}" data-act="potion" data-slot="${i}" aria-label="물약">${p ? D.POTIONS[p].icon : ''}</button>`).join('')}
-      <button class="tb" data-act="deck" aria-label="덱">🃏${run.deck.length}</button>
+      <span class="tbr">${run.potions.map((p, i) => `<button class="tb potion-slot ${p ? 'full' : ''}" data-act="potion" data-slot="${i}" aria-label="물약">${p ? D.POTIONS[p].icon : ''}</button>`).join('')}
+      <button class="tb" data-act="deck" aria-label="덱">🃏${run.deck.length}</button></span>
     </div>
     <div class="relicbar">${run.relics.map(r => `<button class="relic ${D.RELICS[r].boss ? 'bossr' : ''}" data-act="relic" data-id="${r}">${D.RELICS[r].icon}</button>`).join('') || '<span class="dim small">유물 없음</span>'}</div>`;
   }
 
   // ───────── 렌더 ─────────
+  // v1.5.1: 상단 줄이 넘치면 먼저 간격을 좁히고, 그래도 넘치면 물약·덱 묶음을 둘째 줄로 (360px·물약 5칸·승천)
+  function fitTopbar() {
+    const t = document.querySelector('.topbar'); if (!t || !t.querySelector('.tbr')) return;
+    const over = () => t.scrollWidth > t.clientWidth + 1;
+    t.classList.remove('tight', 'wrap');
+    if (over()) t.classList.add('tight');
+    if (over()) t.classList.add('wrap');
+  }
   function render() {
     let html, scr;
     if (!run) { scr = ui.view; const pages = { pick: renderPick, title: renderTitle, store: renderStore }; html = (pages[scr] || renderTitle)(); }
@@ -268,6 +276,7 @@
     if (ui.story) html += storyHTML();
     app.innerHTML = `<div class="screen ${changed && !reduced() ? 'enter' : ''} scr-${scr} ${run ? 'act' + run.act : ''}" ${run && run.screen !== 'combat' ? `style="--actbg:${D.ACTS[run.act].bg[0]}"` : ''}>${html}</div>`;
     if (run && run.screen === 'map' && !ui.hold) scrollMap();
+    fitTopbar();
     if (run && (run.screen === 'combat' || ui.hold)) layoutHand();
   }
 
